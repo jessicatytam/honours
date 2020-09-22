@@ -18,3 +18,10 @@ z3<-filter(z2,!grepl("COUNTRY_COORDINATE_MISMATCH",issue)&
 z4<-select(z3,scientificName,decimalLatitude,decimalLongitude,year)
 
 write_csv(z4,"data/gbif_processed.csv")
+
+gbif <- read.csv(file = "gbif_processed.csv", header = T)
+
+unique(gbif$scientificName) #41850 records
+
+gbif %>%
+  mutate(species = word(scientificName, 1, 2, sep = " "))
