@@ -1,6 +1,7 @@
 library(data.table)
 library(dplyr)
 library(readr)
+library(stringr)
 
 z<-fread("data/0062362-200613084148143.csv")
 z2<-select(z,order,family,genus,species,scientificName,decimalLatitude,decimalLongitude,year,issue)
