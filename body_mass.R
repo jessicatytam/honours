@@ -1,11 +1,16 @@
 library(dplyr)
+library(tidyr)
 library(rvest)
+library(stringr)
 
 #ADW
-koalapge <- read_html("https://animaldiversity.org/accounts/Phascolarctos_cinereus/")
-koalapge %>%
-  html_nodes("body") %>%
+tablepage <- read_html("https://animaldiversity.ummz.umich.edu/quaardvark/search/1E2668FF-7319-0001-3FA4-1CB91E871B70/?start=1") #reading the webpage
+table <- tablepage %>% #getting the table
+  html_nodes("tbody") %>%
   html_text()
+tablepg1 <- data.frame(table) # turning it into a df
+tablepg1 %>% 
+  str_view_all("[:alpha:]")
 
 #AnAge
 remotes::install_github("mastoffel/AnAgeScrapeR", dependencies = TRUE)
@@ -23,5 +28,4 @@ Smith <- Smith %>%
   rename(continent = V1, status = V2, order = V3, family = V4, genus = V5, species = V6,
          log_mass = V7, combined_mass = V8, reference = V9) 
 
-
-#have to figure out if "-999" means NA!!!
+#need to replace -999 with NA
