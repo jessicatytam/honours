@@ -21,7 +21,7 @@ table((lengths(gregexpr("\\W+", res$tip.label)) + 1)) #table for the above
 #we will only use the "clean binomials"
 
 #Plotting the tree (its too large, takes a while!):
-plot(res, labels=FALSE)
+#plot(res, labels=FALSE)
 
 #Once we have a cleaned list of species on the tree, we can clean the tree and also use tnrs_match_names() to get their ott_id and then get other id types (NCBI, worms, gbif, irmng) using taxon_external_IDs() function.
  
@@ -35,6 +35,6 @@ newspecieslist <- specieslist %>%
   mutate(numberofwords = lengths(gregexpr("\\W+", specieslist))+1)
 
 finalspecieslist <- newspecieslist %>%
-  subset(numberofwords == 2)
-finalspecieslist %>%
-  select(specieslist)
+  subset(numberofwords == 2) %>%
+  select(specieslist) %>%
+  write_csv("intermediate_data/species_list_from_phylo.csv")

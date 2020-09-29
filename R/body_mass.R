@@ -2,15 +2,18 @@ library(dplyr)
 library(tidyr)
 library(rvest)
 library(stringr)
+library(readr)
 
 #ADW
-tablepage <- read_html("https://animaldiversity.ummz.umich.edu/quaardvark/search/1E2668FF-7319-0001-3FA4-1CB91E871B70/?start=1") #reading the webpage
+tablepage <- read_html("https://animaldiversity.ummz.umich.edu/quaardvark/search/1E2668FF-7319-0001-3FA4-1CB91E871B70/?start=800") #reading the webpage
 table <- tablepage %>% #getting the table
   html_nodes("tbody") %>%
   html_text()
 tablepg1 <- data.frame(table) # turning it into a df
 tablepg1 %>% 
   str_view_all("[:alpha:]")
+
+write_csv(tablepg1,"test.csv")
 
 #AnAge
 remotes::install_github("mastoffel/AnAgeScrapeR", dependencies = TRUE)
