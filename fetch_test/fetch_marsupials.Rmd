@@ -1,0 +1,49 @@
+---
+title: "Test"
+author: "Jess"
+date: "9/17/2020"
+output: html_document
+---
+
+```{r}
+source("C:/Users/iamje/Jess/UNSW/BEES0006/specieshindex/R/Hindex.r") #load specieshindex functions
+library(taxize)
+library(httr)
+library(XML)
+library(rscopus)
+
+taxonomy <- read.csv(file = "Datasets/taxonomy.csv", header = T)
+```
+
+```{r}
+DownloadAll <- function(data) {
+  totalspp <- nrow(data)
+  APIkey <- "442b9048417ef20cf680a0ae26ee4d86"
+  datalist = data.frame()
+  for (i in 1:totalspp) {
+    print("Starting loop now.")
+    species <- FetchSpTAK(data$genusName[i],
+                          data$speciesName[i], 
+                          APIkey)
+    sppindex <- Allindices(species, genus = data$genusName[i], species = data$speciesName[i])
+    print(paste(length(species), "records retrieved."))
+    list <- data.frame(sppindex)
+    datalist <- rbind(datalist, list)
+  }
+  return(datalist)
+}
+```
+
+```{r}
+marsupials <- DownloadAll(taxonomy)
+
+CountSpTAK("Spilocuscus", "rufoniger", "442b9048417ef20cf680a0ae26ee4d86") #0
+Ailurops_melanotis <- FetchSpTAK("Ailurops", "melanotis", "442b9048417ef20cf680a0ae26ee4d86")
+Myrmecobius_fasciatus <- FetchSpTAK("Myrmecobius", "fasciatus", "442b9048417ef20cf680a0ae26ee4d86")
+
+Allindex <- Allindices(Myrmecobius_fasciatus, genus = "Myrmecobius", species = "fasciatus")
+
+noCitations <- data.frame(citations = 0, journals = 0)
+```
+
+
