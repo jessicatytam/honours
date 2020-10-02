@@ -25,8 +25,10 @@ ADWdata <- str_split(tablepg1, "\\s+(?=[:upper:])") %>% #split the string accord
   filter(entry != "") #get rid of the first empty entry
 
 #separating each entry into columns
-lengths(gregexpr("\\d+", ADWdata$entry))
+ADWdata <- ADWdata %>%
+  mutate(latin_name = word(ADWdata$entry, 1, 2)) 
 
+ADWdata <- str_split(ADWdata$entry, "\\s+(?=\\d+)") #split the string according to the occurrence of a digit; but converts from df to list
 
 
 #AnAge
