@@ -26,20 +26,20 @@ ADWdata <- str_split(tablepg1, "\\s+(?=[:upper:])") %>% #split the string accord
 
 #separating each entry into columns
 ADWdatasplit <- str_split(ADWdata$entry, "\\s+(?=\\d+)") #split the string according to the occurrence of a digit; but converts from df to list; doesn't separate decimals
-
+ADWdatasplit[[2]]
 
 
 #AnAge
 remotes::install_github("mastoffel/AnAgeScrapeR", dependencies = TRUE) #i think this is better for individual species
 #found the complete dataset so i'll use that instead
-AnAge <- read.delim(file = "C:/Users/iamje/Jess/UNSW/Honours/honours/mass_databases/anage_data.txt", header = T)
+AnAge <- read.delim(file = "mass_databases/anage_data.txt", header = T)
 
 #PanTHERIA
-Pantheria1 <- read.delim(file = "C:/Users/iamje/Jess/UNSW/Honours/honours/mass_databases/PanTHERIA_1-0_WR93_Aug2008.txt", header = T)
-Pantheria2 <- read.delim(file = "C:/Users/iamje/Jess/UNSW/Honours/honours/mass_databases/PanTHERIA_1-0_WR05_Aug2008.txt", header = T)
+Pantheria1 <- read.delim(file = "mass_databases/PanTHERIA_1-0_WR93_Aug2008.txt", header = T)
+Pantheria2 <- read.delim(file = "mass_databases/PanTHERIA_1-0_WR05_Aug2008.txt", header = T)
 
 #Smith et al.
-Smith <- read.delim(file = "C:/Users/iamje/Jess/UNSW/Honours/honours/mass_databases/MOMv3.3.txt", header = F)
+Smith <- read.delim(file = "mass_databases/MOMv3.3.txt", header = F)
 Smith <- Smith %>%
   rename(continent = V1, status = V2, order = V3, family = V4, genus = V5, species = V6,
          log_mass = V7, combined_mass = V8, reference = V9) 
