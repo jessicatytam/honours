@@ -30,10 +30,17 @@ ADWdataName <- ADWdata %>%
   mutate(binomial_name = str_extract(ADWdata$entry, "\\D+")) # separate name from string
 ADWdataName <- ADWdataName %>%
   mutate(genus = word(binomial_name, 1), #first word of string
-         species = word(binomial_name, start = 2, end = -1)) #second to last word of string
+         species = word(binomial_name, 2, -1)) #second to last word of string
 
+#creating new columns for weight data
+ADWdataWeight <- ADWdataName %>%
+  mutate(avg_mass_g = str_extract(ADWdataName$entry, "\\d+"))
 
+lengths(gregexpr("\\d+", ADWdataName$entry))
+gregexpr("\\D+", ADWdataName$entry)
+str_extract(ADWdataName$entry, "\\s+(?=[:digit:])")
 
+average, min, max
 
 #AnAge
 remotes::install_github("mastoffel/AnAgeScrapeR", dependencies = TRUE) #i think this is better for individual species
