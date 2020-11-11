@@ -2,6 +2,7 @@ library(tidyr)
 library(stringr)
 library(readr)
 library(tidyverse)
+library(rvest)
 
 #ADW
 
@@ -24,9 +25,14 @@ ADWdata <- str_split(tablepg1, "\\s+(?=[:upper:])") %>% #split the string accord
   rename(entry = c......Abditomys.latidens....Abeomelomys.sevia....Abrawayaomys.ruschii...) %>%
   filter(entry != "") #get rid of the first empty entry
 
-#separating each entry into columns
-ADWdatasplit <- str_split(ADWdata$entry, "\\s+(?=\\d+)") #split the string according to the occurrence of a digit; but converts from df to list; doesn't separate decimals
-ADWdatasplit[[2]]
+#creating new columns for species names
+ADWdataName <- ADWdata %>%
+  mutate(binomial_name = str_extract(ADWdata$entry, "\\D+")) # separate name from string
+ADWdataName <- ADWdataName %>%
+  mutate(genus = word(binomial_name, 1), #first word of string
+         species = word(binomial_name, start = 2, end = -1)) #second to last word of string
+
+
 
 
 #AnAge
