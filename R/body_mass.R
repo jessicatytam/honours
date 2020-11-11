@@ -34,11 +34,10 @@ ADWdataName <- ADWdataName %>%
 
 #creating new columns for weight data
 ADWdataWeight <- ADWdataName %>%
-  mutate(avg_mass_g = str_extract(ADWdataName$entry, "\\d+"))
+  mutate(avg_mass_g = as.numeric(unlist(regmatches(entry, gregexpr("[[:digit:]]+\\.*[[:digit:]]*", entry)))))
 
-lengths(gregexpr("\\d+", ADWdataName$entry))
-gregexpr("\\D+", ADWdataName$entry)
-str_extract(ADWdataName$entry, "\\s+(?=[:digit:])")
+as.numeric(unlist(regmatches(ADWdataName$entry, gregexpr("[[:digit:]]+\\.*[[:digit:]]*", ADWdataName$entry)))) #this one works
+
 
 average, min, max
 
