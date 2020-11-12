@@ -4,19 +4,32 @@
 ## Data collection
 
   - [ ] Body mass
+      - [ ] ADW
+          - [x] collected
+          - [ ] cleaned
+      - [ ] AnAge
+          - [x] collected
+          - [ ] cleaned
+      - [ ] PanTheria
+          - [x] collected
+          - [ ] cleaned
+      - [ ] Smith et al.
+          - [x] collected
+          - [ ] cleaned
   - [x] GBIF geographical location
   - [x] Phylogeny
   - [ ] Human use
+      - [ ] scraped from IUCN
+      - [ ] cleaned
   - [ ] IUCN status
 
-## Tidying data
+## Pre-analysis
 
-### Body mass
-
-  - [ ] ADW
-  - [ ] AnAge
-  - [ ] PanTheria
-  - [ ] Smith et al.
+  - [ ] Synonym matching
+  - [ ] Missing data
+  - [ ] h-index
+  - [ ] Altmetrics
+  - [ ] Google Trends
 
 ## Making graphs
 
