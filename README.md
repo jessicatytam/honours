@@ -1,11 +1,11 @@
 
-# Task manager
+# :bomb: Task manager
 
-## Data collection
+## :pick: Data collection
 
   - [ ] Body mass
       - [ ] ADW
-          - [x] collected
+          - [x] scraped
           - [ ] cleaned
       - [ ] AnAge
           - [x] collected
@@ -23,16 +23,22 @@
       - [ ] cleaned
   - [ ] IUCN status
 
-## Pre-analysis
+## :diya\_lamp: Pre-analysis
 
-  - [ ] Synonym matching
-  - [ ] Missing data
-  - [ ] h-index
-  - [ ] Altmetrics
-  - [ ] Google Trends
+  - [ ] Synonym matching (rinat)
+  - [ ] Missing data (mice)
+  - [ ] *h*-index (specieshindex)
+  - [ ] Altmetrics (rAltmetric)
+  - [ ] Google Trends (gtrendsR)
 
-## Making graphs
+## :art: Making graphs
 
-  - [ ] h-index map
+  - [ ] *h*-index map
   - [ ] Altmetrics map
   - [ ] Google Trends map
+
+## :rocket: Statistical analysis
+
+  - [ ] glmm
+  - [ ] *h*<sup>2</sup>
+  - [ ] Pagel’s \(\lambda\)
