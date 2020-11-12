@@ -9,7 +9,7 @@ output: github_document
   - [ ] Body mass
     - [ ] ADW
       - [x] scraped
-      - [ ] cleaned
+      - [ ] cleaned :round_pushpin:
     - [ ] AnAge
       - [x] collected
       - [ ] cleaned
@@ -26,7 +26,7 @@ output: github_document
     - [ ] cleaned
   - [ ] IUCN status
 
-## :diya_lamp: Pre-analysis
+## :abacus: Pre-analysis
 
   - [ ] Synonym matching (rinat)
   - [ ] Missing data (mice)
@@ -44,3 +44,9 @@ output: github_document
   - [ ] glmm
   - [ ] *h*<sup>2</sup>
   - [ ] Pagel's $\lambda$
+  
+\  
+
+**Legend**\
+What I'm working on now :round_pushpin:\
+Priority :gem: \

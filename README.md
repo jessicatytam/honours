@@ -6,7 +6,7 @@
   - [ ] Body mass
       - [ ] ADW
           - [x] scraped
-          - [ ] cleaned
+          - [ ] cleaned :round\_pushpin:
       - [ ] AnAge
           - [x] collected
           - [ ] cleaned
@@ -23,7 +23,7 @@
       - [ ] cleaned
   - [ ] IUCN status
 
-## :diya\_lamp: Pre-analysis
+## :abacus: Pre-analysis
 
   - [ ] Synonym matching (rinat)
   - [ ] Missing data (mice)
@@ -42,3 +42,9 @@
   - [ ] glmm
   - [ ] *h*<sup>2</sup>
   - [ ] Pagel’s \(\lambda\)
+
+ 
+
+**Legend**  
+What I’m working on now :round\_pushpin:  
+Priority :gem:
