@@ -25,6 +25,8 @@
       - [x] collected from IUCN
       - [ ] cleaned
   - [ ] IUCN status :gem:
+      - [x] collected
+      - [ ] cleaned
 
 ## :abacus: Pre-analysis
 
