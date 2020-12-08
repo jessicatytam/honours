@@ -26,14 +26,14 @@ output: github_document
     
   - [x] GBIF geographical location
   - [x] Phylogeny
-  - [ ] Human use :round_pushpin:
+  - [ ] Human use :gem: :round_pushpin:
     - [ ] scraped from IUCN
     - [ ] cleaned
-  - [ ] IUCN status
+  - [ ] IUCN status :gem:
 
 ## :abacus: Pre-analysis
 
-  - [ ] Combine datasets
+  - [ ] Combine datasets :gem:
   - [ ] Synonym matching (rinat)
   - [ ] Missing data (mice)
   - [ ] *h*-index (specieshindex)
