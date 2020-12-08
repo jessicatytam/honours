@@ -4,6 +4,9 @@
 ## :pick: Data collection
 
   - [ ] Body mass
+      - [ ] EltonTraits 1.0 (will only use )
+          - [ ] collected :round\_pushpin:
+          - [ ] cleaned
       - [ ] ADW
           - [x] scraped
           - [ ] cleaned
@@ -15,9 +18,6 @@
           - [ ] cleaned
       - [ ] Smith et al.
           - [x] collected
-          - [ ] cleaned
-      - [ ] EltonTraits 1.0
-          - [ ] collected :round\_pushpin:
           - [ ] cleaned
   - [x] GBIF geographical location
   - [x] Phylogeny
