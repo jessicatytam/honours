@@ -4,6 +4,29 @@ library(readr)
 library(tidyverse)
 library(rvest)
 
+#EltonTraits 1.0
+
+EltonTraits <- read.delim(file = "mass_databases/MamFuncDat.txt", header = T)
+
+EltonTraits %>%
+  group_by(BodyMass.SpecLevel) %>%
+  count(BodyMass.SpecLevel) %>%
+  ungroup()
+#0 inferred from genus of family typical values = 812 species
+#1 based on species level data = 4041 species
+#2 based on phylogenetically imputed values = 547 species
+#NA = 3 species
+
+EltonTraits <- EltonTraits[-c(5401:5403),] #remove empty rows
+
+EltonTraitscleaned <- EltonTraits[c(2, 3, 24, 26)] #picking out the columns needed
+
+sum(lengths(str_extract_all(EltonTraits$Scientific, "\\w+")) == 2) #checking no subspecies included
+
+write.csv(EltonTraitscleaned, "intermediate_data/EltonTraits.csv")
+
+
+
 #ADW
 
 #a loop to download the complete dataset

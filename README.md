@@ -3,10 +3,10 @@
 
 ## :pick: Data collection
 
-  - [ ] Body mass
-      - [ ] EltonTraits 1.0 (will only use this for now)
-          - [ ] collected :round\_pushpin:
-          - [ ] cleaned  
+  - [x] Body mass
+      - [x] EltonTraits 1.0 (will only use this for now)
+          - [x] collected
+          - [x] cleaned  
             ~~- \[ \] ADW~~  
             ~~- \[x\] scraped~~  
             ~~- \[ \] cleaned~~  
@@ -21,13 +21,14 @@
             ~~- \[ \] cleaned~~
   - [x] GBIF geographical location
   - [x] Phylogeny
-  - [ ] Human use
+  - [ ] Human use :round\_pushpin:
       - [ ] scraped from IUCN
       - [ ] cleaned
   - [ ] IUCN status
 
 ## :abacus: Pre-analysis
 
+  - [ ] Combine datasets
   - [ ] Synonym matching (rinat)
   - [ ] Missing data (mice)
   - [ ] *h*-index (specieshindex)
