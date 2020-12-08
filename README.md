@@ -22,7 +22,7 @@
   - [x] GBIF geographical location
   - [x] Phylogeny
   - [ ] Human use :gem: :round\_pushpin:
-      - [ ] scraped from IUCN
+      - [x] collected from IUCN
       - [ ] cleaned
   - [ ] IUCN status :gem:
 
