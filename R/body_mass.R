@@ -38,6 +38,14 @@ ADWdataWeight <- ADWdataName %>%
 
 as.numeric(unlist(regmatches(ADWdataName$entry, gregexpr("[[:digit:]]+\\.*[[:digit:]]*", ADWdataName$entry)))) #this one works
 
+ADWdataWeight <- ADWdataName %>%
+  mutate(avg_mass_g = str_extract_all(ADWdataName$entry, "[[:digit:]]+\\.*[[:digit:]]*"))
+
+ADWdataWeight$avg_mass_g <- as.data.frame(ADWdataWeight$avg_mass_g)
+ADWdataWeight$avg_mass_g <- as.numeric(ADWdataWeight$avg_mass_g)
+
+class(ADWdataWeight$avg_mass_g)
+ADWdataWeight
 
 average, min, max
 

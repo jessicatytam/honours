@@ -6,7 +6,7 @@
   - [ ] Body mass
       - [ ] ADW
           - [x] scraped
-          - [ ] cleaned :round\_pushpin:
+          - [ ] cleaned
       - [ ] AnAge
           - [x] collected
           - [ ] cleaned
@@ -15,6 +15,9 @@
           - [ ] cleaned
       - [ ] Smith et al.
           - [x] collected
+          - [ ] cleaned
+      - [ ] EltonTraits 1.0
+          - [ ] collected :round\_pushpin:
           - [ ] cleaned
   - [x] GBIF geographical location
   - [x] Phylogeny

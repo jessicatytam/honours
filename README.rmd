@@ -9,7 +9,7 @@ output: github_document
   - [ ] Body mass
     - [ ] ADW
       - [x] scraped
-      - [ ] cleaned :round_pushpin:
+      - [ ] cleaned 
     - [ ] AnAge
       - [x] collected
       - [ ] cleaned
@@ -18,6 +18,9 @@ output: github_document
       - [ ] cleaned
     - [ ] Smith et al.
       - [x] collected
+      - [ ] cleaned
+    - [ ] EltonTraits 1.0
+      - [ ] collected :round_pushpin:
       - [ ] cleaned
   - [x] GBIF geographical location
   - [x] Phylogeny
