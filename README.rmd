@@ -26,9 +26,10 @@ output: github_document
     
   - [x] GBIF geographical location
   - [x] Phylogeny
-  - [ ] Human use :gem: :round_pushpin:
+  - [ ] Human use :gem: 
     - [x] collected from IUCN
-    - [ ] cleaned
+    - [ ] add column 'human use' :round_pushpin:
+    - [ ] combine into 1 dataset 
   - [ ] IUCN status :gem:
     - [x] collected
     - [ ] cleaned

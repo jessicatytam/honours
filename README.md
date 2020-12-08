@@ -21,9 +21,10 @@
             ~~- \[ \] cleaned~~
   - [x] GBIF geographical location
   - [x] Phylogeny
-  - [ ] Human use :gem: :round\_pushpin:
+  - [ ] Human use :gem:
       - [x] collected from IUCN
-      - [ ] cleaned
+      - [ ] add column ‘human use’ :round\_pushpin:
+      - [ ] combine into 1 dataset
   - [ ] IUCN status :gem:
       - [x] collected
       - [ ] cleaned
