@@ -4,21 +4,21 @@
 ## :pick: Data collection
 
   - [ ] Body mass
-      - [ ] EltonTraits 1.0 (will only use )
+      - [ ] EltonTraits 1.0 (will only use this for now)
           - [ ] collected :round\_pushpin:
-          - [ ] cleaned
-      - [ ] ADW
-          - [x] scraped
-          - [ ] cleaned
-      - [ ] AnAge
-          - [x] collected
-          - [ ] cleaned
-      - [ ] PanTheria
-          - [x] collected
-          - [ ] cleaned
-      - [ ] Smith et al.
-          - [x] collected
-          - [ ] cleaned
+          - [ ] cleaned  
+            ~~- \[ \] ADW~~  
+            ~~- \[x\] scraped~~  
+            ~~- \[ \] cleaned~~  
+            ~~- \[ \] AnAge~~  
+            ~~- \[x\] collected~~  
+            ~~- \[ \] cleaned~~  
+            ~~- \[ \] PanTheria~~  
+            ~~- \[x\] collected~~  
+            ~~- \[ \] cleaned~~  
+            ~~- \[ \] Smith et al.~~  
+            ~~- \[x\] collected~~  
+            ~~- \[ \] cleaned~~
   - [x] GBIF geographical location
   - [x] Phylogeny
   - [ ] Human use
