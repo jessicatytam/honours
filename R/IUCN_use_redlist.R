@@ -53,7 +53,7 @@ newtest <- for(i in 1:(nrow(test)-1)){
   n <- i+1
   if(test[i,][1]==test[n,][1] && test[i,][4]==test[n,][4]){
     replace(test, test[i,][3], test[n,][2])
-    test <- test[-c(n),]
+    test <- test[-n,]
   }
 }
 
