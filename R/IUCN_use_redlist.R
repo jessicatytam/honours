@@ -1,9 +1,9 @@
+library(reshape2)
 library(dplyr)
 
-#load data
+#import the data
 
 IUCNlist <- list.files(path = "IUCN_use_and_redlistcategory", pattern = ".csv", full.names = TRUE) #show names of all the files in the folder
-
 
 uselist <- list() #need to create list first so R will know where to store the data
 for(i in 1:length(IUCNlist)){
@@ -12,13 +12,18 @@ for(i in 1:length(IUCNlist)){
 
 str(uselist[[1]]) #view the items in the list
 
-usedf <- data.frame() #create df
-for(i in length(uselist)){
-  usedf <- data.frame(uselist[[i]]) #convert list to df
-}
+meltedList <- melt(uselist) #converts list to df with list element number
 
-test <- data.frame(uselist[1])
+subset(meltedList, L1 == 1) #view each group
 
-#add 'human use' column
+#remove duplicates
 
-#combine into 1 dataset
+length(unique(meltedList$scientificName)) #number of unique species
+
+newlist <- meltedList %>%
+  rename(use1 = L1) %>%
+  arrange(scientificName) %>%
+  unique() #remove duplicates
+ 
+#red list category columns
+
