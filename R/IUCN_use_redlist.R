@@ -21,40 +21,40 @@ subset(meltedList, L1 == 1) #view each group
 length(unique(meltedList$scientificName)) #number of unique species
 
 newlist <- meltedList %>%
-  rename(use1 = L1) %>%
+  rename(use = L1) %>%
   arrange(scientificName) %>%
   unique() #remove duplicates
  
 #red list category columns
 
 redlist <- newlist %>%
-  mutate(redlistCategory2 = NA) #add extra red list column
+  mutate(redlistCategory2 = 0) #add extra red list column
 redlist <- redlist[c(1,2,4,3)] #rearrange columns
 
-for (i in 1:count(redlist)-1){
-  if(redlist[i,][1]==redlist[i+1,][1] & redlist[i,][4]==redlist[i+1,][4]){ #if species name and use1 are the same for 2 rows
-    replace(redlist, redlist[i,][3], redlist[i+1,][3]) #replace NA with the 2nd redlist value
+for(i in 1:2466){
+  if(redlist[i,][1]==redlist[i+1,][1] & redlist[i,][4]==redlist[i+1,][4]){ #if species name and use are the same for 2 rows
+    replace(redlist, redlist[i,][3], redlist[i+1,][2]) #replace NA of the 1st row with the 2nd row's red list value
     redlist <- redlist[-c(i+1),] #remove the 2nd row
   }
 }
 
 
-
-#use columns
-
+redlist[(20+1),][2]
 
 
 
-
-test <- matrix(c(1,1,2,2,3,3,NA,NA,NA,4,4,4),
+test <- matrix(c(1,1,2,2,3,3,0,0,0,4,4,4),
                nrow = 3)
 test
+nrow(test)
 test[-1,]
 
-for (i in 1:count(test)-1){
+newtest <- for(i in 1:(nrow(test)-1)){
   n <- i+1
   if(test[i,][1]==test[n,][1] && test[i,][4]==test[n,][4]){
-    replace(test, test[i,][3], test[n,][3])
+    replace(test, test[i,][3], test[n,][2])
+    test <- test[-c(n),]
   }
 }
 
+newtest
