@@ -23,11 +23,10 @@
   - [x] Phylogeny
   - [ ] Human use :gem:
       - [x] collected from IUCN
-      - [ ] add column ‘human use’ :round\_pushpin:
-      - [ ] combine into 1 dataset
+      - [ ] add new columns and remove duplicates :round\_pushpin:
   - [ ] IUCN status :gem:
       - [x] collected
-      - [ ] cleaned
+      - [ ] add new columns and remove duplicates :round\_pushpin:
 
 ## :abacus: Pre-analysis
 

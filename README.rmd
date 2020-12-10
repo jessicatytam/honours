@@ -28,11 +28,10 @@ output: github_document
   - [x] Phylogeny
   - [ ] Human use :gem: 
     - [x] collected from IUCN
-    - [ ] add column 'human use' :round_pushpin:
-    - [ ] combine into 1 dataset 
+    - [ ] add new columns and remove duplicates :round_pushpin:
   - [ ] IUCN status :gem:
     - [x] collected
-    - [ ] cleaned
+    - [ ] add new columns and remove duplicates :round_pushpin:
 
 ## :abacus: Pre-analysis
 
