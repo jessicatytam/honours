@@ -33,9 +33,11 @@ redlist <- newlist %>%
 redlist <- redlist[c(1,2,4,3)] #rearrange columns
 
 for(i in 1:2466){
-  if(redlist[i,][1] %in% redlist[i+1,][1] & redlist[i,][4] %in% redlist[i+1,][4]){ #if species name & use are the same for 2 rows
-    replace(redlist, redlist[i,][3], redlist[i+1,][2]) #replace NA of the 1st row with the 2nd row's red list value
-    redlist <- redlist[-c(i+1),] #remove the 2nd row
+  for (j in 2:2465) {
+    if(redlist[i,][1] %in% redlist[j,][1] & redlist[i,][4] %in% redlist[j,][4]){ #if species name & use are the same for 2 rows
+      redlist[redlist[i,][3] == "NA"] <- redlist[j,][2] #replace NA of the 1st row with the 2nd row's red list value
+      redlist <- redlist[-j,] #remove the 2nd row
+    }
   }
 }
 
@@ -51,11 +53,12 @@ nrow(test)
 test[-1,]
 
 #for loop
-for(i in 1:nrow(test)-1){
-  n <- i+1
-  if(identical(test[i,][1], test[n,][1]) & identical(test[i,][4], test[n,][4])){
-    test[test[i,][3] == "NA"] <- test[n][2] #replacing not working
-    test <- test[-n,] #removing works
+for(i in 1:(nrow(test)-1)){
+  for(j in 2:(nrow(test)-2)){
+    if(identical(test[i,][1], test[j,][1]) & identical(test[i,][4], test[j,][4])){
+    test[test[i,][3] == "NA"] <- test[j][2] #replacing not working
+    test <- test[-j,] #removing works
+    }
   }
 }
 
