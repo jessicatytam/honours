@@ -35,14 +35,14 @@ redlist <- redlist[c(1,2,4,3)] #rearrange columns
 for(i in 1:2466){
   for (j in 2:2465) {
     if(redlist[i,][1] %in% redlist[j,][1] & redlist[i,][4] %in% redlist[j,][4]){ #if species name & use are the same for 2 rows
-      redlist[redlist[i,][3] == "NA"] <- redlist[j,][2] #replace NA of the 1st row with the 2nd row's red list value
+      replace(redlist, redlist$redlistCategory2[i], redlist$redlistCategory[j]) #replace NA of the 1st row with the 2nd row's red list value
       redlist <- redlist[-j,] #remove the 2nd row
     }
   }
 }
 
 
-redlist[(20+1),][2]
+class(redlist$redlistCategory)
 
 
 
