@@ -19,7 +19,8 @@ EltonTraits %>%
 
 EltonTraits <- EltonTraits[-c(5401:5403),] #remove empty rows
 
-EltonTraitscleaned <- EltonTraits[c(2, 3, 24, 26)] #picking out the columns needed
+EltonTraitscleaned <- EltonTraits[c(2, 3, 24, 26)] %>% #picking out the columns needed
+  arrange(Scientific)
 
 sum(lengths(str_extract_all(EltonTraits$Scientific, "\\w+")) == 2) #checking no subspecies included
 

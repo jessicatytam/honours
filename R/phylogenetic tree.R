@@ -37,4 +37,5 @@ newspecieslist <- specieslist %>%
 finalspecieslist <- newspecieslist %>%
   subset(numberofwords == 2) %>%
   select(specieslist) %>%
+  arrange(specieslist) %>%
   write_csv("intermediate_data/species_list_from_phylo.csv")
