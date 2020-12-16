@@ -24,23 +24,30 @@ subset(meltedList, L1 == 1) #view each group
 length(unique(meltedList$scientificName)) #number of unique species; 1472
 
 newlist <- meltedList[c(1,3)] %>%
-  rename(use = L1) %>%
   arrange(scientificName) %>%
   unique() #remove duplicates; 2390
 
-#trying pivot_wider
-
-newlistaddcol <- newlist %>%
-  mutate(sppcount = sequence(rle(newlist$scientificName)$lengths))
-
-newlistnum <- newlistaddcol %>% #1472
-  pivot_wider(names_from = sppcount,
-              values_from = use)
-
-#replace numbers with uses
+#replace values with uses
 
 Uses <- list.files(path = "IUCN_use", full.names = FALSE)
 Uses <- data.frame(gsub("\\..*","", Uses)) #remove ".csv"
+Uses$ID <- seq.int(nrow(Uses)) #add column with number for matching
 
-str_replace_all(newlistnum, "\\d+", Uses)
+newlist$use <- Uses$gsub..............Uses.[match(newlist$L1, Uses$ID)] #match label with use
 
+#trying pivot_wider
+
+newlistaddcol <- newlist[-c(2)] %>%
+  mutate(sppcount = sequence(rle(newlist$scientificName)$lengths)) #new column to count the occurrences of each species
+
+newlistnum <- newlistaddcol %>% #1472 species
+  pivot_wider(names_from = sppcount,
+              values_from = use)
+
+#renaming columns
+
+colnames(newlistnum) <- paste0("use", colnames(newlistnum))
+
+#export
+
+write.csv(newlistnum, file = "intermediate_data/IUCN_use.csv")

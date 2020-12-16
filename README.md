@@ -21,16 +21,16 @@
             ~~- \[ \] cleaned~~
   - [x] GBIF geographical location
   - [x] Phylogeny
-  - [ ] Human use :gem:
+  - [x] Human use
       - [x] collected from IUCN
-      - [ ] try pivot\_wider() :round\_pushpin:
-  - [x] IUCN status :gem:
+      - [x] try pivot\_wider()
+  - [x] IUCN status
       - [x] collected
       - [x] cleaned
 
 ## :abacus: Pre-analysis
 
-  - [ ] Combine datasets :gem:
+  - [ ] Combine datasets :round\_pushpin:
   - [ ] Synonym matching (rinat)
   - [ ] Missing data (mice)
   - [ ] *h*-index (specieshindex)
