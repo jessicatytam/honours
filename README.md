@@ -3,7 +3,7 @@
 
 ## :pick: Data collection
 
-  - [x] Body mass
+  - [x] Body mass (5400 spp)
       - [x] EltonTraits 1.0 (will only use this for now)
           - [x] collected
           - [x] cleaned  
@@ -19,12 +19,12 @@
             ~~- \[ \] Smith et al.~~  
             ~~- \[x\] collected~~  
             ~~- \[ \] cleaned~~
-  - [x] GBIF geographical location
-  - [x] Phylogeny
-  - [x] Human use
+  - [x] GBIF geographical location (5989 spp)
+  - [x] Phylogeny (6952 spp)
+  - [x] Human use (1472 spp)
       - [x] collected from IUCN
       - [x] try pivot\_wider()
-  - [x] IUCN status
+  - [x] IUCN status (6336 spp)
       - [x] collected
       - [x] cleaned
 
