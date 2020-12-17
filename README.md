@@ -24,7 +24,7 @@
   - [x] Human use (1472 spp)
       - [x] collected from IUCN
       - [x] try pivot\_wider()
-  - [x] IUCN status (6336 spp)
+  - [x] IUCN status (5934 spp)
       - [x] collected
       - [x] cleaned
 

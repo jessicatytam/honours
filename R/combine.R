@@ -54,7 +54,7 @@ test[3]
 
 testdf <- combinedf[1:20,]
 
-for (i in 1:20) {
+for (i in 1:20) { #i think this is working but there is something wrong with the data provider
   if (isTRUE(is.na(testdf$order[i]))) {
     order <- tax_name(testdf$species[i], get = "order")
     testdf$order[i] <- as.character(order[3])
@@ -63,7 +63,3 @@ for (i in 1:20) {
 
 class(testdf$family)
 class(testdf$order)
-
-is.na(testdf$order)
-
-isTRUE(is.na(testdf$order[3])) 
