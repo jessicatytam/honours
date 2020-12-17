@@ -1,5 +1,7 @@
 library(dplyr)
 library(purrr)
+library(tidyr)
+library(taxize)
 
 #load datasets
 
@@ -23,18 +25,45 @@ humanuse <- humanuse[-c(1)] %>%
   rename(species = usescientificName)
 
 redlist <- redlist[-c(1)] %>%
-  rename(species = scientificName)
+  unique() #6093
+
+redlist <- redlist %>%
+  mutate(sppcount = sequence(rle(redlist$scientificName)$lengths)) #new column to count the occurrences of each species
+
+redlist <- pivot_wider(redlist, names_from = sppcount, values_from = redlistCategory)
+colnames(redlist) <- paste0("redlistCategory", colnames(redlist))
+redlist <- redlist %>%
+  rename(species = redlistCategoryscientificName)
 
 #combining the datasets
 
 combinedf <- list(mass, phylogeny, location, redlist, humanuse) %>% 
   reduce(full_join, by = "species") %>%
-  arrange(species) %>% #8711
-  unique() #8433 
+  arrange(species) %>% #8308
+  unique() 
 
-combinedf <- combinedf[c(1:2,7,3:6,8:24)]
+combinedf <- combinedf[c(1:2,7,3:6,8:26)]
 
 length(unique(combinedf$species)) #8308
-count(unique(combinedf)) #8433
+count(unique(combinedf)) #8308
 
-combinedf 
+#add families and orders
+
+test <- tax_name("Abrawayaomys chebezi", get = "family")
+test[3]
+
+testdf <- combinedf[1:20,]
+
+for (i in 1:20) {
+  if (testdf$order[i][is.na(testdf$order[i])]) {
+    order <- tax_name(testdf[i][1], get = "order")
+    testdf$order[i][is.na(testdf$order[i])] <- as.character(order[3])
+  }
+}
+
+class(testdf$family)
+class(testdf$order)
+
+testdf[is.na(testdf)]
+
+             
