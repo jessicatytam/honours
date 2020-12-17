@@ -30,7 +30,8 @@
 
 ## :abacus: Pre-analysis
 
-  - [ ] Combine datasets :round\_pushpin:
+  - [x] Combine datasets (8308 spp)
+  - [ ] Add classification levels :round\_pushpin:
   - [ ] Synonym matching (rinat)
   - [ ] Missing data (mice)
   - [ ] *h*-index (specieshindex)
@@ -47,7 +48,7 @@
 
   - [ ] glmm
   - [ ] *h*<sup>2</sup>
-  - [ ] Pagel’s \(\lambda\)
+  - [ ] Pagel’s λ
 
  
 

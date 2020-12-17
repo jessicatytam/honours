@@ -35,7 +35,8 @@ output: github_document
 
 ## :abacus: Pre-analysis
 
-  - [ ] Combine datasets :round_pushpin:
+  - [x] Combine datasets (8308 spp)
+  - [ ] Add classification levels :round_pushpin:
   - [ ] Synonym matching (rinat)
   - [ ] Missing data (mice)
   - [ ] *h*-index (specieshindex)
@@ -51,7 +52,7 @@ output: github_document
 ## :rocket: Statistical analysis
   - [ ] glmm
   - [ ] *h*<sup>2</sup>
-  - [ ] Pagel's $\lambda$
+  - [ ] Pagel's λ
   
 \  
 

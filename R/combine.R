@@ -49,13 +49,40 @@ count(unique(combinedf)) #8308
 
 #add families and orders
 
+for (i in 1:nrow(combinedf)) { 
+  if (is.na(combinedf$family[i])) {
+    family <- tax_name(combinedf$species[i], get = "family")
+    combinedf$family[i] <- as.character(family[3])
+  }
+}
+
+for (i in 1:nrow(combinedf)) { 
+  if (is.na(combinedf$order[i])) {
+    order <- tax_name(combinedf$species[i], get = "order")
+    combinedf$order[i] <- as.character(order[3])
+  }
+}
+
+
+
+
+
+
+
 test <- tax_name("Abrawayaomys chebezi", get = "family")
 test[3]
 
 testdf <- combinedf[1:20,]
 
-for (i in 1:20) { #i think this is working but there is something wrong with the data provider
-  if (isTRUE(is.na(testdf$order[i]))) {
+for (i in 1:20) { 
+  if (is.na(testdf$family[i])) {
+    family <- tax_name(testdf$species[i], get = "family")
+    testdf$family[i] <- as.character(family[3])
+  }
+}
+
+for (i in 1:20) { 
+  if (is.na(testdf$order[i])) {
     order <- tax_name(testdf$species[i], get = "order")
     testdf$order[i] <- as.character(order[3])
   }
