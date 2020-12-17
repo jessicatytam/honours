@@ -19,7 +19,7 @@
             ~~- \[ \] Smith et al.~~  
             ~~- \[x\] collected~~  
             ~~- \[ \] cleaned~~
-  - [x] GBIF geographical location (5989 spp)
+  - [x] GBIF geographical location (4721 spp)
   - [x] Phylogeny (6952 spp)
   - [x] Human use (1472 spp)
       - [x] collected from IUCN
