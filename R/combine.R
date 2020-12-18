@@ -49,44 +49,25 @@ count(unique(combinedf)) #8308
 
 #add families and orders
 
-for (i in 1:nrow(combinedf)) { 
+for (i in 45:nrow(combinedf)) { 
   if (is.na(combinedf$family[i])) {
-    family <- tax_name(combinedf$species[i], get = "family")
+    family <- tax_name(combinedf$species[i], get = "family", db = "ncbi")
     combinedf$family[i] <- as.character(family[3])
   }
 }
 
 for (i in 1:nrow(combinedf)) { 
   if (is.na(combinedf$order[i])) {
-    order <- tax_name(combinedf$species[i], get = "order")
+    order <- tax_name(combinedf$species[i], get = "order", db = "ncbi")
     combinedf$order[i] <- as.character(order[3])
   }
 }
 
+#checking the number of NA values
 
+sum(is.na(combinedf$family)) #1741 for ncbi
+sum(is.na(combinedf$order)) #1669 for ncbi
 
+#REMEMBER TO SAVE
 
-
-
-
-test <- tax_name("Abrawayaomys chebezi", get = "family")
-test[3]
-
-testdf <- combinedf[1:20,]
-
-for (i in 1:20) { 
-  if (is.na(testdf$family[i])) {
-    family <- tax_name(testdf$species[i], get = "family")
-    testdf$family[i] <- as.character(family[3])
-  }
-}
-
-for (i in 1:20) { 
-  if (is.na(testdf$order[i])) {
-    order <- tax_name(testdf$species[i], get = "order")
-    testdf$order[i] <- as.character(order[3])
-  }
-}
-
-class(testdf$family)
-class(testdf$order)
+write.csv(combinedf, file = "outputs/combined.csv")
