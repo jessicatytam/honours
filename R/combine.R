@@ -1,6 +1,7 @@
 library(dplyr)
 library(purrr)
 library(tidyr)
+library(stringr)
 library(taxize)
 library(rinat)
 
@@ -74,10 +75,26 @@ sum(is.na(combinedf$order)) #1669 for ncbi
 combinedf <- combinedf %>%
   replace_na(list(phylogeny = "No"))
 
-#synonym matching
+#remove species with 1 word in the string
 
 
+
+#common name matching
+
+get_inat_obs_id(query = "Phascolarctos cinereus")
 
 #REMEMBER TO SAVE
 
 write.csv(combinedf, file = "outputs/combinedf.csv")
+
+#some testing
+
+test <- combinedf[241:250,]
+
+sapply(gregexpr("\\S+", test$species[4]), length) == 1
+
+for (i in 1:nrow(test)) {
+  if (sapply(gregexpr("\\S+", test$species[i]), length) == 1) {
+    test <- test[-c(i)]
+  }
+}
