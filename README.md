@@ -33,7 +33,8 @@
   - [x] Combine datasets (8308 spp)
   - [ ] Add classification levels
       - will have to come back to do this after itis is working again
-  - [ ] Synonym matching (rinat) :round\_pushpin:
+  - [ ] Common name matching (rinat) :round\_pushpin:
+  - [ ] Synonym matching
   - [ ] Missing data (mice)
   - [ ] *h*-index (specieshindex)
   - [ ] Altmetrics (rAltmetric)
