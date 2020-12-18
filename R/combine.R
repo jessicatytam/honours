@@ -2,6 +2,7 @@ library(dplyr)
 library(purrr)
 library(tidyr)
 library(taxize)
+library(rinat)
 
 #load datasets
 
@@ -68,6 +69,15 @@ for (i in 1:nrow(combinedf)) {
 sum(is.na(combinedf$family)) #1741 for ncbi
 sum(is.na(combinedf$order)) #1669 for ncbi
 
+#replacing NA in phylogeny
+
+combinedf <- combinedf %>%
+  replace_na(list(phylogeny = "No"))
+
+#synonym matching
+
+
+
 #REMEMBER TO SAVE
 
-write.csv(combinedf, file = "outputs/combined.csv")
+write.csv(combinedf, file = "outputs/combinedf.csv")

@@ -31,8 +31,9 @@
 ## :abacus: Pre-analysis
 
   - [x] Combine datasets (8308 spp)
-  - [ ] Add classification levels :round\_pushpin:
-  - [ ] Synonym matching (rinat)
+  - [ ] Add classification levels
+      - will have to come back to do this after itis is working again
+  - [ ] Synonym matching (rinat) :round\_pushpin:
   - [ ] Missing data (mice)
   - [ ] *h*-index (specieshindex)
   - [ ] Altmetrics (rAltmetric)
