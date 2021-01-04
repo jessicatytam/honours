@@ -31,6 +31,8 @@
 ## :abacus: Pre-analysis
 
   - [x] Combine datasets (8308 spp)
+  - [x] More cleaning up
+      - [x] remove species with only genus or species name
   - [ ] Add classification levels
       - will have to come back to do this after itis is working again
   - [ ] Common name matching (rinat) :round\_pushpin:

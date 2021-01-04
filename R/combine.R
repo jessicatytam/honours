@@ -77,15 +77,30 @@ combinedf <- combinedf %>%
 
 #remove species with 1 word in the string
 
+sum(lengths(gregexpr("\\w+", combinedf$species))==1) #3 
 
+for (i in 1:nrow(combinedf)) {
+  if (lengths(gregexpr("\\w+", combinedf$species[i]))==1) {
+    combinedf <- combinedf[-i,]
+  }
+} #8305 species
 
 #common name matching
 
-get_inat_obs_id(query = "Phascolarctos cinereus")
+get_inat_common_name <- function(scientificname){
+  a_mac <- get_inat_obs(taxon_name = scientificname, maxresults = 1000)
+  return(names(sort(table(a_mac$species_guess),decreasing = TRUE)[1]))
+}
+
+get_inat_common_name("Phascolarctos cinereus")
+get_inat_common_name("Dasyurus viverrinus")
 
 #REMEMBER TO SAVE
 
 write.csv(combinedf, file = "outputs/combinedf.csv")
+
+#loading the dataset
+combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)
 
 
 
@@ -95,11 +110,12 @@ write.csv(combinedf, file = "outputs/combinedf.csv")
 #some testing
 
 test <- combinedf[241:250,]
+test <- test[-5,]
 
-sapply(gregexpr("\\S+", test$species[4]), length) == 1
+lengths(gregexpr("\\w+", test$species))==1
 
 for (i in 1:nrow(test)) {
-  if (sapply(gregexpr("\\S+", test$species[i]), length) == 1) {
-    test <- test[-c(i)]
+  if (lengths(gregexpr("\\w+", test$species[i]))==1) {
+    test <- test[-i,]
   }
 }
