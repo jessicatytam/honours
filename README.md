@@ -32,11 +32,12 @@
 
   - [x] Combine datasets (8308 spp)
   - [x] More cleaning up
-      - [x] remove species with only genus or species name
+      - [x] remove species with only genus or species name (8305 spp)
   - [ ] Add classification levels
       - will have to come back to do this after itis is working again
-  - [ ] Common name matching (rinat) :round\_pushpin:
-  - [ ] Synonym matching
+  - [ ] Synonym matching :round\_pushpin:
+      - [ ] what to do with synonyms with different data e.g. mass
+  - [ ] Common name matching (rinat)
   - [ ] Missing data (mice)
   - [ ] *h*-index (specieshindex)
   - [ ] Altmetrics (rAltmetric)

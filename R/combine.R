@@ -4,6 +4,7 @@ library(tidyr)
 library(stringr)
 library(taxize)
 library(rinat)
+library(rotl)
 
 #load datasets
 
@@ -85,6 +86,13 @@ for (i in 1:nrow(combinedf)) {
   }
 } #8305 species
 
+#synonym matching
+
+combinedf <- combinedf %>%
+  mutate(genus_species = tnrs_match_names(species)$unique_name, .after = species)
+
+sum(combinedf$species == combinedf$genus_species)
+
 #common name matching
 
 get_inat_common_name <- function(scientificname){
@@ -101,7 +109,7 @@ for (i in 1:nrow(combinedf)) {
 
 write.csv(combinedf, file = "outputs/combinedf.csv")
 
-combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)
+combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)[-c(1:2)]
 
 
 
@@ -110,7 +118,14 @@ combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)
 
 #some testing
 
-test <- combinedf[241:250,]
+test <- combinedf[1071:1080,]
+
+test <- test %>%
+  mutate(genus_species = tnrs_match_names(species)$unique_name, .after = species)
+
+
+
+
 
 get_inat_common_name(test$species[4])
 tryCatch(get_inat_common_name("Amphinectomys savamis"), error = function(e) NA)
