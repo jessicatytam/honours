@@ -92,14 +92,15 @@ get_inat_common_name <- function(scientificname){
   return(names(sort(table(a_mac$species_guess),decreasing = TRUE)[1]))
 }
 
-get_inat_common_name("Phascolarctos cinereus")
-get_inat_common_name("Dasyurus viverrinus")
+for (i in 1:nrow(combinedf)) {
+  combinedf %>%
+    mutate(common_name = get_inat_common_name(species[i]))
+}
 
 #REMEMBER TO SAVE
 
 write.csv(combinedf, file = "outputs/combinedf.csv")
 
-#loading the dataset
 combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)
 
 
@@ -110,12 +111,17 @@ combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)
 #some testing
 
 test <- combinedf[241:250,]
-test <- test[-5,]
 
-lengths(gregexpr("\\w+", test$species))==1
+get_inat_common_name(test$species[4])
+tryCatch(get_inat_common_name("Amphinectomys savamis"), error = function(e) NA)
 
 for (i in 1:nrow(test)) {
-  if (lengths(gregexpr("\\w+", test$species[i]))==1) {
-    test <- test[-i,]
-  }
+  test <- test %>%
+    mutate(common_name[i] = get_inat_common_name(species[i]))
 }
+
+
+test %>%
+  tryCatch(mutate(common_name = get_inat_common_name(test$species)), error = function(e) NA)
+
+get_inat_common_name("Andalgalomys roigi")
