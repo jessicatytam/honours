@@ -100,7 +100,8 @@ sum(combinedf$species %in% combinedf$genus_species) #7673
 
 synonymsdf <- combinedf %>%
   group_by(genus_species) %>%
-  fill(c(3:27), .direction = "downup")
+  fill(c(3:27), .direction = "downup") %>%
+  ungroup() #this didn't really do anything
 
 
 #common name matching
@@ -136,15 +137,21 @@ test <- test %>%
   ungroup()
 
 
+
 get_inat_common_name(test$species[4])
 tryCatch(get_inat_common_name("Alouatta macconnelli"), error = function(e) NA)
 tryCatch(get_inat_common_name("Alouatta nigerrima"), error = function(e) NA)
 tryCatch(get_inat_common_name("Alouatta coibensis"), error = function(e) NA)
+tryCatch(get_inat_common_name("Alouatta belzebul"), error = function(e) NA)
+
+
+
 
 for (i in 1:nrow(test)) {
-  test <- test %>%
-    mutate(common_name[i] = get_inat_common_name(species[i]))
-}
+  testoutcome <- test %>%
+    mutate(common_name = tryCatch(get_inat_common_name(species), error = function(e) NA), .after = genus_species)
+} #this is returning the same common name for all species
 
-test <- tryCatch(mutate(common_name = get_inat_common_name(test$species), error = function(e) NA, .after = species))
+testoutput <- tryCatch(mutate(common_name = get_inat_common_name(test$species), error = function(e) NA, .after = species))
 test$species
+
