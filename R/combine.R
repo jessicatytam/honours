@@ -91,7 +91,12 @@ for (i in 1:nrow(combinedf)) {
 combinedf <- combinedf %>%
   mutate(genus_species = tnrs_match_names(species)$unique_name, .after = species)
 
-sum(combinedf$species == combinedf$genus_species)
+sum(lengths(gregexpr("\\w+", combinedf$genus_species))!=2) #164
+sum(lengths(gregexpr("\\w+", combinedf$genus_species))==1) #100
+sum(lengths(gregexpr("\\w+", combinedf$genus_species))==3) #61
+sum(lengths(gregexpr("\\w+", combinedf$genus_species))==4) #1
+sum(is.na(combinedf$genus_species)) #100
+sum(combinedf$species %in% combinedf$genus_species) #7673
 
 #common name matching
 
