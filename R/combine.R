@@ -54,14 +54,14 @@ count(unique(combinedf)) #8308
 
 for (i in 45:nrow(combinedf)) { 
   if (is.na(combinedf$family[i])) {
-    family <- tax_name(combinedf$species[i], get = "family", db = "ncbi")
+    family <- tax_name(combinedf$species[i], get = "family", db = "itis")
     combinedf$family[i] <- as.character(family[3])
   }
 }
 
 for (i in 1:nrow(combinedf)) { 
   if (is.na(combinedf$order[i])) {
-    order <- tax_name(combinedf$species[i], get = "order", db = "ncbi")
+    order <- tax_name(combinedf$species[i], get = "order", db = "itis")
     combinedf$order[i] <- as.character(order[3])
   }
 }
@@ -98,6 +98,11 @@ sum(lengths(gregexpr("\\w+", combinedf$genus_species))==4) #1
 sum(is.na(combinedf$genus_species)) #100
 sum(combinedf$species %in% combinedf$genus_species) #7673
 
+synonymsdf <- combinedf %>%
+  group_by(genus_species) %>%
+  fill(c(3:27), .direction = "downup")
+
+
 #common name matching
 
 get_inat_common_name <- function(scientificname){
@@ -123,25 +128,23 @@ combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)[-c(1:2)]
 
 #some testing
 
-test <- combinedf[1071:1080,]
+test <- combinedf[196:205,]
 
 test <- test %>%
-  mutate(genus_species = tnrs_match_names(species)$unique_name, .after = species)
-
-
-
+  group_by(genus_species) %>%
+  fill(c(3:27), .direction = "downup") %>%
+  ungroup()
 
 
 get_inat_common_name(test$species[4])
-tryCatch(get_inat_common_name("Amphinectomys savamis"), error = function(e) NA)
+tryCatch(get_inat_common_name("Alouatta macconnelli"), error = function(e) NA)
+tryCatch(get_inat_common_name("Alouatta nigerrima"), error = function(e) NA)
+tryCatch(get_inat_common_name("Alouatta coibensis"), error = function(e) NA)
 
 for (i in 1:nrow(test)) {
   test <- test %>%
     mutate(common_name[i] = get_inat_common_name(species[i]))
 }
 
-
-test %>%
-  tryCatch(mutate(common_name = get_inat_common_name(test$species)), error = function(e) NA)
-
-get_inat_common_name("Andalgalomys roigi")
+test <- tryCatch(mutate(common_name = get_inat_common_name(test$species), error = function(e) NA, .after = species))
+test$species

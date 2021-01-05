@@ -37,7 +37,7 @@
       - will have to come back to do this after itis is working again
   - [ ] Synonym matching :round\_pushpin:
       - [ ] what to do with synonyms with different data e.g. mass
-  - [ ] Common name matching (rinat)
+  - [ ] Common name matching (rinat) :round\_pushpin:
   - [ ] Missing data (mice)
   - [ ] *h*-index (specieshindex)
   - [ ] Altmetrics (rAltmetric)
