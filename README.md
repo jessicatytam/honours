@@ -33,12 +33,12 @@
   - [x] Combine datasets (8308 spp)
   - [x] More cleaning up
       - [x] remove species with only genus or species name (8305 spp)
-  - [ ] Add classification levels
+  - [ ] Add classification levels (taxize)
       - will have to come back to do this after itis is working again
-  - [ ] Synonym matching :round\_pushpin:
-      - [ ] what to do with synonyms with different data e.g. mass
+  - [ ] Synonym matching (rotl) :round\_pushpin:
+      - what to do with synonyms with different data e.g. mass
   - [ ] Common name matching (rinat) :round\_pushpin:
-      - [ ] resolve error “No encoding supplied: defaulting to UTF-8.”
+      - resolve error “No encoding supplied: defaulting to UTF-8.”
   - [ ] Missing data (mice)
   - [ ] *h*-index (specieshindex)
   - [ ] Altmetrics (rAltmetric)
@@ -52,7 +52,7 @@
 
 ## :rocket: Statistical analysis
 
-  - [ ] glmm
+  - [ ] MCMCglmm
   - [ ] *h*<sup>2</sup>
   - [ ] Pagel’s λ
 
