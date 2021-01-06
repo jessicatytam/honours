@@ -57,14 +57,14 @@ for (i in 45:nrow(combinedf)) {
     family <- tax_name(combinedf$species[i], get = "family", db = "itis")
     combinedf$family[i] <- as.character(family[3])
   }
-}
+} #not working suddenly
 
 for (i in 1:nrow(combinedf)) { 
   if (is.na(combinedf$order[i])) {
     order <- tax_name(combinedf$species[i], get = "order", db = "itis")
     combinedf$order[i] <- as.character(order[3])
   }
-}
+} #not working suddenly
 
 #checking the number of NA values
 
@@ -89,15 +89,12 @@ for (i in 1:nrow(combinedf)) {
 #synonym matching
 
 combinedf <- combinedf %>%
-  mutate(genus_species = tnrs_match_names(species)$unique_name, .after = species)
+  mutate(ID = tnrs_match_names(species)$ott_id, .after = species)
 
-sum(lengths(gregexpr("\\w+", combinedf$genus_species))!=2) #164
-sum(lengths(gregexpr("\\w+", combinedf$genus_species))==1) #100
-sum(lengths(gregexpr("\\w+", combinedf$genus_species))==3) #61
-sum(lengths(gregexpr("\\w+", combinedf$genus_species))==4) #1
-sum(is.na(combinedf$genus_species)) #100
-sum(combinedf$species %in% combinedf$genus_species) #7673
+length(unique(combinedf$ID)) #7746
 
+
+#remove duplicates after synonyms are matched
 synonymsdf <- combinedf %>%
   group_by(genus_species) %>%
   fill(c(3:27), .direction = "downup") %>%
@@ -111,16 +108,23 @@ get_inat_common_name <- function(scientificname){
   return(names(sort(table(a_mac$species_guess),decreasing = TRUE)[1]))
 }
 
+commondf <- data.frame()
 for (i in 1:nrow(combinedf)) {
-  combinedf %>%
-    mutate(common_name = get_inat_common_name(species[i]))
-}
+  common_name <- tryCatch(get_inat_common_name(combinedf$species[i]), error = function(e) NA)
+  common_name <- data.frame(common_name)
+  commondf <- rbind(commondf, common_name)
+}  #could not get all of the common names; "No encoding supplied: defaulting to UTF-8."
+combinedf <- cbind(combinedf, commondf)
+combinedf <- combinedf[c(1:2,28,3:27)]
+
+#replace blanks with NA
+
 
 #REMEMBER TO SAVE
 
 write.csv(combinedf, file = "outputs/combinedf.csv")
 
-combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)[-c(1:2)]
+combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)[-c(1)]
 
 
 
@@ -129,7 +133,7 @@ combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)[-c(1:2)]
 
 #some testing
 
-test <- combinedf[196:205,]
+test <- combinedf[11:20,]
 
 test <- test %>%
   group_by(genus_species) %>%
@@ -144,14 +148,25 @@ tryCatch(get_inat_common_name("Alouatta nigerrima"), error = function(e) NA)
 tryCatch(get_inat_common_name("Alouatta coibensis"), error = function(e) NA)
 tryCatch(get_inat_common_name("Alouatta belzebul"), error = function(e) NA)
 
-
-
-
 for (i in 1:nrow(test)) {
   testoutcome <- test %>%
-    mutate(common_name = tryCatch(get_inat_common_name(species), error = function(e) NA), .after = genus_species)
-} #this is returning the same common name for all species
+    mutate(common_name = tryCatch(get_inat_common_name(species[i]), error = function(e) NA), .after = ID)
+} 
+
+for (i in 1:nrow(test)) {
+  test_common_names <- tryCatch(get_inat_common_name(test$species[i]), error = function(e) NA)
+} 
+testoutput <- cbind(test, data.frame(test_common_names))
+
+testoutput <- data.frame()
+for (i in 1:nrow(test)) {
+  test_common_names <- tryCatch(get_inat_common_name(test$species[i]), error = function(e) NA)
+  test_common_names <- data.frame(test_common_names)
+  testoutput <- rbind(testoutput, test_common_names)
+} 
+test <- cbind(test, testoutput)
+test <- test[c(1:2,28,3:27)]
 
 testoutput <- tryCatch(mutate(common_name = get_inat_common_name(test$species), error = function(e) NA, .after = species))
 test$species
-
+get_inat_common_name(test$species[9])

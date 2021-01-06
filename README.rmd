@@ -43,6 +43,7 @@ output: github_document
   - [ ] Synonym matching :round_pushpin:
     - [ ] what to do with synonyms with different data e.g. mass
   - [ ] Common name matching (rinat) :round_pushpin:
+    - [ ] resolve error "No encoding supplied: defaulting to UTF-8."
   - [ ] Missing data (mice)
   - [ ] *h*-index (specieshindex)
   - [ ] Altmetrics (rAltmetric)

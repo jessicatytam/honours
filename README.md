@@ -38,6 +38,7 @@
   - [ ] Synonym matching :round\_pushpin:
       - [ ] what to do with synonyms with different data e.g. mass
   - [ ] Common name matching (rinat) :round\_pushpin:
+      - [ ] resolve error “No encoding supplied: defaulting to UTF-8.”
   - [ ] Missing data (mice)
   - [ ] *h*-index (specieshindex)
   - [ ] Altmetrics (rAltmetric)
