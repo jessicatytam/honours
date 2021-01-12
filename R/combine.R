@@ -93,6 +93,9 @@ combinedf <- combinedf %>%
 
 length(unique(combinedf$ID)) #7746
 
+tnrs_match_names("Macropus rufus")
+synonyms(tnrs_match_names("Macropus rufus"))
+
 
 #remove duplicates after synonyms are matched
 synonymsdf <- combinedf %>%
