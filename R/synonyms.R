@@ -17,9 +17,11 @@ for (i in 1:nrow(phylo)) {
   print(paste("Done:", phylo$species[i]))
 }
 
+synonyms <- synonyms %>% rename(synonyms = ...1)
+
 #get species ID
 
-
+tnrs_match_names(synonyms$...1)
 
 
 #saving files
