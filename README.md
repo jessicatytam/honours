@@ -35,8 +35,8 @@
       - [x] remove species with only genus or species name (8305 spp)
   - [ ] Add classification levels (taxize)
       - will have to come back to do this after itis is working again
-  - [ ] Synonym matching (rotl) :round\_pushpin:
-      - [ ] create a species list in long form with the ID
+  - [x] Synonym matching (rotl) :round\_pushpin:
+      - [x] create a species list in long form with the ID
   - [ ] Common name matching (rinat)
       - resolve error “No encoding supplied: defaulting to UTF-8.”
   - [ ] Missing data (mice)
