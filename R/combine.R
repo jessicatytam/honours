@@ -86,6 +86,13 @@ for (i in 1:nrow(combinedf)) {
   }
 } #8305 species
 
+#update phylogeny list
+
+phylo_list <- combinedf %>%
+  filter(phylogeny=="Yes") %>%
+  select(species) %>%
+  write.csv("intermediate_data/species_list_from_phylo.csv")
+
 #synonym matching
 
 combinedf <- combinedf %>%
@@ -108,7 +115,7 @@ synonymsdf <- combinedf %>%
 
 get_inat_common_name <- function(scientificname){
   a_mac <- get_inat_obs(taxon_name = scientificname, maxresults = 1000)
-  return(names(sort(table(a_mac$species_guess),decreasing = TRUE)[1]))
+  return(names(sort(table(a_mac$species_guess), decreasing = TRUE)[1]))
 }
 
 commondf <- data.frame()
@@ -142,6 +149,4 @@ test <- test %>%
   group_by(ID) %>%
   fill(c(3:27), .direction = "downup") %>%
   ungroup()
-
-
 

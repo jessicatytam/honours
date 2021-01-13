@@ -41,10 +41,9 @@ output: github_document
   - [ ] Add classification levels (taxize)
     - will have to come back to do this after itis is working again
   - [ ] Synonym matching (rotl) :round_pushpin:
-    - what to do with synonyms with different data e.g. mass
-  - [ ] Common name matching (rinat) :round_pushpin:
+    - [ ] create a species list in long form with the ID
+  - [ ] Common name matching (rinat) 
     - resolve error "No encoding supplied: defaulting to UTF-8."
-  - [ ] Create a species list in long form with the ID
   - [ ] Missing data (mice)
   - [ ] *h*-index (specieshindex)
   - [ ] Altmetrics (rAltmetric)
