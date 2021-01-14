@@ -53,24 +53,3 @@ write.csv(phylo, file = "intermediate_data/species_list_from_phylo.csv")
 kangaroo <- data.frame(synonyms(tnrs_match_names("Macropus rufus")))
 data.frame(synonyms(tnrs_match_names("Abrocoma vaccarum")))
 
-test <- data.frame(synonyms[1:10,])
-
-tnrs_match_names(test$synonyms.1.10...[7])$ott_id
-
-for (i in 1:nrow(test)) {
-  getID <- tnrs_match_names(test$synonyms.1.10...[i])
-  ID <- data.frame(getID)[4]
-  testID <- test %>%
-    mutate(ott_id = ID[i])
-}
-
-id <- data.frame()
-for(i in 1:nrow(test)) {
-  getID <- tnrs_match_names(test$synonyms.1.10...[i])
-  getID <- data.frame(getID$ott_id)
-  id <- bind_rows(id, getID)
-  print(paste("Done:", test$synonyms.1.10...[i]))
-}
-
-testID <- test %>%
-  mutate(ott_id = tnrs_match_names(synonyms.1.10...$ott_id))
