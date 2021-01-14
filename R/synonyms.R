@@ -43,6 +43,11 @@ for(i in 1:nrow(phylo)) {
 phylo <- cbind(phylo, phyloid)
 phylo <- phylo %>% rename(id = getID.ott_id)
 
+#checking
+
+length(unique(synonyms$id)) #2767
+length(unique(phylo$id)) #6949
+
 #saving files
 
 write.csv(synonyms, file = "intermediate_data/synonyms.csv")
