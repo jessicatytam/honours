@@ -42,6 +42,7 @@
   - [ ] Missing data (mice)
   - [ ] *h*-index (specieshindex)
       - [ ] put quotation marks around synonyms :round\_pushpin:
+      - [ ] fix weird NA dataframe
       - [ ] separate into 2 lists(?)
   - [ ] Altmetrics (rAltmetric)
   - [ ] Google Trends (gtrendsR)
