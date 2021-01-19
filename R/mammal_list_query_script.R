@@ -1,46 +1,42 @@
-
-
-
 library(tidyverse)
 library(specieshindex)
 
-syn<-read_csv("intermediate_data/synonyms.csv")
-sp<-read_csv("intermediate_data/species_list_from_phylo.csv")
+syn <- read_csv("intermediate_data/synonyms.csv")
+sp <- read_csv("intermediate_data/species_list_from_phylo.csv")
 
 sp$species[16]
 
-syn$synonyms[match(sp$id[16],syn$id)]
+syn$synonyms[match(sp$id[16], syn$id)]
 
 #checking that synomym search works
-FetchSpTAK(genus = "Abrothrix",species="sanborni",synonyms = "Akodon sanborni", APIkey = "442b9048417ef20cf680a0ae26ee4d86")
+FetchSpTAK(genus = "Abrothrix", species = "sanborni", synonyms = "Akodon sanborni", APIkey = "442b9048417ef20cf680a0ae26ee4d86")
 
 
 #for(i in 1:length(sp$species)){
 
 
-scopus_out<-list() #initializing empty lists
-for(i in 1:100){  
+scopus_out <- list() #initializing empty lists
+for (i in 1:100) {  
   if (!sp$id[i] %in% syn$id){
-    scopus_out[[i]] <- FetchSpTAK(genus = str_split(sp$species[i],pattern = " ")[[1]][1],
-               species=str_split(sp$species[i],pattern = " ")[[1]][2],
+    scopus_out[[i]] <- FetchSpTAK(genus = str_split(sp$species[i], pattern = " ")[[1]][1],
+               species = str_split(sp$species[i], pattern = " ")[[1]][2],
                APIkey = "442b9048417ef20cf680a0ae26ee4d86")
   }
-  else{
-   syns <- syn$synonyms[match(sp$id[i],syn$id)]
-   scopus_out[[i]] <- FetchSpTAK(genus = str_split(sp$species[i],pattern = " ")[[1]][1],
-                                 species=str_split(sp$species[i],pattern = " ")[[1]][2],
+  else {
+   syns <- syn$synonyms[match(sp$id[i], syn$id)]
+   scopus_out[[i]] <- FetchSpTAK(genus = str_split(sp$species[i], pattern = " ")[[1]][1],
+                                 species = str_split(sp$species[i], pattern = " ")[[1]][2],
                                  synonyms = syns,
                                  APIkey = "442b9048417ef20cf680a0ae26ee4d86")
   }
-  #
 }
 
-saveRDS(scopus_out,"intermediate_data/temp_scopus_results.RDS")
+saveRDS(scopus_out, "intermediate_data/temp_scopus_results.RDS")
 
 #lapply(scopus_out,Allindices,genus="genus",species="species")
 
 #currently getting at error at index 14 and also later on
-ai<-list()
+ai <- list()
 for (i in c(1:13,15:27)){
   ai[[i]]<-Allindices(scopus_out[[i]],genus=str_split(sp$species[i],pattern = " ")[[1]][1],species=str_split(sp$species[i],pattern = " ")[[1]][2])
 }
