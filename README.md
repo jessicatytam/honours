@@ -33,14 +33,16 @@
   - [x] Combine datasets (8308 spp)
   - [x] More cleaning up
       - [x] remove species with only genus or species name (8305 spp)
-  - [ ] Add classification levels (taxize)
+  - [x] Add classification levels (taxize)
       - will have to come back to do this after itis is working again
-  - [x] Synonym matching (rotl) :round\_pushpin:
+  - [x] Synonym matching (rotl)
       - [x] create a species list in long form with the ID
   - [ ] Common name matching (rinat)
       - resolve error “No encoding supplied: defaulting to UTF-8.”
   - [ ] Missing data (mice)
   - [ ] *h*-index (specieshindex)
+      - [ ] put quotation marks around synonyms :round\_pushpin:
+      - [ ] separate into 2 lists(?)
   - [ ] Altmetrics (rAltmetric)
   - [ ] Google Trends (gtrendsR)
 
