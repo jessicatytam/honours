@@ -15,7 +15,7 @@ syn$synonyms <- shQuote(syn$synonyms, "cmd")
 
 #list to get citation records
 scopus_out <- list() #initializing empty lists
-for (i in 1:100) {  
+for (i in 1:length(sp$species)) {  
   if (!sp$id[i] %in% syn$id) {
     scopus_out[[i]] <- FetchSpTAK(genus = str_split(sp$species[i], pattern = " ")[[1]][1],
                                   species = str_split(sp$species[i], pattern = " ")[[1]][2],
@@ -29,7 +29,7 @@ for (i in 1:100) {
   }
 }
 
-saveRDS(scopus_out, "intermediate_data/temp_scopus_results.RDS")
+saveRDS(scopus_out, "intermediate_data/scopus_results.RDS")
 
 
 #currently getting at error at index 14 and also later on

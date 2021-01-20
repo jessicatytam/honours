@@ -40,10 +40,10 @@
   - [ ] Common name matching (rinat)
       - resolve error “No encoding supplied: defaulting to UTF-8.”
   - [ ] Missing data (mice)
-  - [ ] *h*-index (specieshindex)
-      - [ ] put quotation marks around synonyms :round\_pushpin:
-      - [ ] fix weird NA dataframe
-      - [ ] separate into 2 lists(?)
+  - [ ] *h*-index (specieshindex) :round\_pushpin:
+      - [x] put quotation marks around synonyms
+      - [x] fix weird NA dataframe (putting synonyms around the synonyms
+        seems to have fixed the problem)
   - [ ] Altmetrics (rAltmetric)
   - [ ] Google Trends (gtrendsR)
 
