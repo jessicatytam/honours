@@ -48,6 +48,7 @@ output: github_document
   - [ ] *h*-index (specieshindex) :round_pushpin:
     - [x] put quotation marks around synonyms
     - [x] fix weird NA dataframe (putting synonyms around the synonyms seems to have fixed the problem)
+    - [ ] divide species list into 2 to fix timeout issue
   - [ ] Altmetrics (rAltmetric)
   - [ ] Google Trends (gtrendsR)
 
