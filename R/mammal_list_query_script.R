@@ -1,4 +1,5 @@
 library(tidyverse)
+devtools::install_github("jessicatytam/specieshindex", force = TRUE, build_vignettes = FALSE)
 library(specieshindex)
 
 syn <- read_csv("intermediate_data/synonyms.csv")
@@ -71,3 +72,6 @@ for (i in 1:nrow(test)) {
   }
 }
 
+
+CountSpTAK(genus = "Allactaga", species = "bullata", synonyms = "Allactaga (Orientallactaga) bullata", APIkey = "442b9048417ef20cf680a0ae26ee4d86") #not working
+CountSpTAK(genus = "Allactaga", species = "bullata", APIkey = "442b9048417ef20cf680a0ae26ee4d86") #this works
