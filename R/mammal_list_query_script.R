@@ -15,13 +15,12 @@ syn$synonyms <- shQuote(syn$synonyms, "cmd")
 
 #list to get citation records
 scopus_out <- list() #initializing empty lists
-for (i in 1:20) {  
-  if (!sp$id[i] %in% syn$id){
+for (i in 1:100) {  
+  if (!sp$id[i] %in% syn$id) {
     scopus_out[[i]] <- FetchSpTAK(genus = str_split(sp$species[i], pattern = " ")[[1]][1],
                                   species = str_split(sp$species[i], pattern = " ")[[1]][2],
                                   APIkey = "442b9048417ef20cf680a0ae26ee4d86")
-  }
-  else {
+  } else {
    syns <- syn$synonyms[match(sp$id[i], syn$id)]
    scopus_out[[i]] <- FetchSpTAK(genus = str_split(sp$species[i], pattern = " ")[[1]][1],
                                  species = str_split(sp$species[i], pattern = " ")[[1]][2],
@@ -34,14 +33,14 @@ saveRDS(scopus_out, "intermediate_data/temp_scopus_results.RDS")
 
 
 #currently getting at error at index 14 and also later on
-ai <- list()
-for (i in c(1:20)){
-  ai[[i]] <- Allindices(scopus_out[[i]],
-                        genus = str_split(sp$species[i], pattern = " ")[[1]][1],
-                        species=str_split(sp$species[i], pattern = " ")[[1]][2])
+indices <- list()
+for (i in 1:length(scopus_out)){
+  indices[[i]] <- Allindices(scopus_out[[i]],
+                             genus = str_split(sp$species[i], pattern = " ")[[1]][1],
+                             species = str_split(sp$species[i], pattern = " ")[[1]][2])
 }
 
-ai_df <- bind_rows(ai)
+indices_df <- bind_rows(indices)
 
 
 
