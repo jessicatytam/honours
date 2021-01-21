@@ -44,7 +44,9 @@
       - [x] put quotation marks around synonyms
       - [x] fix weird NA dataframe (putting synonyms around the synonyms
         seems to have fixed the problem)
-      - [ ] divide species list into 2 to fix timeout issue
+      - [x] divide species list into 2 to fix timeout issue
+      - [ ] run the 2nd list next week since I’ve reached the limit of
+        20,000 requests this week
   - [ ] Altmetrics (rAltmetric)
   - [ ] Google Trends (gtrendsR)
 
