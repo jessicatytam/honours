@@ -16,7 +16,7 @@ FetchSpTAK(genus = "Abrothrix", species = "sanborni", synonyms = "Akodon sanborn
 syn$synonyms <- shQuote(syn$synonyms, "cmd")
 
 #list to get citation records
-scopus_out1 <- list() #initializing empty lists
+scopus_out1 <- list() #initializing empty list 1
 for (i in 1:length(sp1$species)) {  
   if (!sp1$id[i] %in% syn$id) {
     scopus_out1[[i]] <- FetchSpTAK(genus = str_split(sp1$species[i], pattern = " ")[[1]][1],
@@ -31,7 +31,7 @@ for (i in 1:length(sp1$species)) {
   }
 }
 
-scopus_out2 <- list() #initializing empty lists
+scopus_out2 <- list() #initializing empty list 2
 for (i in 1:length(sp2$species)) {  
   if (!sp2$id[i] %in% syn$id) {
     scopus_out2[[i]] <- FetchSpTAK(genus = str_split(sp2$species[i], pattern = " ")[[1]][1],
