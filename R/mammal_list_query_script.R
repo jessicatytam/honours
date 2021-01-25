@@ -31,18 +31,18 @@ for (i in 1:length(sp1$species)) {
   }
 }
 
-scopus_out2 <- list() #initializing empty list 2
+scopus_out2 <- list() #initializing empty list 2 using shinichi's api
 for (i in 1:length(sp2$species)) {  
   if (!sp2$id[i] %in% syn$id) {
     scopus_out2[[i]] <- FetchSpTAK(genus = str_split(sp2$species[i], pattern = " ")[[1]][1],
                                    species = str_split(sp2$species[i], pattern = " ")[[1]][2],
-                                   APIkey = "442b9048417ef20cf680a0ae26ee4d86")
+                                   APIkey = "01adbe5c94f9e02cc94bcb3348382a76")
   } else {
     syns <- syn$synonyms[match(sp2$id[i], syn$id)]
     scopus_out2[[i]] <- FetchSpTAK(genus = str_split(sp2$species[i], pattern = " ")[[1]][1],
                                    species = str_split(sp2$species[i], pattern = " ")[[1]][2],
                                    synonyms = syns,
-                                   APIkey = "442b9048417ef20cf680a0ae26ee4d86")
+                                   APIkey = "01adbe5c94f9e02cc94bcb3348382a76")
   }
 }
 
@@ -68,9 +68,9 @@ indices1_df <- bind_rows(indices1)
 indices2_df <- bind_rows(indices2)
 indices_df <- rbind(indices1_df, indices2_df)
 
-write.csv(indices_df, file = "outputs/hindex")
+write.csv(indices_df, file = "outputs/hindex.csv")
 
-
+scopus_out1 <- readRDS("intermediate_data/scopus_results1.RDS")
 
 
 
