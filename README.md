@@ -39,19 +39,26 @@
       - [x] create a species list in long form with the ID
   - [ ] Common name matching (rinat)
       - resolve error “No encoding supplied: defaulting to UTF-8.”
-  - [ ] Missing data (mice)
-  - [ ] *h*-index (specieshindex) :round\_pushpin:
+  - [x] *h*-index (specieshindex)
       - [x] put quotation marks around synonyms
       - [x] fix weird NA dataframe (putting synonyms around the synonyms
         seems to have fixed the problem)
       - [x] divide species list into 2 to fix timeout issue
-      - [ ] run the 2nd list next week since I’ve reached the limit of
+      - [x] run the 2nd list next week since I’ve reached the limit of
         20,000 requests this week
+  - [ ] Missing data (mice)
   - [ ] Altmetrics (rAltmetric)
   - [ ] Google Trends (gtrendsR)
 
 ## :art: Making graphs
 
+  - [ ] h-index distribution :round\_pushpin:
+  - [ ] h vs mass :round\_pushpin:
+  - [ ] h vs phylogeny
+      - [ ] get phylogenetic tree
+  - [ ] h vs location
+  - [ ] h vs iucn :round\_pushpin:
+  - [ ] h vs human
   - [ ] *h*-index map
   - [ ] Altmetrics map
   - [ ] Google Trends map
