@@ -32,7 +32,8 @@ ggplot(hindex, aes(x = reorder(genus_species, h),
 #mass
 ggplot(includeh, aes(x = BodyMass.Value,
                      y = h)) +
-  geom_point(alpha = 0.5)
+  geom_point(aes(colour = order),
+             alpha = 0.5)
 
 #iucn category
 unique(includeh$redlistCategory1)
