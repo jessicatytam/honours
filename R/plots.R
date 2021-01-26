@@ -21,19 +21,21 @@ mass <- combinedf %>%
 
 phylogeny <- filter(hindex$genus_species %in% mass$species)
 
+#log transform
+
 #quick plots
 
 #h-index
 ggplot(hindex, aes(x = reorder(genus_species, h),
                    y = h)) +
   geom_point(alpha = 0.5) +
-  theme(axis.text.x = element_text(angle = 90))
+  theme(axis.text.x = element_text(angle = 90)) 
 
-#mass
+#mass; fix the body mass values
 ggplot(includeh, aes(x = BodyMass.Value,
                      y = h)) +
   geom_point(aes(colour = order),
-             alpha = 0.5)
+             alpha = 0.5) 
 
 #iucn category
 unique(includeh$redlistCategory1)
@@ -48,7 +50,6 @@ ggplot(includeh, aes(x = redlistCategorySort,
                      y = h)) +
   geom_boxplot() +
   geom_jitter(aes(colour = order),
-              alpha = 0.5) #+
-  theme(legend.position = "none")
+              alpha = 0.5) 
 
 
