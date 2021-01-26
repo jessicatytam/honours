@@ -55,6 +55,7 @@ output: github_document
 
 ## :art: Making graphs
 
+  - [ ] log transform the data :round_pushpin:
   - [ ] h-index distribution :round_pushpin:
   - [ ] h vs mass :round_pushpin:
   - [ ] h vs phylogeny

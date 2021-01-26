@@ -52,6 +52,7 @@
 
 ## :art: Making graphs
 
+  - [ ] log transform the data :round\_pushpin:
   - [ ] h-index distribution :round\_pushpin:
   - [ ] h vs mass :round\_pushpin:
   - [ ] h vs phylogeny
