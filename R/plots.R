@@ -1,4 +1,12 @@
 library(tidyverse)
+library(rnaturalearth)
+library(rnaturalearthdata)
+
+library(sp)
+library(maptools)
+library(rgeos)
+library(raster)
+library(RColorBrewer)
 
 hindex <- read.csv(file = "outputs/hindex.csv", header = T)
 combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)
@@ -8,32 +16,28 @@ combinedf <- combinedf %>%
 
 hindex$genus_species <- str_replace_all(hindex$genus_species, "_", " ")
 
-includeh <- list(combinedf, hindex) %>% 
-  reduce(full_join, by = "genus_species")
+includeh <- list(hindex, combinedf) %>% 
+  reduce(left_join, by = "genus_species")
 
+#LOG TRANSFORM
 
-
-#some cleaning and filtering
-
-mass <- combinedf %>%
-  filter(phylogeny == "Yes") %>%
-  filter(!is.na(BodyMass.Value))
-
-phylogeny <- filter(hindex$genus_species %in% mass$species)
-
-#log transform
+includeh <- includeh %>%
+  mutate(logh = log10(h),
+         logmass = log10(BodyMass.Value))
 
 #quick plots
 
 #h-index
-ggplot(hindex, aes(x = reorder(genus_species, h),
-                   y = h)) +
-  geom_point(alpha = 0.5) +
-  theme(axis.text.x = element_text(angle = 90)) 
+ggplot(includeh, aes(x = reorder(genus_species, logh),
+                     y = logh)) +
+  geom_point(aes(colour = order),
+             alpha = 0.5) +
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(angle = 90)) 
 
 #mass; fix the body mass values
-ggplot(includeh, aes(x = BodyMass.Value,
-                     y = h)) +
+ggplot(includeh, aes(x = logmass,
+                     y = logh)) +
   geom_point(aes(colour = order),
              alpha = 0.5) 
 
@@ -44,12 +48,37 @@ includeh$redlistCategorySort <- factor(includeh$redlistCategory1, levels = c("Le
                                                                              "Regionally Extinct", "Extinct in the Wild", "Extinct",
                                                                              "Data Deficient", "Not Applicable", NA))
 
-
-
 ggplot(includeh, aes(x = redlistCategorySort,
-                     y = h)) +
+                     y = logh)) +
   geom_boxplot() +
   geom_jitter(aes(colour = order),
               alpha = 0.5) 
 
+#human use
+includeh_pivot <- includeh %>%
+  pivot_longer(cols = starts_with("use"),
+               names_to = "use_count",
+               values_to = "human_use")
 
+ggplot(includeh_pivot, aes(x = logh,
+                           y = human_use)) +
+  geom_boxplot() +
+  geom_jitter(aes(colour = order),
+              alpha = 0.5) 
+
+#latitude
+
+ggplot(includeh, aes(x = median_lat,
+                     y = logh,
+                     colour = order)) +
+  geom_point()
+
+#map
+world <- ne_countries(scale = "large", returnclass = "sp")
+
+ggplot(data = world) +
+  geom_sf() +
+  geom_point(data = includeh, aes(x = x,
+                                  y = y,
+                                  colour = h),
+             alpha = 0.5) 
