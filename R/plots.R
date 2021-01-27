@@ -1,5 +1,6 @@
 library(tidyverse)
 library(ggExtra)
+library(ape)
 
 library(rnaturalearth)
 library(rnaturalearthdata)
@@ -37,11 +38,17 @@ ggplot(includeh, aes(x = reorder(genus_species, logh),
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 90)) 
 
+ggplot(includeh, aes(x = h,
+                     fill = order)) +
+  geom_bar() 
+
 #mass; fix the body mass values
 ggplot(includeh, aes(x = logmass,
                      y = logh)) +
   geom_point(aes(colour = order),
              alpha = 0.5) 
+
+glm(logh ~ logmass, data = includeh, family = "poisson") #filter negative values
 
 #iucn category
 unique(includeh$redlistCategory1)
@@ -88,3 +95,12 @@ ggplot(data = world) +
                                   y = y,
                                   colour = h),
              alpha = 0.5) 
+
+#phylogenetic tree
+taxa <- tnrs_match_names("Mammalia") #find iTOL record for Mammalia
+res <- tol_subtree(ott_id = taxa$ott_id, label_format = "name") #extract subtree of mammals
+str(res)
+
+hindex$genus_species <- str_replace_all(hindex$genus_species, " ", "_")
+
+newres <- map(res$tip.label, ~ keep(.x, hindex$genus_species))
