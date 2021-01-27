@@ -1,4 +1,6 @@
 library(tidyverse)
+library(ggExtra)
+
 library(rnaturalearth)
 library(rnaturalearthdata)
 
@@ -68,10 +70,14 @@ ggplot(includeh_pivot, aes(x = logh,
 
 #latitude
 
-ggplot(includeh, aes(x = median_lat,
+med_lat <- ggplot(includeh, aes(x = median_lat,
                      y = logh,
                      colour = order)) +
   geom_point()
+ggMarginal(med_lat,
+           type = "histogram",
+           margins = "x",
+           bins = 100)
 
 #map
 world <- ne_countries(scale = "large", returnclass = "sp")
