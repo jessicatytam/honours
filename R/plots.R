@@ -2,10 +2,11 @@ library(tidyverse)
 library(ggExtra)
 library(taxize)
 library(rotl)
-library(reshape)
 
 library(rnaturalearth)
 library(rnaturalearthdata)
+library(sf)
+library(wesanderson)
 
 library(sp)
 library(maptools)
@@ -194,14 +195,27 @@ ggMarginal(med_lat,
            bins = 100)
 
 #map
-world <- ne_countries(scale = "large", returnclass = "sp")
+
+sbs <- read.csv(file = "intermediate_data/gbif_processed.csv", header = T)
+
+gbif <- sbs %>%
+  group_by(species) %>%
+  summarise_at(vars(decimalLatitude, decimalLongitude), median, na.rm = T) %>%
+  ungroup() 
+gbif <- gbif %>%
+  rename(genus_species = species)
+includeh <- list(includeh, gbif) %>%
+  reduce(left_join, by = "genus_species")
+
+world <- ne_countries(scale = "large", returnclass = "sf")
 
 ggplot(data = world) +
   geom_sf() +
-  geom_point(data = includeh, aes(x = x,
-                                  y = y,
-                                  colour = h),
-             alpha = 0.5) 
+  geom_point(data = includeh, aes(x = decimalLongitude,
+                                  y = decimalLatitude,
+                                  colour = logh),
+             size = 2) +
+  scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous")) 
 
 #phylogenetic tree; need help
 taxa <- tnrs_match_names("Mammalia") #find iTOL record for Mammalia
