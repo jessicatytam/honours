@@ -154,10 +154,14 @@ ggplot(includeh, aes(x = h,
   geom_bar() 
 
 #mass; fix the body mass values
-ggplot(includeh, aes(x = logmass,
+mass <- ggplot(includeh, aes(x = logmass,
                      y = logh)) +
   geom_point(aes(colour = order),
-             alpha = 0.5) 
+             alpha = 0.5) +
+  theme(legend.position = "bottom")
+ggMarginal(mass,
+           type = "histogram",
+           bins = 100)
 
 #iucn category
 ggplot(includeh, aes(x = redlistCategory1,
@@ -235,3 +239,5 @@ tax_df_test <- melt(tax_lineage(taxonomy_taxon_info(ott_ids = 6145836, include_l
 tax_filter_test <- tax_df_test %>%
   filter(rank == "family")
 tax_filter_test$unique_name
+
+sum(is.na(includeh$redlistCategory1))
