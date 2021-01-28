@@ -1,6 +1,8 @@
 library(tidyverse)
 library(ggExtra)
-library(ape)
+library(taxize)
+library(rotl)
+library(reshape)
 
 library(rnaturalearth)
 library(rnaturalearthdata)
@@ -22,6 +24,44 @@ hindex$genus_species <- str_replace_all(hindex$genus_species, "_", " ")
 includeh <- list(hindex, combinedf) %>% 
   reduce(left_join, by = "genus_species")
 
+#fill in orders and families
+
+#using ott_ids; this is much faster
+for (i in 4631:length(includeh$id)) {
+  if (is.na(includeh$order[i])) {
+    print(i)
+    tax_df <- melt(tax_lineage(taxonomy_taxon_info(ott_ids = includeh$id[i], include_lineage = TRUE)))
+    tax_filter <- tax_df %>%
+      filter(rank == "order")
+    order <- tax_filter$unique_name
+    includeh$order[i] <- as.character(order)
+  }
+}
+
+for (i in 5156:length(includeh$id)) {
+  if (is.na(includeh$family[i])) {
+    print(i)
+    tax_df <- melt(tax_lineage(taxonomy_taxon_info(ott_ids = includeh$id[i], include_lineage = TRUE)))
+    tax_filter <- tax_df %>%
+      filter(rank == "family")
+    family <- tax_filter$unique_name
+    includeh$family[i] <- as.character(family)
+  }
+}
+
+#check orders and families
+
+unique(includeh$order)
+sum(is.na(includeh$order)) #16
+
+unique(includeh$family)
+sum(is.na(includeh$family)) #7
+
+#cleaning orders and families
+
+includeh$order <- gsub("Proboscidea (order in Deuterostomia)", "Proboscidea")
+includeh$order <- gsub("Cingulata (order in Deuterostomia)", "Cingulata")
+
 #LOG TRANSFORM
 
 includeh <- includeh %>%
@@ -29,6 +69,9 @@ includeh <- includeh %>%
          logmass = log10(BodyMass.Value))
 
 #quick plots
+
+#h by order
+ggplot(includeh)
 
 #h-index
 ggplot(includeh, aes(x = reorder(genus_species, logh),
@@ -47,8 +90,6 @@ ggplot(includeh, aes(x = logmass,
                      y = logh)) +
   geom_point(aes(colour = order),
              alpha = 0.5) 
-
-glm(logh ~ logmass, data = includeh, family = "poisson") #filter negative values
 
 #iucn category
 unique(includeh$redlistCategory1)
@@ -96,7 +137,7 @@ ggplot(data = world) +
                                   colour = h),
              alpha = 0.5) 
 
-#phylogenetic tree
+#phylogenetic tree; need help
 taxa <- tnrs_match_names("Mammalia") #find iTOL record for Mammalia
 res <- tol_subtree(ott_id = taxa$ott_id, label_format = "name") #extract subtree of mammals
 str(res)
@@ -104,3 +145,31 @@ str(res)
 hindex$genus_species <- str_replace_all(hindex$genus_species, " ", "_")
 
 newres <- map(res$tip.label, ~ keep(.x, hindex$genus_species))
+
+
+
+#save and read
+
+write.csv(includeh, file = "outputs/includeh.csv")
+includeh <- read.csv(file = "outputs/includeh.csv", header = T)
+
+
+
+#testing
+
+test <- includeh[44:63,]
+
+for (i in 1:length(test$id)) {
+  if (is.na(test$family[i])) {
+    tax_df <- melt(tax_lineage(taxonomy_taxon_info(ott_ids = test$id[i], include_lineage = TRUE)))
+    tax_filter <- tax_df %>%
+      filter(rank == "family")
+    family <- tax_filter$unique_name
+    test$family[i] <- as.character(family)
+  }
+}
+
+tax_df_test <- melt(tax_lineage(taxonomy_taxon_info(tax_name = "Aconaemys", include_lineage = TRUE)))
+tax_filter_test <- tax_df_test %>%
+  filter(rank == "family")
+tax_filter_test$unique_name
