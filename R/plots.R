@@ -59,8 +59,7 @@ sum(is.na(includeh$family)) #7
 
 #cleaning orders and families
 
-includeh$order <- gsub("Proboscidea (order in Deuterostomia)", "Proboscidea")
-includeh$order <- gsub("Cingulata (order in Deuterostomia)", "Cingulata")
+includeh$order <- word(includeh$order, 1)
 
 #LOG TRANSFORM
 
@@ -151,7 +150,7 @@ newres <- map(res$tip.label, ~ keep(.x, hindex$genus_species))
 #save and read
 
 write.csv(includeh, file = "outputs/includeh.csv")
-includeh <- read.csv(file = "outputs/includeh.csv", header = T)
+includeh <- read.csv(file = "outputs/includeh.csv", header = T)[-c(1)]
 
 
 
