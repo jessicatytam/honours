@@ -184,7 +184,6 @@ ggplot(includeh_pivot, aes(x = logh,
               alpha = 0.5) 
 
 #latitude
-
 med_lat <- ggplot(includeh, aes(x = median_lat,
                                 y = logh,
                                 colour = order)) +
@@ -195,7 +194,6 @@ ggMarginal(med_lat,
            bins = 100)
 
 #map
-
 sbs <- read.csv(file = "intermediate_data/gbif_processed.csv", header = T)
 
 gbif <- sbs %>%
@@ -214,7 +212,8 @@ ggplot(data = world) +
   geom_point(data = includeh, aes(x = decimalLongitude,
                                   y = decimalLatitude,
                                   colour = logh),
-             size = 2) +
+             size = 3,
+             alpha = 0.8) +
   scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous")) 
 
 #phylogenetic tree; need help
