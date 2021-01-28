@@ -3027,7 +3027,7 @@
 "3026","Lepus douglasii","douglasii","Lepus",0,0,0,0,0,NA,0,0,0,0,7654318,"Leporidae","Lagomorpha",NA,NA,"Yes",56.51521,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
 "3027","Lepus fagani","fagani","Lepus",5,23,5,5,0,8,2,0.25,1,1,3611222,"Leporidae","Lagomorpha",2048.51,2,"Yes",7.779497,"Least Concern",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0.301029995663981,3.31143808834492,"Least Concern"
 "3028","Lepus flavigularis","flavigularis","Lepus",17,101,12,17,0,38,7,0.184,4,1,836256,"Leporidae","Lagomorpha",2999.99,1,"Yes",16.223713,"Endangered",NA,NA,"food_human","pets_display_animals_horticulture",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0.845098040014257,3.47711980706898,"Endangered"
-"3029","Lepus formosus","formosus","Lepus",0,0,0,0,0,NA,0,0,0,0,7654319,"Astroblepidae","Siluriformes",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
+"3029","Lepus formosus","formosus","Lepus",0,0,0,0,0,NA,0,0,0,0,7654319,"Leporidae","Lagomorpha",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
 "3030","Lepus granatensis","granatensis","Lepus",73,1587,47,70,2,38,21,0.553,35,7,29167,"Leporidae","Lagomorpha",4010,1,"Yes",39.580001,"Least Concern",NA,NA,"food_human","sport_hunting_specimen_collecting",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1.32221929473392,3.60314437262018,"Least Concern"
 "3031","Lepus habessinicus","habessinicus","Lepus",4,70,4,4,0,38,4,0.105,1,1,29169,"Leporidae","Lagomorpha",2015.56,1,"Yes",8.903015,"Least Concern",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0.602059991327962,3.30439573093415,"Least Concern"
 "3032","Lepus hainanus","hainanus","Lepus",1,2,1,1,0,5,1,0.2,0,0,426408,"Leporidae","Lagomorpha",2000,1,"Yes",19.514484,"Endangered",NA,NA,"food_human","wearing_apparel_accessories",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0,3.30102999566398,"Endangered"
@@ -3913,7 +3913,7 @@
 "3912","Mus canguru","canguru","Mus",0,0,0,0,0,NA,0,0,0,0,6144906,"Muridae","Rodentia",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
 "3913","Muscardinus avellanarius","avellanarius","Muscardinus",208,2877,103,190,7,70,27,0.386,93,8,664079,"Gliridae","Rodentia",27.5,1,"Yes",51.26913,"Least Concern",NA,NA,"pets_display_animals_horticulture",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1.43136376415899,1.43933269383026,"Least Concern"
 "3914","Mus caroli","caroli","Mus",149,3573,103,140,3,49,36,0.735,86,4,922493,"Muridae","Rodentia",11.25,1,"Yes",22.383329,"Least Concern",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1.55630250076729,1.05115252244738,"Least Concern"
-"3915","Mus colletti","colletti","Mus",0,0,0,0,0,NA,0,0,0,0,7654769,"Macrouridae","Gadiformes",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
+"3915","Mus colletti","colletti","Mus",0,0,0,0,0,NA,0,0,0,0,7654769,"Muridae","Rodentia",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
 "3916","Mus cookii","cookii","Mus",15,436,15,14,0,41,10,0.244,10,2,542528,"Muridae","Rodentia",20.47,1,"Yes",25.466669,"Least Concern",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,1.31111784266251,"Least Concern"
 "3917","Mus crociduroides","crociduroides","Mus",0,0,0,0,0,NA,0,0,0,0,185328,"Muridae","Rodentia",28.7,1,"Yes",-1.714,"Data Deficient",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,1.45788189673399,"Data Deficient"
 "3918","Mus emesi","emesi","Mus",1,4,1,1,0,32,1,0.031,0,0,403204,"Muridae","Rodentia",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0,NA,NA
@@ -3936,7 +3936,7 @@
 "3935","Mus orangiae","orangiae","Mus",0,0,0,0,0,NA,0,0,0,0,3608904,"Muridae","Rodentia",9.5,2,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,0.977723605288848,NA
 "3936","Mus oubanguii","oubanguii","Mus",3,41,2,3,0,51,3,0.059,2,0,3608899,"Muridae","Rodentia",9.16,2,"Yes",3.883,"Data Deficient",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0.477121254719662,0.96189547366785,"Data Deficient"
 "3937","Mus pahari","pahari","Mus",44,600,31,41,2,39,15,0.385,18,3,542493,"Muridae","Rodentia",25.73,1,"Yes",22.35,"Least Concern",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1.17609125905568,1.41043978621035,"Least Concern"
-"3938","Mus paulina","paulina","Mus",0,0,0,0,0,NA,0,0,0,0,7654773,"Liolaemidae","Squamata",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
+"3938","Mus paulina","paulina","Mus",0,0,0,0,0,NA,0,0,0,0,7654773,"Muridae","Rodentia",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
 "3939","Mus phillipsi","phillipsi","Mus",1,9,1,1,0,24,1,0.042,0,0,3608880,"Muridae","Rodentia",12.3,1,"Yes",14.08333,"Least Concern",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0,1.0899051114394,"Least Concern"
 "3940","Mus platythrix","platythrix","Mus",38,271,31,37,0,49,9,0.184,9,0,845970,"Muridae","Rodentia",25.2,1,"Yes",12.3,"Least Concern",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0.954242509439325,1.40140054078154,"Least Concern"
 "3941","Mus proconodon","proconodon","Mus",1,3,1,1,0,9,1,0.111,0,0,7654774,"Muridae","Rodentia",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0,NA,NA
@@ -3983,7 +3983,7 @@
 "3982","Mus tenellus","tenellus","Mus",4,20,3,3,0,49,3,0.061,1,0,844277,"Muridae","Rodentia",9.48,2,"Yes",1.23861,"Least Concern",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0.477121254719662,0.976808337338066,"Least Concern"
 "3983","Mus terraereginae","terraereginae","Mus",0,0,0,0,0,NA,0,0,0,0,6144910,"Muridae","Rodentia",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
 "3984","Mus terricolor","terricolor","Mus",103,2070,55,100,2,46,24,0.522,50,4,348560,"Muridae","Rodentia",9,1,"Yes",18.326163,"Least Concern",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1.38021124171161,0.954242509439325,"Least Concern"
-"3985","Mus tomentosus","tomentosus","Mus",0,0,0,0,0,NA,0,0,0,0,7654775,"Bombyliidae","Diptera",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
+"3985","Mus tomentosus","tomentosus","Mus",0,0,0,0,0,NA,0,0,0,0,7654775,"Muridae","Rodentia",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
 "3986","Mus triton","triton","Mus",15,274,11,15,0,56,9,0.161,9,2,289304,"Muridae","Rodentia",13.55,1,"Yes",-5.1107,"Least Concern",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0.954242509439325,1.13193929521042,"Least Concern"
 "3987","Mus vulcani","vulcani","Mus",0,0,0,0,0,NA,0,0,0,0,3608885,"Muridae","Rodentia",20.2,1,"Yes",NA,"Least Concern",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,1.30535136944662,"Least Concern"
 "3988","Mus vulpinus","vulpinus","Mus",0,0,0,0,0,NA,0,0,0,0,7654776,"Muridae","Rodentia",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
@@ -6384,10 +6384,10 @@
 "6383","Sus celebensis","celebensis","Sus",22,570,20,20,0,38,8,0.211,8,3,418120,"Suidae","Artiodactyla",55000,1,"Yes",0.316667,"Near Threatened",NA,NA,"food_human",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0.903089986991944,4.74036268949424,NA
 "6384","Sus fasciatus","fasciatus","Sus",0,0,0,0,0,NA,0,0,0,0,7655736,"Suidae","Artiodactyla",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
 "6385","Sus gadarensis","gadarensis","Sus",0,0,0,0,0,NA,0,0,0,0,7655737,"Suidae","Artiodactyla",NA,NA,"Yes",32.67,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
-"6386","Sus lybicus","lybicus","Sus",0,0,0,0,0,NA,0,0,0,0,7655738,"Tropiduchidae","Hemiptera",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
+"6386","Sus lybicus","lybicus","Sus",0,0,0,0,0,NA,0,0,0,0,7655738,"Suidae","Artiodactyla",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
 "6387","Sus mystaceus","mystaceus","Sus",0,0,0,0,0,NA,0,0,0,0,7655739,"Suidae","Artiodactyla",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
 "6388","Sus oliveri","oliveri","Sus",2,8,2,1,0,4,1,0.25,0,1,3611400,"Suidae","Artiodactyla",73569.74,0,"Yes",10.233333,"Vulnerable",NA,NA,"food_human",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0,4.86669922122172,"Vulnerable"
-"6389","Sus palustris","palustris","Sus",0,0,0,0,0,NA,0,0,0,0,7655741,"Microdesmidae","Perciformes",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
+"6389","Sus palustris","palustris","Sus",0,0,0,0,0,NA,0,0,0,0,7655741,"Suidae","Artiodactyla",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
 "6390","Sus philippensis","philippensis","Sus",5,33,4,3,0,24,3,0.125,1,1,149813,"Suidae","Artiodactyla",190792.3,1,"Yes",7.93335,"Vulnerable",NA,NA,"food_human","sport_hunting_specimen_collecting",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0.477121254719662,5.28056084345513,"Vulnerable"
 "6391","Sus pliciceps","pliciceps","Sus",0,0,0,0,0,NA,0,0,0,0,7655742,"Suidae","Artiodactyla",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,-Inf,NA,NA
 "6392","Sus strozzii","strozzii","Sus",17,213,13,17,0,75,9,0.12,8,4,7655743,"Suidae","Artiodactyla",NA,NA,"Yes",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0.954242509439325,NA,NA
@@ -6947,4 +6947,4 @@
 "6946","Zyzomys palatalis","palatalis","Zyzomys",7,77,4,7,0,25,5,0.2,3,0,3608737,"Muridae","Rodentia",NA,NA,"Yes",NA,"Critically Endangered",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0.698970004336019,NA,"Critically Endangered"
 "6947","Zyzomys palatilis","palatilis","Zyzomys",1,2,1,1,0,15,1,0.067,0,0,399975,"Muridae","Rodentia",123,1,"Yes",-17.40766,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0,2.0899051114394,NA
 "6948","Zyzomys pedunculatus","pedunculatus","Zyzomys",16,204,11,15,1,21,9,0.429,7,2,399977,"Muridae","Rodentia",100,1,"Yes",-23.630635,"Critically Endangered",NA,NA,"food_human",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0.954242509439325,2,"Critically Endangered"
-"6949","Zyzomys woodwardi","woodwardi","Zyzomys",8,99,5,8,0,41,6,0.146,5,0,399979,"Muridae","Rodentia",136,1,"Yes",NA,"Least Concern",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0.778151250383644,2.13353890837022,"Least Concern"
+"6949","Zyzomys woodwardi","woodwardi","Zyzomys",8,99,5,8,0,41,6,0.146,5,0,399979,"Suidae","Artiodactyla",136,1,"Yes",NA,"Least Concern",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0.778151250383644,2.13353890837022,"Least Concern"

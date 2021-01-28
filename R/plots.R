@@ -79,6 +79,32 @@ for (i in 1:length(includeh$family)) {
   }
 }
 
+#fix non-mammalian orders
+
+for (i in 1:nrow(includeh)) {
+  if (includeh$genus_species[i] == "Lepus formosus") {
+    includeh$family[i] <- "Leporidae"
+    includeh$order[i] <- "Lagomorpha"
+  } else if (includeh$genus_species[i] == "Mus colletti") {
+    includeh$family[i] <- "Muridae"
+    includeh$order[i] <- "Rodentia"
+  } else if (includeh$genus_species[i] == "Mus paulina") {
+    includeh$family[i] <- "Muridae"
+    includeh$order[i] <- "Rodentia"
+  } else if (includeh$genus_species[i] == "Mus tomentosus") {
+    includeh$family[i] <- "Muridae"
+    includeh$order[i] <- "Rodentia"
+  } else if (includeh$genus_species[i] == "Sus lybicus") {
+    includeh$family[i] <- "Suidae"
+    includeh$order[i] <- "Artiodactyla"
+  } else if (includeh$genus_species[i] == "Sus palustris") {
+    includeh$family[i] <- "Suidae"
+    includeh$order[i] <- "Artiodactyla"
+  }
+}
+
+#Musserakis sulawesiensis a nematode?!?!
+
 #LOG TRANSFORM
 
 includeh <- includeh %>%
@@ -87,11 +113,28 @@ includeh <- includeh %>%
 
 #quick plots
 
+#sorting
+
+med_mass <- includeh %>%
+  group_by(order) %>%
+  summarise_at(vars(BodyMass.Value), median, na.rm = T) %>%
+  ungroup()
+med_mass <- med_mass %>%
+  arrange(by_group = BodyMass.Value)
+includeh$order <- factor(includeh$order, levels = med_mass$order)
+
+unique(includeh$redlistCategory1)
+includeh$redlistCategory1 <- factor(includeh$redlistCategory1, levels = c("Least Concern", "Near Threaten", "Vulnerable",
+                                                                          "Endangered", "Critically Endangered",
+                                                                          "Regionally Extinct", "Extinct in the Wild", "Extinct",
+                                                                          "Data Deficient", "Not Applicable", NA))
+
+
 #h by order
 ggplot(includeh, aes(x = logh,
-                     y = reorder(order, -logh, FUN = median))) +
+                     y = order)) +
   geom_boxplot() +
-  geom_jitter(aes(colour = redlistCategorySort),
+  geom_jitter(aes(colour = redlistCategory1),
               alpha = 0.5)
 
 #h-index
@@ -101,6 +144,10 @@ ggplot(includeh, aes(x = reorder(genus_species, logh),
              alpha = 0.5) +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 90)) 
+
+ggplot(includeh, aes(x = logh,
+                     fill = order)) +
+  geom_bar() 
 
 ggplot(includeh, aes(x = h,
                      fill = order)) +
@@ -113,13 +160,7 @@ ggplot(includeh, aes(x = logmass,
              alpha = 0.5) 
 
 #iucn category
-unique(includeh$redlistCategory1)
-includeh$redlistCategorySort <- factor(includeh$redlistCategory1, levels = c("Least Concern", "Near Threaten", "Vulnerable",
-                                                                             "Endangered", "Critically Endangered",
-                                                                             "Regionally Extinct", "Extinct in the Wild", "Extinct",
-                                                                             "Data Deficient", "Not Applicable", NA))
-
-ggplot(includeh, aes(x = redlistCategorySort,
+ggplot(includeh, aes(x = redlistCategory1,
                      y = logh)) +
   geom_boxplot() +
   geom_jitter(aes(colour = order),
