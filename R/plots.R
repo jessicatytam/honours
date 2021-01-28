@@ -181,9 +181,9 @@ ggplot(includeh_pivot, aes(x = logh,
 #latitude
 
 med_lat <- ggplot(includeh, aes(x = median_lat,
-                     y = logh,
-                     colour = order)) +
-  geom_point()
+                                y = logh,
+                                colour = order)) +
+  geom_point(alpha = 0.5)
 ggMarginal(med_lat,
            type = "histogram",
            margins = "x",
