@@ -57,9 +57,27 @@ sum(is.na(includeh$order)) #16
 unique(includeh$family)
 sum(is.na(includeh$family)) #7
 
-#cleaning orders and families
+#clean orders and families
 
 includeh$order <- word(includeh$order, 1)
+
+for (i in 1:length(includeh$order)) {
+  if (includeh$family[i] == "Chrysochloridae" & is.na(includeh$order[i])) {
+    includeh$order[i] <- "Afrosoricida"
+  }
+}
+
+for (i in 1:length(includeh$order)) {
+  if (includeh$family[i] == "Tenrecidae" & is.na(includeh$order[i])) {
+    includeh$order[i] <- "Afrosoricida"
+  }
+}
+
+for (i in 1:length(includeh$family)) {
+  if (is.na(includeh$family[i])) {
+    includeh$family[i] <- "Cetotheriidae"
+  }
+}
 
 #LOG TRANSFORM
 
@@ -70,7 +88,11 @@ includeh <- includeh %>%
 #quick plots
 
 #h by order
-ggplot(includeh)
+ggplot(includeh, aes(x = logh,
+                     y = reorder(order, -logh, FUN = median))) +
+  geom_boxplot() +
+  geom_jitter(aes(colour = redlistCategorySort),
+              alpha = 0.5)
 
 #h-index
 ggplot(includeh, aes(x = reorder(genus_species, logh),
@@ -168,7 +190,7 @@ for (i in 1:length(test$id)) {
   }
 }
 
-tax_df_test <- melt(tax_lineage(taxonomy_taxon_info(tax_name = "Aconaemys", include_lineage = TRUE)))
+tax_df_test <- melt(tax_lineage(taxonomy_taxon_info(ott_ids = 6145836, include_lineage = TRUE)))
 tax_filter_test <- tax_df_test %>%
   filter(rank == "family")
 tax_filter_test$unique_name
