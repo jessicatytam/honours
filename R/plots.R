@@ -6,13 +6,8 @@ library(rotl)
 library(rnaturalearth)
 library(rnaturalearthdata)
 library(sf)
+library(letsR)
 library(wesanderson)
-
-library(sp)
-library(maptools)
-library(rgeos)
-library(raster)
-library(RColorBrewer)
 
 hindex <- read.csv(file = "outputs/hindex.csv", header = T)
 combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)
@@ -196,21 +191,27 @@ ggMarginal(med_lat,
 #map
 sbs <- read.csv(file = "intermediate_data/gbif_processed.csv", header = T)
 
-gbif <- sbs %>%
-  group_by(species) %>%
-  summarise_at(vars(decimalLatitude, decimalLongitude), median, na.rm = T) %>%
-  ungroup() 
-gbif <- gbif %>%
-  rename(genus_species = species)
-includeh <- list(includeh, gbif) %>%
+PAM <- lets.presab.points(cbind(sbs$decimalLongitude,sbs$decimalLatitude), sbs$species,
+                          xmn = -180, xmx = 180, 
+                          ymn = -90, ymx = 90,resol = 2)
+
+summary(PAM)
+plot(PAM)
+#lets.midpoint.fixed() in file "R/geo_plotting"
+mid <- lets.midpoint.fixed(PAM)
+mid$x<-as.numeric(mid$x)
+mid$y<-as.numeric(mid$y)
+mid <- mid %>%
+  rename(genus_species = Species)
+includeh <- list(includeh, mid) %>%
   reduce(left_join, by = "genus_species")
 
 world <- ne_countries(scale = "large", returnclass = "sf")
 
 ggplot(data = world) +
   geom_sf() +
-  geom_point(data = includeh, aes(x = decimalLongitude,
-                                  y = decimalLatitude,
+  geom_point(data = includeh, aes(x = x,
+                                  y = y,
                                   colour = logh),
              size = 3,
              alpha = 0.8) +
