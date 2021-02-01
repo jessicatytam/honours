@@ -10,6 +10,7 @@ library(sf)
 library(letsR)
 library(wesanderson)
 library(ggtree)
+library(ggtreeExtra)
 library(treeio)
 
 
@@ -233,9 +234,14 @@ tree <- as_tibble(tree)
 tree_join <- full_join(tree, includeh_join, by = "label")
 tree_join <- as.treedata(tree_join)
 
+ggtree(tree_join, aes(colour = order),
+       layout = "circular") +
+  geom_fruit(geom = geom_bar,
+             mapping = aes(x = h, fill = order),
+             pwidth = 0.5,
+             orientation = "y", 
+             stat = "identity")
 
-ggtree(tree_join, layout = "circular") #+
-  geom_hilight(fill = order, alpha = 0.5)
 
 
 #save and read
