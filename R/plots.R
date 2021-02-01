@@ -2,12 +2,16 @@ library(tidyverse)
 library(ggExtra)
 library(taxize)
 library(rotl)
+library(ape)
 
 library(rnaturalearth)
 library(rnaturalearthdata)
 library(sf)
 library(letsR)
 library(wesanderson)
+library(ggtree)
+library(treeio)
+
 
 hindex <- read.csv(file = "outputs/hindex.csv", header = T)
 combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)
@@ -218,14 +222,20 @@ ggplot(data = world) +
   scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous")) 
 
 #phylogenetic tree; need help
-taxa <- tnrs_match_names("Mammalia") #find iTOL record for Mammalia
-res <- tol_subtree(ott_id = taxa$ott_id, label_format = "name") #extract subtree of mammals
-str(res)
+tree <- tol_induced_subtree(ott_ids = includeh$id, label_format = "name")
+plot(tree, type = "fan", cex = 0.4, label.offset = 0.1, no.margin = T)
 
-hindex$genus_species <- str_replace_all(hindex$genus_species, " ", "_")
+includeh_join <- includeh %>%
+  rename(label = genus_species)
+includeh_join$label <- str_replace_all(includeh_join$label, " ", "_")
 
-newres <- map(res$tip.label, ~ keep(.x, hindex$genus_species))
+tree <- as_tibble(tree)
+tree_join <- full_join(tree, includeh_join, by = "label")
+tree_join <- as.treedata(tree_join)
 
+
+ggtree(tree_join, layout = "circular") #+
+  geom_hilight(fill = order, alpha = 0.5)
 
 
 #save and read
