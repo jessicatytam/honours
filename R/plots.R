@@ -8,6 +8,7 @@ library(rnaturalearth)
 library(rnaturalearthdata)
 library(sf)
 library(letsR)
+library(geoshpere)
 library(wesanderson)
 library(ggtree)
 library(ggtreeExtra)
@@ -104,13 +105,28 @@ for (i in 1:nrow(includeh)) {
   }
 }
 
-#Musserakis sulawesiensis a nematode?!?!
+#remove extinct mammals
+
+includeh <- includeh[!(includeh$genus == "Homo"),] #humans
+includeh <- includeh[!(includeh$genus == "Mammuthus"),] #woolly mammoth
+
+#removing "not applicable" in iucn status
+
+for (i in 1:nrow(includeh)) {
+  if (includeh$redlistCategory1[i] == "Not Applicable") {
+    includeh$redlistCategory1[i] <- includeh$redlistCategory2[i]
+    includeh$redlistCategory2[i] <- NA
+  }
+}
 
 #LOG TRANSFORM
 
 includeh <- includeh %>%
   mutate(logh = log10(h),
          logmass = log10(BodyMass.Value))
+
+includeh <- includeh %>%
+  mutate(logh1 = log10(h+1), .after = logh)
 
 #quick plots
 
@@ -130,23 +146,22 @@ includeh$redlistCategory1 <- factor(includeh$redlistCategory1, levels = c("Least
                                                                           "Regionally Extinct", "Extinct in the Wild", "Extinct",
                                                                           "Data Deficient", "Not Applicable", NA))
 
-
 #h by order
-ggplot(includeh, aes(x = logh,
+ggplot(includeh, aes(x = logh1,
                      y = order)) +
   geom_boxplot() +
   geom_jitter(aes(colour = redlistCategory1),
               alpha = 0.5)
 
 #h-index
-ggplot(includeh, aes(x = reorder(genus_species, logh),
-                     y = logh)) +
+ggplot(includeh, aes(x = reorder(genus_species, logh1),
+                     y = logh1)) +
   geom_point(aes(colour = order),
              alpha = 0.5) +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 90)) 
 
-ggplot(includeh, aes(x = logh,
+ggplot(includeh, aes(x = logh1,
                      fill = order)) +
   geom_bar() 
 
@@ -156,9 +171,10 @@ ggplot(includeh, aes(x = h,
 
 #mass; fix the body mass values
 mass <- ggplot(includeh, aes(x = logmass,
-                     y = logh)) +
+                     y = logh1)) +
   geom_point(aes(colour = order),
              alpha = 0.5) +
+  geom_smooth() +
   theme(legend.position = "bottom")
 ggMarginal(mass,
            type = "histogram",
@@ -166,7 +182,7 @@ ggMarginal(mass,
 
 #iucn category
 ggplot(includeh, aes(x = redlistCategory1,
-                     y = logh)) +
+                     y = logh1)) +
   geom_boxplot() +
   geom_jitter(aes(colour = order),
               alpha = 0.5) 
@@ -177,7 +193,7 @@ includeh_pivot <- includeh %>%
                names_to = "use_count",
                values_to = "human_use")
 
-ggplot(includeh_pivot, aes(x = logh,
+ggplot(includeh_pivot, aes(x = logh1,
                            y = human_use)) +
   geom_boxplot() +
   geom_jitter(aes(colour = order),
@@ -185,9 +201,10 @@ ggplot(includeh_pivot, aes(x = logh,
 
 #latitude
 med_lat <- ggplot(includeh, aes(x = median_lat,
-                                y = logh,
+                                y = logh1,
                                 colour = order)) +
-  geom_point(alpha = 0.5)
+  geom_point(alpha = 0.5) +
+  geom_smooth()
 ggMarginal(med_lat,
            type = "histogram",
            margins = "x",
@@ -199,7 +216,6 @@ sbs <- read.csv(file = "intermediate_data/gbif_processed.csv", header = T)
 PAM <- lets.presab.points(cbind(sbs$decimalLongitude,sbs$decimalLatitude), sbs$species,
                           xmn = -180, xmx = 180, 
                           ymn = -90, ymx = 90,resol = 2)
-
 summary(PAM)
 plot(PAM)
 #lets.midpoint.fixed() in file "R/geo_plotting"
@@ -217,9 +233,14 @@ ggplot(data = world) +
   geom_sf() +
   geom_point(data = includeh, aes(x = x,
                                   y = y,
-                                  colour = logh),
+                                  colour = logh1),
              size = 3,
-             alpha = 0.8) +
+             alpha = 0.6) +
+  coord_sf(expand = FALSE) +
+  labs(x = "Longitude",
+       y = "Latitude",
+       colour = "h-index") +
+  theme(panel.background = element_rect(fill = "aliceblue")) +
   scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous")) 
 
 #phylogenetic tree; need help
