@@ -67,6 +67,8 @@
 ## :rocket: Statistical analysis
 
   - [ ] MCMCglmm
+  - [ ] PGLS
+  - [ ] Phylogenetic signals (phylosignal)
   - [ ] *h*<sup>2</sup>
   - [ ] Pagel’s λ
 
