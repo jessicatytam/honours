@@ -111,10 +111,16 @@ includeh <- includeh[!(includeh$order == "Ascaridida"),] #worm
 includeh <- includeh[!(includeh$genus == "Homo"),] #humans
 includeh <- includeh[!(includeh$genus == "Mammuthus"),] #woolly mammoth
 
-#need to check
-includeh <- includeh[!(includeh$genus == "Boromys"),] #cave rat from the Eocene
+status <- data.frame(tnrs_match_names(names = includeh$genus_species)$flags)
+status <- status %>%
+  rename(status = tnrs_match_names.names...includeh.genus_species..flags)
+includeh <- cbind(includeh, status)
 
+includeh <- includeh[!(includeh$status == "extinct"),] #status from rotl
 
+includeh <- includeh[!(includeh$genus_species == "Mylodon darwinii"),] #ground sloth
+includeh <- includeh[!(includeh$genus_species == "Orrorin tugenensis"),] #early human
+includeh <- includeh[!(includeh$genus_species == "Brandtocetus chongulek"),] #miocene whale
 
 #removing "not applicable" in iucn status
 
@@ -213,6 +219,16 @@ mass <- ggplot(includeh, aes(x = logmass,
 ggMarginal(mass,
            type = "histogram",
            bins = 150)
+
+ggplot(includeh, aes(x = logmass,
+                     y = log10(m+1))) +
+  geom_point(aes(colour = order),
+             alpha = 0.5) +
+  geom_smooth() +
+  labs(x = "Body mass",
+       y = "m-index",
+       colour = "Order") +
+  theme(legend.position = "bottom")
 
 #iucn category
 ggplot(includeh, aes(x = redlistCategory1,
@@ -337,7 +353,14 @@ ggtree(tree_join, aes(colour = order),
              stat = "identity")
 
 #not related to h-index
-
+ggplot(includeh, aes(y = order)) +
+  geom_bar(aes(fill = redlistCategory1),
+           position = "fill") +
+  scale_y_discrete(limits = rev) +
+  scale_x_continuous(labels = scales::percent) +
+  scale_fill_manual(values = c("#0d1e7d", "#194cb3", "#6b40e1", "#aa55ea",
+                               "#ea559d", "#cd2d54", "#951433",
+                               "#888888", "#292929"))
 
 #save and read
 
@@ -348,28 +371,11 @@ includeh <- read.csv(file = "outputs/includeh.csv", header = T)[-c(1)]
 
 #testing
 
-test <- includeh[44:63,]
+test <- includeh[1:20,]
 
-for (i in 1:length(test$id)) {
-  if (is.na(test$family[i])) {
-    tax_df <- melt(tax_lineage(taxonomy_taxon_info(ott_ids = test$id[i], include_lineage = TRUE)))
-    tax_filter <- tax_df %>%
-      filter(rank == "family")
-    family <- tax_filter$unique_name
-    test$family[i] <- as.character(family)
-  }
-}
+testextinct <- flags(tnrs_match_names(names = test$genus_species))
 
-tax_df_test <- melt(tax_lineage(taxonomy_taxon_info(ott_ids = 6145836, include_lineage = TRUE)))
-tax_filter_test <- tax_df_test %>%
-  filter(rank == "family")
-tax_filter_test$unique_name
+sum(tnrs_match_names(names = includeh$genus_species)$flags=="extinct")
 
-sum(is.na(includeh$redlistCategory1))
-
-
-for (i in 1:nrow(includeh)) {
-  if (includeh$redlistCategory1[i] == "Not Applicable") {
-    print(includeh$genus_species[i])
-  }
-}
+testiucn <- includeh %>%
+  filter(redlistCategory1=="Extinct")
