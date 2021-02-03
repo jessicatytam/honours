@@ -48,19 +48,19 @@
         20,000 requests this week
   - [ ] Missing data (mice)
   - [ ] Altmetrics (rAltmetric)
-  - [ ] Google Trends (gtrendsR)
+  - [ ] Google Trends (gtrendsR) :round\_pushpin:
 
-## :art: Making graphs
+## :art: Making graphs :round\_pushpin:
 
-  - [ ] log transform the data :round\_pushpin:
-  - [ ] h-index distribution :round\_pushpin:
-  - [ ] h vs mass :round\_pushpin:
-  - [ ] h vs phylogeny
-      - [ ] get phylogenetic tree
-  - [ ] h vs location
-  - [ ] h vs iucn :round\_pushpin:
-  - [ ] h vs human
-  - [ ] *h*-index map
+  - [x] log transform the data
+  - [x] h-index distribution
+  - [x] h vs mass
+  - [x] h vs phylogeny
+      - [x] get phylogenetic tree
+  - [x] h vs location
+  - [x] h vs iucn
+  - [x] h vs human use
+  - [x] *h*-index map
   - [ ] Altmetrics map
   - [ ] Google Trends map
 

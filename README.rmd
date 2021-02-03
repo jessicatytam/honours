@@ -51,19 +51,19 @@ output: github_document
     - [x] run the 2nd list next week since I've reached the limit of 20,000 requests this week
   - [ ] Missing data (mice)
   - [ ] Altmetrics (rAltmetric)
-  - [ ] Google Trends (gtrendsR)
+  - [ ] Google Trends (gtrendsR) :round_pushpin:
 
-## :art: Making graphs
+## :art: Making graphs :round_pushpin:
 
-  - [ ] log transform the data :round_pushpin:
-  - [ ] h-index distribution :round_pushpin:
-  - [ ] h vs mass :round_pushpin:
-  - [ ] h vs phylogeny
-    - [ ] get phylogenetic tree
-  - [ ] h vs location 
-  - [ ] h vs iucn :round_pushpin:
-  - [ ] h vs human
-  - [ ] *h*-index map
+  - [x] log transform the data 
+  - [x] h-index distribution 
+  - [x] h vs mass 
+  - [x] h vs phylogeny
+    - [x] get phylogenetic tree
+  - [x] h vs location 
+  - [x] h vs iucn 
+  - [x] h vs human use
+  - [x] *h*-index map
   - [ ] Altmetrics map
   - [ ] Google Trends map
 
