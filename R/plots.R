@@ -107,15 +107,35 @@ for (i in 1:nrow(includeh)) {
 
 #remove extinct mammals
 
+includeh <- includeh[!(includeh$order == "Ascaridida"),] #worm
 includeh <- includeh[!(includeh$genus == "Homo"),] #humans
 includeh <- includeh[!(includeh$genus == "Mammuthus"),] #woolly mammoth
+
+#need to check
+includeh <- includeh[!(includeh$genus == "Boromys"),] #cave rat from the Eocene
+
+
 
 #removing "not applicable" in iucn status
 
 for (i in 1:nrow(includeh)) {
-  if (includeh$redlistCategory1[i] == "Not Applicable") {
+  if (!is.na(includeh$redlistCategory1[i]) & includeh$redlistCategory1[i] == "Not Applicable") {
     includeh$redlistCategory1[i] <- includeh$redlistCategory2[i]
     includeh$redlistCategory2[i] <- NA
+  }
+}
+
+for (i in 1:nrow(includeh)) {
+  if (is.na(includeh$redlistCategory1[i]) & !is.na(includeh$redlistCategory2[i])) {
+    includeh$redlistCategory1[i] <- includeh$redlistCategory2[i]
+    includeh$redlistCategory2[i] <- NA
+  }
+}
+
+for (i in 1:nrow(includeh)) {
+  if (is.na(includeh$redlistCategory2[i]) & !is.na(includeh$redlistCategory3[i])) {
+    includeh$redlistCategory2[i] <- includeh$redlistCategory3[i]
+    includeh$redlistCategory3[i] <- NA
   }
 }
 
@@ -151,15 +171,26 @@ ggplot(includeh, aes(x = logh1,
                      y = order)) +
   geom_boxplot() +
   geom_jitter(aes(colour = redlistCategory1),
-              alpha = 0.5)
+              alpha = 0.7) +
+  labs(x = "h-index",
+       y = "Order",
+       colour = "IUCN Red List Category") +
+  scale_x_continuous() +
+  scale_colour_manual(values = c("#0d1e7d", "#194cb3", "#6b40e1", "#aa55ea",
+                                 "#ea559d", "#cd2d54", "#951433",
+                                 "#888888", "#292929")) +
+  scale_y_discrete(limits = rev)
 
 #h-index
 ggplot(includeh, aes(x = reorder(genus_species, logh1),
                      y = logh1)) +
   geom_point(aes(colour = order),
              alpha = 0.5) +
+  labs(x = "Species",
+       y = "h-index",
+       colour = "Order") +
   theme(legend.position = "bottom",
-        axis.text.x = element_text(angle = 90)) 
+        axis.text.x = element_blank()) 
 
 ggplot(includeh, aes(x = logh1,
                      fill = order)) +
@@ -175,36 +206,78 @@ mass <- ggplot(includeh, aes(x = logmass,
   geom_point(aes(colour = order),
              alpha = 0.5) +
   geom_smooth() +
+  labs(x = "Body mass",
+       y = "h-index",
+       colour = "Order") +
   theme(legend.position = "bottom")
 ggMarginal(mass,
            type = "histogram",
-           bins = 100)
+           bins = 150)
 
 #iucn category
 ggplot(includeh, aes(x = redlistCategory1,
                      y = logh1)) +
   geom_boxplot() +
   geom_jitter(aes(colour = order),
-              alpha = 0.5) 
+              alpha = 0.5) +
+  labs(x = "IUCN Red List Category",
+       y = "h-index",
+       colour = "Order")
 
 #human use
 includeh_pivot <- includeh %>%
   pivot_longer(cols = starts_with("use"),
                names_to = "use_count",
                values_to = "human_use")
+includeh_pivot$human_use <- str_to_title(toupper(includeh_pivot$human_use)) #first letter uppercase
+includeh_pivot$human_use <- str_replace_all(includeh_pivot$human_use, "_", " ")
+
+for (i in 1:nrow(includeh_pivot)) {
+  if (!is.na(includeh_pivot$human_use[i]) & includeh_pivot$human_use[i] == "Food animal") {
+    includeh_pivot$human_use[i] <- "Food (for animals)"
+  } else if (!is.na(includeh_pivot$human_use[i]) & includeh_pivot$human_use[i] == "Food human") {
+    includeh_pivot$human_use[i] <- "Food (for humans)"
+  } else if (!is.na(includeh_pivot$human_use[i]) & includeh_pivot$human_use[i] == "Handicrafts jewellery") {
+    includeh_pivot$human_use[i] <- "Handicrafts & jewellery"
+  } else if (!is.na(includeh_pivot$human_use[i]) & includeh_pivot$human_use[i] == "Pets display animals horticulture") {
+    includeh_pivot$human_use[i] <- "Pets, display animals & horticulture"
+  } else if (!is.na(includeh_pivot$human_use[i]) & includeh_pivot$human_use[i] == "Sport hunting specimen collecting") {
+    includeh_pivot$human_use[i] <- "Sport hunting & specimen collecting"
+  } else if (!is.na(includeh_pivot$human_use[i]) & includeh_pivot$human_use[i] == "Wearing apparel accessories") {
+    includeh_pivot$human_use[i] <- "Wearing apparel & accessories"
+  } 
+}
+
+med_use <- includeh_pivot %>%
+  group_by(human_use) %>%
+  summarise_at(vars(logh1), median, na.rm = T) %>%
+  ungroup()
+med_use <- med_use %>%
+  arrange(logh1)
+med_use <- med_use[c(3:4, 6:19, 5, 2, 1),]
+
+includeh_pivot$human_use <- factor(includeh_pivot$human_use, levels = med_use$human_use)
 
 ggplot(includeh_pivot, aes(x = logh1,
                            y = human_use)) +
   geom_boxplot() +
   geom_jitter(aes(colour = order),
-              alpha = 0.5) 
+              alpha = 0.5) +
+  labs(x = "h-index",
+       y = "Human use",
+       colour = "Order") +
+  scale_y_discrete(limits = rev)
+  
 
 #latitude
 med_lat <- ggplot(includeh, aes(x = median_lat,
                                 y = logh1,
                                 colour = order)) +
   geom_point(alpha = 0.5) +
-  geom_smooth()
+  geom_smooth() +
+  labs(x = "Latitude (median)",
+       y = "h-index",
+       colour = "Order")
 ggMarginal(med_lat,
            type = "histogram",
            margins = "x",
@@ -235,7 +308,7 @@ ggplot(data = world) +
                                   y = y,
                                   colour = logh1),
              size = 3,
-             alpha = 0.6) +
+             alpha = 0.7) +
   coord_sf(expand = FALSE) +
   labs(x = "Longitude",
        y = "Latitude",
@@ -263,6 +336,7 @@ ggtree(tree_join, aes(colour = order),
              orientation = "y", 
              stat = "identity")
 
+#not related to h-index
 
 
 #save and read
@@ -292,3 +366,10 @@ tax_filter_test <- tax_df_test %>%
 tax_filter_test$unique_name
 
 sum(is.na(includeh$redlistCategory1))
+
+
+for (i in 1:nrow(includeh)) {
+  if (includeh$redlistCategory1[i] == "Not Applicable") {
+    print(includeh$genus_species[i])
+  }
+}
