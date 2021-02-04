@@ -122,7 +122,7 @@ includeh <- includeh[!(includeh$genus_species == "Mylodon darwinii"),] #ground s
 includeh <- includeh[!(includeh$genus_species == "Orrorin tugenensis"),] #early human
 includeh <- includeh[!(includeh$genus_species == "Brandtocetus chongulek"),] #miocene whale
 
-#removing "not applicable" in iucn status
+#cleaning iucn status
 
 for (i in 1:nrow(includeh)) {
   if (!is.na(includeh$redlistCategory1[i]) & includeh$redlistCategory1[i] == "Not Applicable") {
@@ -145,6 +145,28 @@ for (i in 1:nrow(includeh)) {
   }
 }
 
+includeh$redlistCategory2 <- na_if(includeh$redlistCategory2, "Not Applicable")
+
+for (i in 1:nrow(includeh)) {
+  if(!is.na(includeh$redlistCategory3[i])) {
+    includeh$redlistCategory2[i] <- includeh$redlistCategory3[i]
+    includeh$redlistCategory3[i] <- NA
+  }
+}
+
+for (i in 1:nrow(includeh)) {
+  if(!is.na(includeh$redlistCategory2[i])) {
+    includeh$redlistCategory1[i] <- includeh$redlistCategory2[i]
+    includeh$redlistCategory2[i] <- NA
+  }
+}
+
+includeh[443, 21] <- "Vulnerable"
+includeh <- includeh[-c(22, 23)]
+includeh <- includeh%>%
+  rename(redlistCategory = redlistCategory1)
+
+
 #LOG TRANSFORM
 
 includeh <- includeh %>%
@@ -166,25 +188,25 @@ med_mass <- med_mass %>%
   arrange(by_group = BodyMass.Value)
 includeh$order <- factor(includeh$order, levels = med_mass$order)
 
-unique(includeh$redlistCategory1)
-includeh$redlistCategory1 <- factor(includeh$redlistCategory1, levels = c("Least Concern", "Near Threaten", "Vulnerable",
-                                                                          "Endangered", "Critically Endangered",
-                                                                          "Regionally Extinct", "Extinct in the Wild", "Extinct",
-                                                                          "Data Deficient", "Not Applicable", NA))
+unique(includeh$redlistCategory)
+includeh$redlistCategory <- factor(includeh$redlistCategory, levels = c("Least Concern", "Near Threaten", "Vulnerable",
+                                                                        "Endangered", "Critically Endangered",
+                                                                        "Regionally Extinct", "Extinct in the Wild", "Extinct",
+                                                                        "Data Deficient", NA))
 
 #h by order
 ggplot(includeh, aes(x = logh1,
                      y = order)) +
   geom_boxplot() +
-  geom_jitter(aes(colour = redlistCategory1),
-              alpha = 0.7) +
+  geom_jitter(aes(colour = redlistCategory),
+              size = 2,
+              alpha = 0.6) +
   labs(x = "h-index",
        y = "Order",
        colour = "IUCN Red List Category") +
   scale_x_continuous() +
   scale_colour_manual(values = c("#0d1e7d", "#194cb3", "#6b40e1", "#aa55ea",
-                                 "#ea559d", "#cd2d54", "#951433",
-                                 "#888888", "#292929")) +
+                                 "#ea559d", "#cd2d54", "#951433", "#888888")) +
   scale_y_discrete(limits = rev)
 
 #h-index
@@ -210,6 +232,7 @@ ggplot(includeh, aes(x = h,
 mass <- ggplot(includeh, aes(x = logmass,
                      y = logh1)) +
   geom_point(aes(colour = order),
+             size = 2,
              alpha = 0.5) +
   geom_smooth() +
   labs(x = "Body mass",
@@ -231,10 +254,11 @@ ggplot(includeh, aes(x = logmass,
   theme(legend.position = "bottom")
 
 #iucn category
-ggplot(includeh, aes(x = redlistCategory1,
+ggplot(includeh, aes(x = redlistCategory,
                      y = logh1)) +
   geom_boxplot() +
   geom_jitter(aes(colour = order),
+              size = 2,
               alpha = 0.5) +
   labs(x = "IUCN Red List Category",
        y = "h-index",
@@ -278,6 +302,7 @@ ggplot(includeh_pivot, aes(x = logh1,
                            y = human_use)) +
   geom_boxplot() +
   geom_jitter(aes(colour = order),
+              size = 2,
               alpha = 0.5) +
   labs(x = "h-index",
        y = "Human use",
@@ -289,8 +314,8 @@ ggplot(includeh_pivot, aes(x = logh1,
 med_lat <- ggplot(includeh, aes(x = median_lat,
                                 y = logh1,
                                 colour = order)) +
-  geom_point(alpha = 0.5) +
-  geom_smooth() +
+  geom_point(size = 2,
+             alpha = 0.5) +
   labs(x = "Latitude (median)",
        y = "h-index",
        colour = "Order")
@@ -354,7 +379,7 @@ ggtree(tree_join, aes(colour = order),
 
 #not related to h-index
 ggplot(includeh, aes(y = order)) +
-  geom_bar(aes(fill = redlistCategory1),
+  geom_bar(aes(fill = redlistCategory),
            position = "fill") +
   scale_y_discrete(limits = rev) +
   scale_x_continuous(labels = scales::percent) +

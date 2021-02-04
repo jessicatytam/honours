@@ -4,16 +4,29 @@ library(rnaturalearth)
 library(rnaturalearthdata)
 library(sf)
 
-search_terms <- c("Phascolarctos cinereus")
 
-output <- gtrends(keyword = search_terms,
-                  time = "all") 
+#get the data
+search_terms <- includeh$genus_species
+
+output <- list()
+for (i in 1:length(includeh$genus_species)) {
+  print(paste("getting data for", includeh$genus_species[i]))
+  search_term <- includeh$genus_species[i]
+  output[[i]] <- gtrends(keyword = search_term,
+                         time = "all")
+}
+gtrends_output <- bind_rows(output)
+
 
 ggplot(output$interest_over_time, aes(x = date,
                                       y = hits)) +
   geom_line()
 
+#sum, slope, intercept
 
+glm <- glm(hits ~ date, output$interest_over_time, family = poisson)
+summary(glm)
+plot(glm)
 
 #map
 
@@ -38,9 +51,8 @@ ggplot(world) +
 
 #reading and writing
 
-
+write.csv(includeh, file = "outputs/includeh.csv")
+includeh <- read.csv(file = "outputs/includeh.csv", header = T)[-c(1)]
 
 #testing
 
-write.csv(includeh, file = "outputs/includeh.csv")
-includeh <- read.csv(file = "outputs/includeh.csv", header = T)[-c(1)]
