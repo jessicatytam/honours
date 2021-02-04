@@ -11,10 +11,10 @@ library(sf)
 h <- new_handle()
 req <- curl_fetch_memory("http://apis.google.com/Cookies/OTZ", handle = h)
 handle_cookies(h)
-(widget <- curl::curl_fetch_memory(url,h))
+widget <- curl_fetch_memory(url, h)
 
 output <- list()
-for (i in 28:length(includeh$genus_species)) {
+for (i in 1:length(includeh$genus_species)) {
   print(paste("getting data for", includeh$genus_species[i]))
   search_term <- includeh$genus_species[i]
   output_more[[i]] <- gtrends(keyword = search_term,

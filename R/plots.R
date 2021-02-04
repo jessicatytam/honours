@@ -387,6 +387,11 @@ ggplot(includeh, aes(y = order)) +
                                "#ea559d", "#cd2d54", "#951433",
                                "#888888", "#292929"))
 
+ggplot(includeh, aes(x = log10(years_publishing),
+                     y = logh1)) +
+  geom_point(aes(size = log10(m+1)),
+             alpha = 0.5)
+
 #save and read
 
 write.csv(includeh, file = "outputs/includeh.csv")
