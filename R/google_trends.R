@@ -1,20 +1,27 @@
 library(tidyverse)
 library(gtrendsR)
+library(curl)
 library(rnaturalearth)
 library(rnaturalearthdata)
 library(sf)
 
 
 #get the data
-search_terms <- includeh$genus_species
+
+h <- new_handle()
+req <- curl_fetch_memory("http://apis.google.com/Cookies/OTZ", handle = h)
+handle_cookies(h)
+(widget <- curl::curl_fetch_memory(url,h))
 
 output <- list()
-for (i in 1:length(includeh$genus_species)) {
+for (i in 28:length(includeh$genus_species)) {
   print(paste("getting data for", includeh$genus_species[i]))
   search_term <- includeh$genus_species[i]
-  output[[i]] <- gtrends(keyword = search_term,
+  output_more[[i]] <- gtrends(keyword = search_term,
                          time = "all")
+  Sys.sleep(1)
 }
+
 gtrends_output <- bind_rows(output)
 
 
