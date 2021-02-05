@@ -359,7 +359,6 @@ ggplot(data = world) +
 
 #phylogenetic tree; need help
 tree <- tol_induced_subtree(ott_ids = includeh$id, label_format = "name")
-plot(tree, type = "fan", cex = 0.4, label.offset = 0.1, no.margin = T)
 
 includeh_join <- includeh %>%
   rename(label = genus_species)
@@ -369,13 +368,16 @@ tree <- as_tibble(tree)
 tree_join <- full_join(tree, includeh_join, by = "label")
 tree_join <- as.treedata(tree_join)
 
-ggtree(tree_join, aes(colour = order),
+ggtree(tree_join, aes(colour = order,
+                      fill = order),
        layout = "circular") +
   geom_fruit(geom = geom_bar,
-             mapping = aes(x = h, fill = order),
+             mapping = aes(x = h),
              pwidth = 0.5,
              orientation = "y", 
-             stat = "identity")
+             stat = "identity") +
+  labs(fill = "Order") +
+  guides(colour = FALSE)
 
 #not related to h-index
 ggplot(includeh, aes(y = order)) +
@@ -396,8 +398,6 @@ ggplot(includeh, aes(x = log10(years_publishing),
 
 write.csv(includeh, file = "outputs/includeh.csv")
 includeh <- read.csv(file = "outputs/includeh.csv", header = T)[-c(1)]
-
-
 
 #testing
 
