@@ -445,11 +445,18 @@ includeh <- read.csv(file = "outputs/includeh.csv", header = T)[-c(1)]
 
 #testing
 
-test <- includeh[1:20,]
+test <- includeh %>%
+  arrange(logh1)
+test <- test[c(6738:6719),]
 
-testextinct <- flags(tnrs_match_names(names = test$genus_species))
-
-sum(tnrs_match_names(names = includeh$genus_species)$flags=="extinct")
-
-testiucn <- includeh %>%
-  filter(redlistCategory1=="Extinct")
+ggplot(data = world) +
+  geom_sf() +
+  geom_point(data = test, aes(x = x,
+                              y = y,
+                              colour = logh1),
+             size = 4) +
+  coord_sf(expand = FALSE) +
+  labs(x = "Longitude",
+       y = "Latitude",
+       colour = "h-index") +
+  scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous")) 
