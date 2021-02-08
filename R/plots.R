@@ -13,6 +13,7 @@ library(wesanderson)
 library(ggtree)
 library(ggtreeExtra)
 library(treeio)
+library(scales)
 
 
 hindex <- read.csv(file = "outputs/hindex.csv", header = T)
@@ -117,6 +118,7 @@ status <- status %>%
 includeh <- cbind(includeh, status)
 
 includeh <- includeh[!(includeh$status == "extinct"),] #status from rotl
+includeh <- includeh[!(includeh$status == "extinct_inherited"),]
 
 includeh <- includeh[!(includeh$genus_species == "Mylodon darwinii"),] #ground sloth
 includeh <- includeh[!(includeh$genus_species == "Orrorin tugenensis"),] #early human
@@ -192,7 +194,7 @@ unique(includeh$redlistCategory)
 includeh$redlistCategory <- factor(includeh$redlistCategory, levels = c("Least Concern", "Near Threaten", "Vulnerable",
                                                                         "Endangered", "Critically Endangered",
                                                                         "Regionally Extinct", "Extinct in the Wild", "Extinct",
-                                                                        "Data Deficient", NA))
+                                                                        "Data Deficient"))
 
 #h by order
 ggplot(includeh, aes(x = logh1,
@@ -200,13 +202,19 @@ ggplot(includeh, aes(x = logh1,
   geom_boxplot() +
   geom_jitter(aes(colour = redlistCategory),
               size = 2,
-              alpha = 0.6) +
+              alpha = 0.5) +
   labs(x = "h-index",
        y = "Order",
        colour = "IUCN Red List Category") +
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 10),
+        legend.title = element_text(size = 12),
+        legend.text = element_text(size = 10),
+        legend.position = c(0.88, 0.862)) +
   scale_x_continuous() +
   scale_colour_manual(values = c("#0d1e7d", "#194cb3", "#6b40e1", "#aa55ea",
-                                 "#ea559d", "#cd2d54", "#951433", "#888888")) +
+                                 "#ea559d", "#cd2d54", "#951433"),
+                      na.value = c("#a5a5a5")) +
   scale_y_discrete(limits = rev)
 
 #h-index
@@ -238,8 +246,13 @@ mass <- ggplot(includeh, aes(x = logmass,
   labs(x = "Body mass",
        y = "h-index",
        colour = "Order") +
-  theme(legend.position = "bottom")
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 10),
+        legend.title = element_text(size = 12),
+        legend.text = element_text(size = 10)) +
+  guides(colour = guide_legend(ncol = 1))
 ggMarginal(mass,
+           margins = "x",
            type = "histogram",
            bins = 150)
 
@@ -254,15 +267,23 @@ ggplot(includeh, aes(x = logmass,
   theme(legend.position = "bottom")
 
 #iucn category
-ggplot(includeh, aes(x = redlistCategory,
-                     y = logh1)) +
+ggplot(includeh, aes(x = logh1,
+                     y = redlistCategory)) +
   geom_boxplot() +
   geom_jitter(aes(colour = order),
               size = 2,
               alpha = 0.5) +
-  labs(x = "IUCN Red List Category",
-       y = "h-index",
-       colour = "Order")
+  labs(x = "h-index",
+       y = "IUCN Red List Category",
+       colour = "Order") +
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 11),
+        legend.title = element_text(size = 12),
+        legend.text = element_text(size = 10),
+        legend.position = c(0.92, 0.6)) +
+  guides(colour = guide_legend(ncol = 1)) +
+  scale_y_discrete(limits = rev,
+                   labels = label_wrap(16))
 
 #human use
 includeh_pivot <- includeh %>%
@@ -307,7 +328,14 @@ ggplot(includeh_pivot, aes(x = logh1,
   labs(x = "h-index",
        y = "Human use",
        colour = "Order") +
-  scale_y_discrete(limits = rev)
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 10),
+        legend.title = element_text(size = 12),
+        legend.text = element_text(size = 10),
+        legend.position = c(0.9, 0.62)) +
+  guides(colour = guide_legend(ncol = 1)) +
+  scale_y_discrete(limits = rev,
+                   labels = label_wrap(18))
   
 
 #latitude
@@ -318,7 +346,12 @@ med_lat <- ggplot(includeh, aes(x = median_lat,
              alpha = 0.5) +
   labs(x = "Latitude (median)",
        y = "h-index",
-       colour = "Order")
+       colour = "Order") +
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 10),
+        legend.title = element_text(size = 12),
+        legend.text = element_text(size = 10)) +
+  guides(colour = guide_legend(ncol = 1))
 ggMarginal(med_lat,
            type = "histogram",
            margins = "x",
@@ -354,10 +387,14 @@ ggplot(data = world) +
   labs(x = "Longitude",
        y = "Latitude",
        colour = "h-index") +
-  theme(panel.background = element_rect(fill = "aliceblue")) +
+  theme(panel.background = element_rect(fill = "aliceblue"),
+        axis.title = element_text(size = 14),
+        axis.text = element_text(size = 10),
+        legend.title = element_text(size = 12),
+        legend.text = element_text(size = 10)) +
   scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous")) 
 
-#phylogenetic tree; need help
+#phylogenetic tree
 tree <- tol_induced_subtree(ott_ids = includeh$id, label_format = "name")
 
 includeh_join <- includeh %>%
@@ -383,11 +420,18 @@ ggtree(tree_join, aes(colour = order,
 ggplot(includeh, aes(y = order)) +
   geom_bar(aes(fill = redlistCategory),
            position = "fill") +
+  labs(x = "Proportion",
+       y = "Order",
+       fill = "IUCN Red List Category") +
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 10),
+        legend.title = element_text(size = 12),
+        legend.text = element_text(size = 10)) +
   scale_y_discrete(limits = rev) +
   scale_x_continuous(labels = scales::percent) +
   scale_fill_manual(values = c("#0d1e7d", "#194cb3", "#6b40e1", "#aa55ea",
-                               "#ea559d", "#cd2d54", "#951433",
-                               "#888888", "#292929"))
+                               "#ea559d", "#cd2d54", "#951433"),
+                    na.value = c("#a5a5a5"))
 
 ggplot(includeh, aes(x = log10(years_publishing),
                      y = logh1)) +
