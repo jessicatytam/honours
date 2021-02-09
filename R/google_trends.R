@@ -25,7 +25,22 @@ for (i in 1:length(includeh$genus_species)) {
 gtrends_output <- bind_rows(output)
 
 
-ggplot(output$interest_over_time, aes(x = date,
+output <- c("Bos taurus")
+cow <- gtrends(keyword = output,
+                 time = "all")
+
+output <- c("Glis glis")
+dormouse <- gtrends(keyword = output,
+                    time = "all")
+
+
+output <- c("Abditomys latidens")
+mammal <- gtrends(keyword = output,
+        time = "all")
+
+
+
+ggplot(mammal$interest_over_time, aes(x = date,
                                       y = hits)) +
   geom_line()
 
