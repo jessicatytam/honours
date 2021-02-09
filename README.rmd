@@ -64,7 +64,9 @@ output: github_document
   - [x] h vs iucn 
   - [x] h vs human use
   - [x] *h*-index map
-  - [ ] Altmetrics map
+  - [ ] h vs domestication
+  - [ ] h with vs without conservation keyword
+    - [ ] check for patterns
   - [ ] Google Trends map
 
 ## :rocket: Statistical analysis
