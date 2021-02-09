@@ -17,10 +17,12 @@ output <- list()
 for (i in 1:length(includeh$genus_species)) {
   print(paste("getting data for", includeh$genus_species[i]))
   search_term <- includeh$genus_species[i]
-  output_more[[i]] <- gtrends(keyword = search_term,
+  output[[i]] <- gtrends(keyword = search_term,
                          time = "all")
   Sys.sleep(1)
 }
+
+saveRDS(output, "intermediate_data/gtrends_results1.RDS") #spp 1-1611
 
 gtrends_output <- bind_rows(output)
 
@@ -57,6 +59,8 @@ ggplot(world) +
   scale_fill_viridis_c(option = "plasma") 
 
 #reading and writing
+
+
 
 write.csv(includeh, file = "outputs/includeh.csv")
 includeh <- read.csv(file = "outputs/includeh.csv", header = T)[-c(1)]
