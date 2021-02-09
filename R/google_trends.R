@@ -8,13 +8,8 @@ library(sf)
 
 #get the data
 
-h <- new_handle()
-req <- curl_fetch_memory("http://apis.google.com/Cookies/OTZ", handle = h)
-handle_cookies(h)
-widget <- curl_fetch_memory(url, h)
-
-output <- list()
-for (i in 1:length(includeh$genus_species)) {
+output2 <- list()
+for (i in 1612:length(includeh$genus_species)) {
   print(paste("getting data for", includeh$genus_species[i]))
   search_term <- includeh$genus_species[i]
   output[[i]] <- gtrends(keyword = search_term,
@@ -23,6 +18,9 @@ for (i in 1:length(includeh$genus_species)) {
 }
 
 saveRDS(output, "intermediate_data/gtrends_results1.RDS") #spp 1-1611
+saveRDS(output2, "intermediate_data/gtrends_results2.RDS") #spp 161-
+
+
 
 gtrends_output <- bind_rows(output)
 
