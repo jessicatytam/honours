@@ -18,7 +18,7 @@ for (i in 1612:6738) {
 }
 
 saveRDS(output, "intermediate_data/gtrends_results1.RDS") #spp 1-1611
-saveRDS(output2, "intermediate_data/gtrends_results2.RDS") #spp 1612-
+saveRDS(output2, "intermediate_data/gtrends_results2.RDS") #spp 1612-1725
 
 
 

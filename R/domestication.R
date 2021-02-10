@@ -21,13 +21,15 @@ domesticated <- domesticated %>%
 partially_domesticated <- partially_domesticated %>%
   filter(str_extract(partially_domesticated$`Taxon group`, "^1") == 1)
 
-#get and clean binomial names 
+#get binomial names 
 
-domesticated <- domesticated %>%
-  mutate(species = str_extract(domesticated$`Species and subspecies`, "(?<=\\().+(?=\\))")) #extract names using the brackets
+domesticated <- domesticated %>% #extract names using the brackets
+  mutate(species = str_extract(domesticated$`Species and subspecies`, "(?<=\\().+(?=\\))")) 
 
-partially_domesticated <- partially_domesticated %>%
-  mutate(species = str_extract_all(partially_domesticated$`Species and subspecies`, "\\(([^\\)]+)")) #extract names using the brackets
+partially_domesticated <- partially_domesticated %>% #extract names using the brackets
+  mutate(species = str_extract_all(partially_domesticated$`Species and subspecies`, "\\(([^\\)]+)")) 
+
+#cleaning binomial names
 
 partially_domesticated$species <- str_replace_all(partially_domesticated$species, "\\(", "") #removing mismatched brackets
 partially_domesticated$species <- str_replace_all(partially_domesticated$species, "\\)", "")
@@ -37,6 +39,8 @@ partially_domesticated$species <- str_replace_all(partially_domesticated$species
 partially_domesticated <- partially_domesticated %>% #separate the names using ","
   separate(species, c("species1", "species2", "species3", "species4", "species5",
                       "species6", "species7", "species8", "species9", "species10"), sep = "[,]+")
+
+#fill in genus names
 
 
 
@@ -49,6 +53,4 @@ partially_domesticated <- partially_domesticated %>% #separate the names using "
 
 test <- partially_domesticated[c(91:100),]
 
-test_output <- test %>%
-  separate(species, c("species1", "species2", "species3", "species4", "species5",
-                      "species6", "species7", "species8", "species9", "species10"), sep = "[,]+")
+str_extract_all(test$species2, "[^[:space:]]+")
