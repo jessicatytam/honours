@@ -24,30 +24,31 @@ partially_domesticated <- partially_domesticated %>%
 #get and clean binomial names 
 
 domesticated <- domesticated %>%
-  mutate(species = str_extract(domesticated$`Species and subspecies`, "(?<=\\().+(?=\\))"))
+  mutate(species = str_extract(domesticated$`Species and subspecies`, "(?<=\\().+(?=\\))")) #extract names using the brackets
 
 partially_domesticated <- partially_domesticated %>%
-  mutate(species = str_extract_all(partially_domesticated$`Species and subspecies`, "\\(([^\\)]+)"))
+  mutate(species = str_extract_all(partially_domesticated$`Species and subspecies`, "\\(([^\\)]+)")) #extract names using the brackets
 
-partially_domesticated$species <- str_replace_all(partially_domesticated$species, "\\(", "")
+partially_domesticated$species <- str_replace_all(partially_domesticated$species, "\\(", "") #removing mismatched brackets
 partially_domesticated$species <- str_replace_all(partially_domesticated$species, "\\)", "")
+partially_domesticated$species <- str_replace_all(partially_domesticated$species, "c", "") #removing "c"
+partially_domesticated$species <- str_replace_all(partially_domesticated$species, '"', "") #removing quotation marks
 
-
-for (i in 1:length(partially_domesticated$species)) {
-  if (str_detect(partially_domesticated$species[i], "[:punct:]")) {
-    print(partially_domesticated$species[i])
-  }
-}
-
-
-domesticated$species[36] <- str_extract(domesticated$species[36], "[^)]+")
+partially_domesticated <- partially_domesticated %>% #separate the names using ","
+  separate(species, c("species1", "species2", "species3", "species4", "species5",
+                      "species6", "species7", "species8", "species9", "species10"), sep = "[,]+")
 
 
 
-#cleaning
+
+#save and load
 
 
 
 #testing
 
-str_extract_all(partially_domesticated$`Species and subspecies`, "\\(([^\\)]+)")
+test <- partially_domesticated[c(91:100),]
+
+test_output <- test %>%
+  separate(species, c("species1", "species2", "species3", "species4", "species5",
+                      "species6", "species7", "species8", "species9", "species10"), sep = "[,]+")

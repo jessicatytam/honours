@@ -65,6 +65,7 @@ output: github_document
   - [x] h vs human use
   - [x] *h*-index map
   - [ ] h vs domestication
+    - [ ] scrape and cleaing data from wikipedia :round_pushpin:
   - [ ] h with vs without conservation keyword
     - [ ] check for patterns
   - [ ] Google Trends map
