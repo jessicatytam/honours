@@ -18,8 +18,36 @@ partially_domesticated <- wiki_url %>%
 domesticated <- domesticated %>%
   filter(str_extract(domesticated$`Taxon group`, "^1") == 1)
 
-#get binomial names 
+partially_domesticated <- partially_domesticated %>%
+  filter(str_extract(partially_domesticated$`Taxon group`, "^1") == 1)
 
-str_extract(domesticated$`Species and subspecies`, "\\w(?!()")
+#get and clean binomial names 
+
+domesticated <- domesticated %>%
+  mutate(species = str_extract(domesticated$`Species and subspecies`, "(?<=\\().+(?=\\))"))
+
+partially_domesticated <- partially_domesticated %>%
+  mutate(species = str_extract_all(partially_domesticated$`Species and subspecies`, "\\(([^\\)]+)"))
+
+partially_domesticated$species <- str_replace_all(partially_domesticated$species, "\\(", "")
+partially_domesticated$species <- str_replace_all(partially_domesticated$species, "\\)", "")
+
+
+for (i in 1:length(partially_domesticated$species)) {
+  if (str_detect(partially_domesticated$species[i], "[:punct:]")) {
+    print(partially_domesticated$species[i])
+  }
+}
+
+
+domesticated$species[36] <- str_extract(domesticated$species[36], "[^)]+")
+
+
 
 #cleaning
+
+
+
+#testing
+
+str_extract_all(partially_domesticated$`Species and subspecies`, "\\(([^\\)]+)")
