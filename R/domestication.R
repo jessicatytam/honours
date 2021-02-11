@@ -1,6 +1,7 @@
 library(tidyverse)
 library(rvest)
 library(rotl)
+library(specieshindex)
 
 #get the data
 
@@ -77,8 +78,6 @@ for (i in 1:length(partially_domesticated$species10)) {
   }
 }
 
-partially_domesticated[46, 13] <- "Osphranter rufus"
-
 #pivot longer
 
 partially_domesticated <- partially_domesticated %>%
@@ -92,12 +91,72 @@ partially_domesticated <- partially_domesticated %>%
 partially_domesticated <- partially_domesticated %>%
   select(!name)
 
-#combine?
+#combine
 
+domesticated <- domesticated %>%
+  rename("spp and subspp" = "Species and subspecies")
+
+partially_domesticated <- partially_domesticated %>%
+  rename(Purposes = Purpose)
+
+domestication <- rbind(domesticated, partially_domesticated)
+
+#remove unwanted data
+
+domestication <- domestication[c(10, 5, 7:8)] 
+domestication <- domestication %>%
+  arrange(species)
+
+#get id for domestication
+
+domestication <- domestication %>%
+  mutate(id = tnrs_match_names(names = domestication$species)$ott_id, .after = species)
+
+#remove subspecies
+
+domestication[28, 1] <- "Canis lupus" #add Canis lupus
+domestication[28, 2] <- tnrs_match_names(names = "Canis lupus")$ott_id
+
+domestication <- domestication %>%
+  filter(lengths(str_split(domestication$species, " "))==2)
+
+#check for synonyms
+
+tnrs_match_names(names = domestication$species)
+
+#h-index
+
+syn <- read_csv("intermediate_data/synonyms.csv")
+syn$synonyms <- shQuote(syn$synonyms, "cmd") #add quotation marks around synonyms
+
+scopus_out <- list() #initializing empty list 
+for (i in 1:length(domestication$species)) {  
+  if (!domestication$id[i] %in% syn$id) {
+    scopus_out[[i]] <- FetchSpTAK(genus = str_split(domestication$species[i], pattern = " ")[[1]][1],
+                                  species = str_split(domestication$species[i], pattern = " ")[[1]][2],
+                                  APIkey = "442b9048417ef20cf680a0ae26ee4d86")
+  } else {
+    syns <- syn$synonyms[match(domestication$id[i], syn$id)]
+    scopus_out[[i]] <- FetchSpTAK(genus = str_split(domestication$species[i], pattern = " ")[[1]][1],
+                                  species = str_split(domestication$species[i], pattern = " ")[[1]][2],
+                                  synonyms = syns,
+                                  APIkey = "442b9048417ef20cf680a0ae26ee4d86")
+  }
+}
+
+indices <- list()
+for (i in 1:length(scopus_out)){
+  indices[[i]] <- Allindices(scopus_out[[i]],
+                              genus = str_split(domestication$species[i], pattern = " ")[[1]][1],
+                              species = str_split(domestication$species[i], pattern = " ")[[1]][2])
+}
 
 #save and load
 
+write.csv(domestication, file = "intermediate_data/domestication.csv")
+domestication <- read.csv(file = "intermediate_data/domestication.csv", header = T)[-c(1),]
 
+write.csv(indices, file = "intermediate_data/domestication_h.csv")
 
 #testing
 
