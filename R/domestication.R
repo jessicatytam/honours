@@ -67,20 +67,32 @@ for (i in 1:length(domesticated$species)) {
   table(tnrs_match_names(names = domesticated$species[i])$approximate_match)
 }
 
-for (i in 1:length(partially_domesticated$species)) {
-  tnrs_match_names(names = partially_domesticated$species[i])$approximate_match
-}
+for (i in 1:length(partially_domesticated$species1)) {
+  table(tnrs_match_names(names = partially_domesticated$species1[i])$approximate_match)
+} 
 
-for (i in 1:length(partially_domesticated$species)) {
-  if (!is.na(partially_domesticated$species[i])) {
-    table(tnrs_match_names(names = partially_domesticated$species[i])$approximate_match)
+for (i in 1:length(partially_domesticated$species10)) {
+  if (!is.na(partially_domesticated$species10[i])) {
+    table(tnrs_match_names(names = partially_domesticated$species10[i])$approximate_match)
   }
 }
 
-partially_domesticated[9, 10] <- "Caracal caracal"
-partially_domesticated[90, 10] <- "Crocuta crocuta"
-partially_domesticated[41, 10] <- "Oryx beisa callotis"
-partially_domesticated[2, 10] <- "Rangifer tarandus domesticus"
+partially_domesticated[46, 13] <- "Osphranter rufus"
+
+#pivot longer
+
+partially_domesticated <- partially_domesticated %>%
+  rename("spp and subspp" = "Species and subspecies")
+
+partially_domesticated <- partially_domesticated %>%
+  pivot_longer(cols = starts_with("species"),
+               values_to = "species",
+               values_drop_na = TRUE)
+
+partially_domesticated <- partially_domesticated %>%
+  select(!name)
+
+#combine?
 
 
 #save and load
