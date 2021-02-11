@@ -1,5 +1,6 @@
 library(tidyverse)
 library(rvest)
+library(rotl)
 
 #get the data
 
@@ -33,7 +34,13 @@ partially_domesticated <- partially_domesticated %>% #extract names using the br
 
 partially_domesticated$species <- str_replace_all(partially_domesticated$species, "\\(", "") #removing mismatched brackets
 partially_domesticated$species <- str_replace_all(partially_domesticated$species, "\\)", "")
-partially_domesticated$species <- str_replace_all(partially_domesticated$species, "c", "") #removing "c"
+
+for (i in 1:length(partially_domesticated$species)) { #removing "c"
+  if (grepl('"', partially_domesticated$species[i])) {
+    partially_domesticated$species[i] <- str_replace(partially_domesticated$species[i], "c", "")
+  }
+}
+
 partially_domesticated$species <- str_replace_all(partially_domesticated$species, '"', "") #removing quotation marks
 
 partially_domesticated <- partially_domesticated %>% #separate the names using ","
@@ -42,7 +49,38 @@ partially_domesticated <- partially_domesticated %>% #separate the names using "
 
 #fill in genus names
 
+for (j in 11:ncol(partially_domesticated)) {
+  for (i in 1:nrow(partially_domesticated)) {
+    if (!is.na(partially_domesticated[,j][i]) & (lengths(str_split(partially_domesticated[,j][i], " ")) == 3)) {
+      partially_domesticated[,j][i] <- str_replace(partially_domesticated[,j][i], ".+(?=[:space:])", word(partially_domesticated$species1[i], 1))
+    } else if (!is.na(partially_domesticated[,j][i]) & (lengths(str_split(partially_domesticated[,j][i], " ")) == 4)) {
+      partially_domesticated[,j][i] <- str_replace(partially_domesticated[,j][i], ".+(?=[:space:])", word(partially_domesticated$species1[i], 1, 2))
+    } 
+  }
+}
 
+partially_domesticated[46, 13] <- "Osphranter rufus"
+
+#check for and fix spelling mistakes
+
+for (i in 1:length(domesticated$species)) {
+  table(tnrs_match_names(names = domesticated$species[i])$approximate_match)
+}
+
+for (i in 1:length(partially_domesticated$species)) {
+  tnrs_match_names(names = partially_domesticated$species[i])$approximate_match
+}
+
+for (i in 1:length(partially_domesticated$species)) {
+  if (!is.na(partially_domesticated$species[i])) {
+    table(tnrs_match_names(names = partially_domesticated$species[i])$approximate_match)
+  }
+}
+
+partially_domesticated[9, 10] <- "Caracal caracal"
+partially_domesticated[90, 10] <- "Crocuta crocuta"
+partially_domesticated[41, 10] <- "Oryx beisa callotis"
+partially_domesticated[2, 10] <- "Rangifer tarandus domesticus"
 
 
 #save and load
@@ -53,4 +91,13 @@ partially_domesticated <- partially_domesticated %>% #separate the names using "
 
 test <- partially_domesticated[c(91:100),]
 
-str_extract_all(test$species2, "[^[:space:]]+")
+grepl('"', test$species[1]) #if this is true
+
+str_replace(test$species, "c", "")
+
+for (i in 1:length(test$species)) {
+  if (grepl('"', test$species[i])) {
+    test$species[i] <- str_replace(test$species[i], "c", "")
+  }
+}
+
