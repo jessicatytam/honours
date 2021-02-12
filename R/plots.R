@@ -27,13 +27,26 @@ hindex$genus_species <- str_replace_all(hindex$genus_species, "_", " ")
 includeh <- list(hindex, combinedf) %>% 
   reduce(left_join, by = "genus_species")
 
+#combine includeh + domestication_h
+
+includeh <- includeh %>%
+  mutate(domestication = NA)
+
+table(indices_df$genus_species %in% includeh$genus_species) #50 unique ones
+
+includeh <- rbind(includeh, indices_df)
+
 #fill in orders and families
 
+includeh[6847, "id"] <- 539171
+includeh[6849, "id"] <- 897692
+includeh[6890, "id"] <- 906301
+
 #using ott_ids; this is much faster
-for (i in 4631:length(includeh$id)) {
+for (i in 1:length(includeh$id)) {
   if (is.na(includeh$order[i])) {
     print(i)
-    tax_df <- melt(tax_lineage(taxonomy_taxon_info(ott_ids = includeh$id[i], include_lineage = TRUE)))
+    tax_df <- reshape::melt(tax_lineage(taxonomy_taxon_info(ott_ids = includeh$id[i], include_lineage = TRUE)))
     tax_filter <- tax_df %>%
       filter(rank == "order")
     order <- tax_filter$unique_name
@@ -41,10 +54,10 @@ for (i in 4631:length(includeh$id)) {
   }
 }
 
-for (i in 5156:length(includeh$id)) {
+for (i in 1:length(includeh$id)) {
   if (is.na(includeh$family[i])) {
     print(i)
-    tax_df <- melt(tax_lineage(taxonomy_taxon_info(ott_ids = includeh$id[i], include_lineage = TRUE)))
+    tax_df <- reshape::melt(tax_lineage(taxonomy_taxon_info(ott_ids = includeh$id[i], include_lineage = TRUE)))
     tax_filter <- tax_df %>%
       filter(rank == "family")
     family <- tax_filter$unique_name
@@ -165,9 +178,8 @@ for (i in 1:nrow(includeh)) {
 
 includeh[443, 21] <- "Vulnerable"
 includeh <- includeh[-c(22, 23)]
-includeh <- includeh%>%
+includeh <- includeh %>%
   rename(redlistCategory = redlistCategory1)
-
 
 #LOG TRANSFORM
 
@@ -178,7 +190,26 @@ includeh <- includeh %>%
 includeh <- includeh %>%
   mutate(logh1 = log10(h+1), .after = logh)
 
-#quick plots
+#fill in domestication
+
+for (i in 1:length(includeh$genus_species)) {
+  if (includeh$genus_species[i] %in% domesticated$species) {
+    includeh$domestication[i] <- "Domesticated"
+  } else if (includeh$genus_species[i] %in% partially_domesticated$species) {
+    includeh$domestication[i] <- "Partially-domesticated"
+  }
+}
+
+includeh$domestication[is.na(includeh$domestication)] <- "Wild"
+
+#delete duplicated
+
+unique(includeh$genus_species)
+includeh <- includeh[!duplicated(includeh$genus_species),] #something went wrong here, 110 duplicates
+table(includeh$domestication)
+table(indices_df$domestication)
+
+#PLOTS
 
 #sorting
 
@@ -336,7 +367,14 @@ ggplot(includeh_pivot, aes(x = logh1,
   guides(colour = guide_legend(ncol = 1)) +
   scale_y_discrete(limits = rev,
                    labels = label_wrap(18))
-  
+
+#domestication
+
+ggplot(includeh, aes(x = logmass,
+                     y = logh1,
+                     colour = domestication)) +
+  geom_point(size = 2,
+             alpha = 0.5)
 
 #latitude
 med_lat <- ggplot(includeh, aes(x = median_lat,
@@ -442,6 +480,9 @@ ggplot(includeh, aes(x = log10(years_publishing),
 
 write.csv(includeh, file = "outputs/includeh.csv")
 includeh <- read.csv(file = "outputs/includeh.csv", header = T)[-c(1)]
+
+write.csv(indices_df, file = "intermediate_data/domestication_h.csv")
+indices_df <- read.csv(file = "intermediate_data/domestication_h.csv", header = T)[-c(1)]
 
 #testing
 
