@@ -55,19 +55,16 @@ output: github_document
 
 ## :art: Making graphs :round_pushpin:
 
-  - [x] log transform the data 
-  - [x] h-index distribution 
   - [x] h vs mass 
   - [x] h vs phylogeny
-    - [x] get phylogenetic tree
   - [x] h vs location 
-  - [x] h vs iucn 
-  - [x] h vs human use
   - [x] *h*-index map
-  - [ ] h vs domestication
-    - [ ] scrape and cleaing data from wikipedia :round_pushpin:
+  - [x] h vs human use
+  - [x] h vs domestication
+  - [x] h vs iucn
   - [ ] h with vs without conservation keyword
     - [ ] check for patterns
+  - [ ] Google Trends sum, slope, intercept
   - [ ] Google Trends map
 
 ## :rocket: Statistical analysis
