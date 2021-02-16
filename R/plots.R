@@ -377,22 +377,6 @@ ggplot(includeh_pivot, aes(x = logh1,
                    labels = label_wrap(18))
 
 #domestication
-
-ggplot(includeh, aes(x = logmass,
-                     y = logh1,
-                     colour = domestication)) +
-  geom_point(size = 2,
-             alpha = 0.5) +
-  labs(x = "Body mass",
-       y = "h-index",
-       colour = "Domestication") +
-  scale_color_manual(values = c("#e74c3c", "#f5b041", "#3498db")) +
-  theme(axis.title = element_text(size = 14),
-        axis.text = element_text(size = 10),
-        legend.title = element_text(size = 12),
-        legend.text = element_text(size = 10),
-        legend.position = c(0.9, 0.9))
-
 ggplot(includeh, aes(x = logh1,
                      y = reorder(domestication, logh1))) +
   geom_boxplot() +
@@ -401,12 +385,12 @@ ggplot(includeh, aes(x = logh1,
               alpha = 0.5) +
   labs(x = "h-index",
        y = "Domestication",
-       order = "Order") +
+       colour = "Order") +
   theme(axis.title = element_text(size = 14),
         axis.text = element_text(size = 10),
         legend.title = element_text(size = 12),
         legend.text = element_text(size = 10)) +
-  guides(colour = guide_legend(ncol = 1))
+  guides(colour = guide_legend(ncol = 1)) 
 
 #latitude
 med_lat <- ggplot(includeh, aes(x = median_lat,

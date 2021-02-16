@@ -1,6 +1,7 @@
 library(tidyverse)
 library(gtrendsR)
 library(curl)
+library(data.table)
 library(rnaturalearth)
 library(rnaturalearthdata)
 library(sf)
@@ -22,7 +23,7 @@ saveRDS(output2, "intermediate_data/gtrends_results2.RDS") #spp 1612-1725
 saveRDS(output3, "intermediate_data/gtrends_results3.RDS") #spp 1726-3234
 saveRDS(output4, "intermediate_data/gtrends_results4.RDS") #spp 3235-4862
 saveRDS(output5, "intermediate_data/gtrends_results5.RDS") #spp 4863-5346
-
+saveRDS(output6, "intermediate_data/gtrends_results6.RDS") #spp 5347-
 
 gtrends_output <- bind_rows(output)
 
@@ -45,6 +46,23 @@ mammal <- gtrends(keyword = output,
 ggplot(mammal$interest_over_time, aes(x = date,
                                       y = hits)) +
   geom_line()
+
+#combine them into 1 list
+
+gtrends_results1 <- readRDS(file = "intermediate_data/gtrends_results1.RDS")
+gtrends_results2 <- readRDS(file = "intermediate_data/gtrends_results2.RDS")
+gtrends_results3 <- readRDS(file = "intermediate_data/gtrends_results3.RDS")
+gtrends_results4 <- readRDS(file = "intermediate_data/gtrends_results4.RDS")
+gtrends_results5 <- readRDS(file = "intermediate_data/gtrends_results5.RDS")
+
+gtrends_results2 <- gtrends_results2[1612:1725]
+gtrends_results3 <- gtrends_results3[1726:3234]
+gtrends_results4 <- gtrends_results4[3235:4862]
+gtrends_results5 <- gtrends_results5[4863:5346]
+
+gtrends_results1[1]
+
+
 
 #sum, slope, intercept
 
@@ -74,8 +92,6 @@ ggplot(world) +
   scale_fill_viridis_c(option = "plasma") 
 
 #reading and writing
-
-
 
 write.csv(includeh, file = "outputs/includeh.csv")
 includeh <- read.csv(file = "outputs/includeh.csv", header = T)[-c(1)]
