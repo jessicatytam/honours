@@ -280,7 +280,7 @@ mass <- ggplot(includeh, aes(x = logmass,
                      y = logh1)) +
   geom_point(aes(colour = order),
              size = 2,
-             alpha = 0.5) +
+             alpha = 0.3) +
   geom_smooth() +
   labs(x = "Body mass",
        y = "h-index",
