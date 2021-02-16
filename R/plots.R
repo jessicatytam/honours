@@ -204,10 +204,12 @@ includeh$domestication[is.na(includeh$domestication)] <- "Wild"
 
 #delete duplicated
 
-unique(includeh$genus_species)
-includeh <- includeh[!duplicated(includeh$genus_species),] #something went wrong here, 110 duplicates
+unique(includeh$genus_species) #6788
+includeh <- includeh %>% #something went wrong here, 110 duplicates
+  distinct(genus_species, domestication, .keep_all = TRUE) 
+includeh <- includeh[!rev(duplicated(rev(includeh$genus_species))),] #remove first occurrence of duplicate
 table(includeh$domestication)
-table(indices_df$domestication)
+table(indices_df$domestication) #13 domesticated, 146 partially-domesticated
 
 #PLOTS
 
@@ -374,7 +376,20 @@ ggplot(includeh, aes(x = logmass,
                      y = logh1,
                      colour = domestication)) +
   geom_point(size = 2,
-             alpha = 0.5)
+             alpha = 0.5) +
+  labs(x = "Body mass",
+       y = "h-index",
+       colour = "Domestication") +
+  scale_color_manual(values = c("#e74c3c", "#f5b041", "#3498db")) +
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 10),
+        legend.title = element_text(size = 12),
+        legend.text = element_text(size = 10),
+        legend.position = c(0.9, 0.9))
+
+ggplot(includeh, aes(x = domestication,
+                     y = logh1)) +
+  geom_boxplot()
 
 #latitude
 med_lat <- ggplot(includeh, aes(x = median_lat,
@@ -486,18 +501,7 @@ indices_df <- read.csv(file = "intermediate_data/domestication_h.csv", header = 
 
 #testing
 
-test <- includeh %>%
-  arrange(logh1)
-test <- test[c(6738:6719),]
+test <- includeh %>% filter(domestication=="Partially-domesticated")
 
-ggplot(data = world) +
-  geom_sf() +
-  geom_point(data = test, aes(x = x,
-                              y = y,
-                              colour = logh1),
-             size = 4) +
-  coord_sf(expand = FALSE) +
-  labs(x = "Longitude",
-       y = "Latitude",
-       colour = "h-index") +
-  scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous")) 
+table(test$genus_species %in% indices_df$genus_species)
+
