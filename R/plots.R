@@ -14,6 +14,8 @@ library(ggtree)
 library(ggtreeExtra)
 library(treeio)
 library(scales)
+library(ggbeeswarm)
+library(ggridges)
 
 
 hindex <- read.csv(file = "outputs/hindex.csv", header = T)
@@ -217,6 +219,49 @@ includeh <- includeh[!rev(duplicated(rev(includeh$genus_species))),] #remove fir
 table(includeh$domestication)
 table(indices_df$domestication) #13 domesticated, 146 partially-domesticated
 
+#condense grouping
+
+includeh <- includeh %>%
+  mutate(clade = NA)
+
+for (i in 1:length(includeh$order)) {
+  if (includeh$order[i] == "Pilosa"|
+      includeh$order[i] == "Cingulata") {
+    includeh$clade[i] <- "Xenarthra"
+  } else if (includeh$order[i] == "Macroscelidea"|
+             includeh$order[i] == "Afrosoricida"|
+             includeh$order[i] == "Proboscidea"|
+             includeh$order[i] == "Sirenia"|
+             includeh$order[i] == "Hyracoidea") {
+    includeh$clade[i] <- "Afrotheria"
+  } else if (includeh$order[i] == "Chiroptera"|
+             includeh$order[i] == "Perissodactyla"|
+             includeh$order[i] == "Artiodactyla"|
+             includeh$order[i] == "Cetacea"|
+             includeh$order[i] == "Pholidota"|
+             includeh$order[i] == "Carnivora"|
+             includeh$order[i] == "Eulipotyphla"|
+             includeh$order[i] == "Soricomorpha"|
+             includeh$order[i] == "Erinaceomorpha") {
+    includeh$clade[i] <- "Laurasiatheria"
+  } else if (includeh$order[i] == "Primates"|
+             includeh$order[i] == "Scandentia"|
+             includeh$order[i] == "Lagomorpha"|
+             includeh$order[i] == "Rodentia"|
+             includeh$order[i] == "Dermoptera") {
+    includeh$clade[i] <- "Euarchontoglires"
+  } else if (includeh$order[i] == "Diprotodontia"|
+             includeh$order[i] == "Dasyuromorphia"|
+             includeh$order[i] == "Microbiotheria"|
+             includeh$order[i] == "Peramelemorphia"|
+             includeh$order[i] == "Notoryctemorphia"|
+             includeh$order[i] == "Monotremata"|
+             includeh$order[i] == "Paucituberculata"|
+             includeh$order[i] == "Didelphimorphia") {
+    includeh$clade[i] <- "Marsupials & monotremes"
+  }
+}
+
 #PLOTS
 
 #sorting
@@ -228,6 +273,8 @@ med_mass <- includeh %>%
 med_mass <- med_mass %>%
   arrange(by_group = BodyMass.Value)
 includeh$order <- factor(includeh$order, levels = med_mass$order)
+
+includeh$clade <- factor(includeh$clade, levels = c("Afrotheria", "Xenarthra", "Euarchontoglires", "Laurasiatheria", "Marsupials & monotremes"))
 
 unique(includeh$redlistCategory)
 includeh$redlistCategory <- factor(includeh$redlistCategory, levels = c("Least Concern", "Near Threaten", "Vulnerable",
@@ -276,24 +323,22 @@ ggplot(includeh, aes(x = h,
   geom_bar() 
 
 #mass; fix the body mass values
-mass <- ggplot(includeh, aes(x = logmass,
+ggplot(includeh, aes(x = logmass,
                      y = logh1)) +
-  geom_point(aes(colour = order),
+  geom_point(aes(colour = clade),
              size = 2,
-             alpha = 0.3) +
-  geom_smooth() +
+             alpha = 0.5) +
+  geom_smooth(colour = "black") +
   labs(x = "Body mass",
        y = "h-index",
-       colour = "Order") +
+       colour = "Clade") +
   theme(axis.title = element_text(size = 14),
         axis.text = element_text(size = 10),
         legend.title = element_text(size = 12),
-        legend.text = element_text(size = 10)) +
-  guides(colour = guide_legend(ncol = 1))
-ggMarginal(mass,
-           margins = "x",
-           type = "histogram",
-           bins = 150)
+        legend.text = element_text(size = 10),
+        legend.position = c(0.89, 0.88)) +
+  guides(colour = guide_legend(ncol = 1)) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"))
 
 ggplot(includeh, aes(x = logmass,
                      y = log10(m+1))) +
@@ -307,14 +352,14 @@ ggplot(includeh, aes(x = logmass,
 
 #iucn category
 ggplot(includeh, aes(x = logh1,
-                     y = redlistCategory)) +
-  geom_boxplot() +
-  geom_jitter(aes(colour = order),
-              size = 2,
-              alpha = 0.5) +
+                     y = redlistCategory,
+                     colour = clade)) +
+  geom_quasirandom(groupOnX = FALSE,
+                   size = 2,
+                   alpha = 0.5) +
   labs(x = "h-index",
        y = "IUCN Red List Category",
-       colour = "Order") +
+       colour = "Clade") +
   theme(axis.title = element_text(size = 14),
         axis.text = element_text(size = 11),
         legend.title = element_text(size = 12),
@@ -322,7 +367,8 @@ ggplot(includeh, aes(x = logh1,
         legend.position = c(0.92, 0.6)) +
   guides(colour = guide_legend(ncol = 1)) +
   scale_y_discrete(limits = rev,
-                   labels = label_wrap(16))
+                   labels = label_wrap(16)) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"))
 
 #human use
 includeh_pivot <- includeh %>%
@@ -380,32 +426,35 @@ ggplot(includeh_pivot, aes(x = logh1,
 ggplot(includeh, aes(x = logh1,
                      y = reorder(domestication, logh1))) +
   geom_boxplot() +
-  geom_jitter(aes(colour = order),
+  geom_jitter(aes(colour = clade),
               size = 2,
               alpha = 0.5) +
   labs(x = "h-index",
        y = "Domestication",
-       colour = "Order") +
+       colour = "Clade") +
   theme(axis.title = element_text(size = 14),
         axis.text = element_text(size = 10),
         legend.title = element_text(size = 12),
         legend.text = element_text(size = 10)) +
-  guides(colour = guide_legend(ncol = 1)) 
+  guides(colour = guide_legend(ncol = 1)) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"))
 
 #latitude
 med_lat <- ggplot(includeh, aes(x = median_lat,
                                 y = logh1,
-                                colour = order)) +
+                                colour = clade)) +
   geom_point(size = 2,
              alpha = 0.5) +
+  geom_smooth(colour = "black") +
   labs(x = "Latitude (median)",
        y = "h-index",
-       colour = "Order") +
+       colour = "Clade") +
   theme(axis.title = element_text(size = 14),
         axis.text = element_text(size = 10),
         legend.title = element_text(size = 12),
         legend.text = element_text(size = 10)) +
-  guides(colour = guide_legend(ncol = 1))
+  guides(colour = guide_legend(ncol = 1)) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"))
 ggMarginal(med_lat,
            type = "histogram",
            margins = "x",
@@ -459,16 +508,15 @@ tree <- as_tibble(tree)
 tree_join <- full_join(tree, includeh_join, by = "label")
 tree_join <- as.treedata(tree_join)
 
-ggtree(tree_join, aes(colour = order,
-                      fill = order),
+ggtree(tree_join, aes(colour = clade), #should change to just colour the tip of the node
        layout = "circular") +
   geom_fruit(geom = geom_bar,
              mapping = aes(x = h),
              pwidth = 0.5,
              orientation = "y", 
              stat = "identity") +
-  labs(fill = "Order") +
-  guides(colour = FALSE)
+  labs(colour = "Clade") +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db")) 
 
 #not related to h-index
 ggplot(includeh, aes(y = order)) +
@@ -502,7 +550,42 @@ indices_df <- read.csv(file = "intermediate_data/domestication_h.csv", header = 
 
 #testing
 
-test <- includeh %>% filter(domestication=="Partially-domesticated")
+test <- includeh[185:194,]
 
-table(test$genus_species %in% indices_df$genus_species)
-
+for (i in 1:length(test$order)) {
+  if (test$order[i] == "Pilosa"|
+      test$order[i] == "Cingulata") {
+    test$clade[i] <- "Xenarthra"
+  } else if (test$order[i] == "Macroscelidea"|
+             test$order[i] == "Afrosoricida"|
+             test$order[i] == "Proboscidea"|
+             test$order[i] == "Sirenia"|
+             test$order[i] == "Hyracoidea") {
+    test$clade[i] <- "Afrotheria"
+  } else if (test$order[i] == "Chiroptera"|
+             test$order[i] == "Perissodactyla"|
+             test$order[i] == "Artiodactyla"|
+             test$order[i] == "Cetacea"|
+             test$order[i] == "Pholidota"|
+             test$order[i] == "Carnivora"|
+             test$order[i] == "Eulipotyphla"|
+             test$order[i] == "Soricomorpha"|
+             test$order[i] == "Erinaceomorpha") {
+    test$clade[i] <- "Laurasiatheria"
+  } else if (test$order[i] == "Primates"|
+             test$order[i] == "Scandentia"|
+             test$order[i] == "Lagomorpha"|
+             test$order[i] == "Rodentia"|
+             test$order[i] == "Dermoptera") {
+    test$clade[i] <- "Euarchontoglires"
+  } else if (test$order[i] == "Diprotodontia"|
+             test$order[i] == "Dasyuromorphia"|
+             test$order[i] == "Microbiotheria"|
+             test$order[i] == "Peramelemorphia"|
+             test$order[i] == "Notoryctemorphia"|
+             test$order[i] == "Monotremata"|
+             test$order[i] == "Paucituberculata"|
+             test$order[i] == "Didelphimorphia") {
+    test$clade[i] <- "Marsupials & monotremes"
+  }
+}
