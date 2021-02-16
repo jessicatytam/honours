@@ -95,6 +95,12 @@ for (i in 1:length(includeh$family)) {
   }
 }
 
+for (i in 1:length(includeh$order)) {
+  if (includeh$order[i] == "Proboscidea (order in Deuterostomia)") {
+    includeh$order[i] <- "Proboscidea"
+  }
+}
+
 #fix non-mammalian orders
 
 for (i in 1:nrow(includeh)) {
@@ -387,9 +393,20 @@ ggplot(includeh, aes(x = logmass,
         legend.text = element_text(size = 10),
         legend.position = c(0.9, 0.9))
 
-ggplot(includeh, aes(x = domestication,
-                     y = logh1)) +
-  geom_boxplot()
+ggplot(includeh, aes(x = logh1,
+                     y = reorder(domestication, logh1))) +
+  geom_boxplot() +
+  geom_jitter(aes(colour = order),
+              size = 2,
+              alpha = 0.5) +
+  labs(x = "h-index",
+       y = "Domestication",
+       order = "Order") +
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 10),
+        legend.title = element_text(size = 12),
+        legend.text = element_text(size = 10)) +
+  guides(colour = guide_legend(ncol = 1))
 
 #latitude
 med_lat <- ggplot(includeh, aes(x = median_lat,
