@@ -9,11 +9,11 @@ library(sf)
 
 #get the data
 
-output5 <- list()
-for (i in 4863:6738) {
+output6 <- list()
+for (i in 5347:6788) {
   print(paste(i, "getting data for", includeh$genus_species[i]))
   search_term <- includeh$genus_species[i]
-  output5[[i]] <- gtrends(keyword = search_term,
+  output6[[i]] <- gtrends(keyword = search_term,
                          time = "all")
   Sys.sleep(1)
 }
@@ -23,7 +23,7 @@ saveRDS(output2, "intermediate_data/gtrends_results2.RDS") #spp 1612-1725
 saveRDS(output3, "intermediate_data/gtrends_results3.RDS") #spp 1726-3234
 saveRDS(output4, "intermediate_data/gtrends_results4.RDS") #spp 3235-4862
 saveRDS(output5, "intermediate_data/gtrends_results5.RDS") #spp 4863-5346
-saveRDS(output6, "intermediate_data/gtrends_results6.RDS") #spp 5347-
+saveRDS(output6, "intermediate_data/gtrends_results6.RDS") #spp 5347-5452
 
 gtrends_output <- bind_rows(output)
 

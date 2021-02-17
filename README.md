@@ -63,6 +63,9 @@
       - [ ] check for patterns
   - [ ] Google Trends sum, slope, intercept
   - [ ] Google Trends map
+  - For all plots
+      - [ ] change font
+      - [ ] change h-index axis scale to true values
 
 ## :rocket: Statistical analysis
 

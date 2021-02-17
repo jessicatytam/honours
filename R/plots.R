@@ -3,6 +3,7 @@ library(ggExtra)
 library(taxize)
 library(rotl)
 library(ape)
+library(rredlist)
 
 library(rnaturalearth)
 library(rnaturalearthdata)
@@ -16,6 +17,8 @@ library(treeio)
 library(scales)
 library(ggbeeswarm)
 library(ggridges)
+library(ggnewscale)
+library(bbplot)
 
 
 hindex <- read.csv(file = "outputs/hindex.csv", header = T)
@@ -189,6 +192,8 @@ includeh <- includeh[-c(22, 23)]
 includeh <- includeh %>%
   rename(redlistCategory = redlistCategory1)
 
+
+
 #LOG TRANSFORM
 
 includeh <- includeh %>%
@@ -324,31 +329,35 @@ ggplot(includeh, aes(x = h,
 
 #mass; fix the body mass values
 ggplot(includeh, aes(x = logmass,
-                     y = logh1)) +
-  geom_point(aes(colour = clade),
-             size = 2,
-             alpha = 0.5) +
-  geom_smooth(colour = "black") +
-  labs(x = "Body mass",
-       y = "h-index",
-       colour = "Clade") +
+                     y = logh1,
+                     colour = clade)) +
+  geom_point(size = 2,
+             alpha = 0.4) +
+  labs(x = "Body mass (kg, pls double check)",
+       y = "h-index") +
+  scale_x_log10() +
+  coord_trans(y = "log1p") +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 4, alpha = 1))) +
+  new_scale_colour() +
+  geom_quantile(aes(colour = clade),
+                quantiles = 0.5,
+                size = 2,
+                alpha = 0.8,
+                lineend = "round") +
+  scale_colour_manual(values = c("#d4ac0d", "#ca6f1e", "#cb4335", "#7d3c98", "#2e86c1")) +
+  guides(colour = FALSE) +
   theme(axis.title = element_text(size = 14),
         axis.text = element_text(size = 10),
-        legend.title = element_text(size = 12),
-        legend.text = element_text(size = 10),
-        legend.position = c(0.89, 0.88)) +
-  guides(colour = guide_legend(ncol = 1)) +
-  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"))
-
-ggplot(includeh, aes(x = logmass,
-                     y = log10(m+1))) +
-  geom_point(aes(colour = order),
-             alpha = 0.5) +
-  geom_smooth() +
-  labs(x = "Body mass",
-       y = "m-index",
-       colour = "Order") +
-  theme(legend.position = "bottom")
+        axis.line = element_line(colour = "black"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 14),
+        legend.key = element_rect(fill = "white"),
+        legend.position = "top",
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major = element_line(colour = "grey80"),
+        panel.grid.minor = element_line(colour = "grey80",
+                                        linetype = "longdash"))
 
 #iucn category
 ggplot(includeh, aes(x = logh1,
@@ -356,19 +365,28 @@ ggplot(includeh, aes(x = logh1,
                      colour = clade)) +
   geom_quasirandom(groupOnX = FALSE,
                    size = 2,
-                   alpha = 0.5) +
-  labs(x = "h-index",
-       y = "IUCN Red List Category",
-       colour = "Clade") +
-  theme(axis.title = element_text(size = 14),
-        axis.text = element_text(size = 11),
-        legend.title = element_text(size = 12),
-        legend.text = element_text(size = 10),
-        legend.position = c(0.92, 0.6)) +
-  guides(colour = guide_legend(ncol = 1)) +
+                   alpha = 0.4) +
+  labs(x = "h-index") +
   scale_y_discrete(limits = rev,
                    labels = label_wrap(16)) +
-  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"))
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 4, alpha = 1))) +
+  theme(axis.title = element_text(size = 14),
+        axis.title.y = element_blank(),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 14,
+                                   colour = "black"),
+        axis.line = element_line(colour = "black"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 14),
+        legend.key = element_rect(fill = "white"),
+        legend.position = "top",
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.x = element_line(colour = "grey80"),
+        panel.grid.minor.x = element_line(colour = "grey80",
+                                          linetype = "longdash")) 
 
 #human use
 includeh_pivot <- includeh %>%
@@ -394,67 +412,140 @@ for (i in 1:nrow(includeh_pivot)) {
   } 
 }
 
+includeh_pivot <- includeh_pivot %>%
+  mutate(human_use_group = NA)
+
+for (i in 1:length(includeh_pivot$human_use)) {
+  if (!is.na(includeh_pivot$human_use[i]) &
+      (includeh_pivot$human_use[i] == "Food (for humans)"|
+      includeh_pivot$human_use[i] == "Food (for animals)")) {
+    includeh_pivot$human_use_group[i] <- "Food"
+  } else if (!is.na(includeh_pivot$human_use[i]) &
+             (includeh_pivot$human_use[i] == "Fuels"|
+             includeh_pivot$human_use[i] == "Manufacturing chemicals"|
+             includeh_pivot$human_use[i] == "Other chemicals"|
+             includeh_pivot$human_use[i] == "Poisons")) {
+    includeh_pivot$human_use_group[i] <- "Chemicals"
+  } else if (!is.na(includeh_pivot$human_use[i]) &
+             (includeh_pivot$human_use[i] == "Wearing apparel & accessories"|
+             includeh_pivot$human_use[i] == "Handicrafts & jewellery")) {
+    includeh_pivot$human_use_group[i] <- "Clothes & accessories"
+  } else if (!is.na(includeh_pivot$human_use[i]) &
+             (includeh_pivot$human_use[i] == "Sport hunting & specimen collecting"|
+             includeh_pivot$human_use[i] == "Pets, display animals & horticulture")) {
+    includeh_pivot$human_use_group[i] <- "Recreational activities"
+  } else if (!is.na(includeh_pivot$human_use[i]) &
+             (includeh_pivot$human_use[i] == "Construction or structural materials"|
+             includeh_pivot$human_use[i] == "Fibre"|
+             includeh_pivot$human_use[i] == "Establishing ex situ production")) {
+    includeh_pivot$human_use_group[i] <- "Industrial goods"
+  } else if (!is.na(includeh_pivot$human_use[i]) &
+             includeh_pivot$human_use[i] == "Other household goods") {
+    includeh_pivot$human_use_group[i] <- "Other consumer goods"
+  } else if (!is.na(includeh_pivot$human_use[i]) &
+             (includeh_pivot$human_use[i] == "Research"|
+             includeh_pivot$human_use[i] == "Medicine")) {
+    includeh_pivot$human_use_group[i] <- "Research & medicine"
+  } else if (!is.na(includeh_pivot$human_use[i]) &
+             (includeh_pivot$human_use[i] == "Other")) {
+    includeh_pivot$human_use_group[i] <- "Others"
+  } else if (is.na(includeh_pivot$human_use[i])|
+             includeh_pivot$human_use[i] == "Unknown") {
+    includeh_pivot$human_use_group[i] <- "Unknown"
+  }
+}
+
 med_use <- includeh_pivot %>%
-  group_by(human_use) %>%
+  group_by(human_use_group) %>%
   summarise_at(vars(logh1), median, na.rm = T) %>%
   ungroup()
 med_use <- med_use %>%
   arrange(logh1)
-med_use <- med_use[c(3:4, 6:19, 5, 2, 1),]
+med_use <- med_use[c(1, 3:8, 2, 9),]
 
-includeh_pivot$human_use <- factor(includeh_pivot$human_use, levels = med_use$human_use)
+includeh_pivot$human_use_group <- factor(includeh_pivot$human_use_group, levels = med_use$human_use_group)
 
 ggplot(includeh_pivot, aes(x = logh1,
-                           y = human_use)) +
-  geom_boxplot() +
-  geom_jitter(aes(colour = order),
-              size = 2,
-              alpha = 0.5) +
-  labs(x = "h-index",
-       y = "Human use",
-       colour = "Order") +
-  theme(axis.title = element_text(size = 14),
-        axis.text = element_text(size = 10),
-        legend.title = element_text(size = 12),
-        legend.text = element_text(size = 10),
-        legend.position = c(0.9, 0.62)) +
-  guides(colour = guide_legend(ncol = 1)) +
+                           y = human_use_group,
+                           colour = clade)) +
+  geom_quasirandom(groupOnX = FALSE,
+                   size = 2,
+                   alpha = 0.4) +
+  labs(x = "h-index") +
   scale_y_discrete(limits = rev,
-                   labels = label_wrap(18))
+                   labels = label_wrap(18)) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 4,
+                                                               alpha = 1))) +
+  theme(axis.title = element_text(size = 14),
+        axis.title.y = element_blank(),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 14,
+                                   colour = "black"),
+        axis.line = element_line(colour = "black"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 14),
+        legend.key = element_rect(fill = "white"),
+        legend.position = "top",
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.x = element_line(colour = "grey80"),
+        panel.grid.minor.x = element_line(colour = "grey80",
+                                          linetype = "longdash"))
+  
 
 #domestication
 ggplot(includeh, aes(x = logh1,
-                     y = reorder(domestication, logh1))) +
-  geom_boxplot() +
-  geom_jitter(aes(colour = clade),
-              size = 2,
-              alpha = 0.5) +
+                     y = reorder(domestication, logh1),
+                     colour = clade)) +
+  geom_quasirandom(groupOnX = FALSE,
+                   size = 2,
+                   alpha = 0.4) +
   labs(x = "h-index",
-       y = "Domestication",
        colour = "Clade") +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 4, alpha = 1))) +
   theme(axis.title = element_text(size = 14),
-        axis.text = element_text(size = 10),
-        legend.title = element_text(size = 12),
-        legend.text = element_text(size = 10)) +
-  guides(colour = guide_legend(ncol = 1)) +
-  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"))
+        axis.title.y = element_blank(),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 14),
+        axis.line = element_line(colour = "black"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 14),
+        legend.key = element_rect(fill = "white"),
+        legend.position = "top",
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.x = element_line(colour = "grey80"),
+        panel.grid.minor.x = element_line(colour = "grey80",
+                                        linetype = "longdash"))
 
 #latitude
 med_lat <- ggplot(includeh, aes(x = median_lat,
                                 y = logh1,
                                 colour = clade)) +
   geom_point(size = 2,
-             alpha = 0.5) +
+             alpha = 0.4) +
   geom_smooth(colour = "black") +
   labs(x = "Latitude (median)",
        y = "h-index",
        colour = "Clade") +
   theme(axis.title = element_text(size = 14),
         axis.text = element_text(size = 10),
-        legend.title = element_text(size = 12),
-        legend.text = element_text(size = 10)) +
-  guides(colour = guide_legend(ncol = 1)) +
-  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"))
+        axis.line = element_line(colour = "black"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 14),
+        legend.key = element_rect(fill = "white"),
+        legend.position = "top",
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major = element_line(colour = "grey80"),
+        panel.grid.minor = element_line(colour = "grey80",
+                                        linetype = "longdash")) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 4, alpha = 1)))
+
 ggMarginal(med_lat,
            type = "histogram",
            margins = "x",
@@ -484,17 +575,19 @@ ggplot(data = world) +
   geom_point(data = includeh, aes(x = x,
                                   y = y,
                                   colour = logh1),
-             size = 3,
-             alpha = 0.7) +
+             size = 2,
+             alpha = 0.4) +
   coord_sf(expand = FALSE) +
   labs(x = "Longitude",
        y = "Latitude",
        colour = "h-index") +
-  theme(panel.background = element_rect(fill = "aliceblue"),
-        axis.title = element_text(size = 14),
+  theme(axis.title = element_text(size = 14),
         axis.text = element_text(size = 10),
         legend.title = element_text(size = 12),
-        legend.text = element_text(size = 10)) +
+        legend.text = element_text(size = 10),
+        panel.background = element_rect(fill = "white"),
+        panel.grid = element_line(colour = "grey80",
+                                        linetype = "dashed")) +
   scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous")) 
 
 #phylogenetic tree
