@@ -338,7 +338,8 @@ ggplot(includeh, aes(x = logmass,
   scale_x_log10() +
   coord_trans(y = "log1p") +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
-                      guide = guide_legend(override.aes = list(size = 4, alpha = 1))) +
+                      guide = guide_legend(override.aes = list(size = 4,
+                                                               alpha = 1))) +
   new_scale_colour() +
   geom_quantile(aes(colour = clade),
                 quantiles = 0.5,
@@ -370,7 +371,8 @@ ggplot(includeh, aes(x = logh1,
   scale_y_discrete(limits = rev,
                    labels = label_wrap(16)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
-                      guide = guide_legend(override.aes = list(size = 4, alpha = 1))) +
+                      guide = guide_legend(override.aes = list(size = 4,
+                                                               alpha = 1))) +
   theme(axis.title = element_text(size = 14),
         axis.title.y = element_blank(),
         axis.text.x = element_text(size = 10),
@@ -505,7 +507,8 @@ ggplot(includeh, aes(x = logh1,
   labs(x = "h-index",
        colour = "Clade") +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
-                      guide = guide_legend(override.aes = list(size = 4, alpha = 1))) +
+                      guide = guide_legend(override.aes = list(size = 4,
+                                                               alpha = 1))) +
   theme(axis.title = element_text(size = 14),
         axis.title.y = element_blank(),
         axis.text.x = element_text(size = 10),
@@ -544,7 +547,8 @@ med_lat <- ggplot(includeh, aes(x = median_lat,
         panel.grid.minor = element_line(colour = "grey80",
                                         linetype = "longdash")) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
-                      guide = guide_legend(override.aes = list(size = 4, alpha = 1)))
+                      guide = guide_legend(override.aes = list(size = 4,
+                                                               alpha = 1)))
 
 ggMarginal(med_lat,
            type = "histogram",
@@ -601,15 +605,22 @@ tree <- as_tibble(tree)
 tree_join <- full_join(tree, includeh_join, by = "label")
 tree_join <- as.treedata(tree_join)
 
-ggtree(tree_join, aes(colour = clade), #should change to just colour the tip of the node
+ggtree(tree_join, #should change to just colour the tip of the node
        layout = "circular") +
+  geom_tippoint(aes(colour = clade)) +
   geom_fruit(geom = geom_bar,
-             mapping = aes(x = h),
+             mapping = aes(x = h,
+                           colour = clade),
              pwidth = 0.5,
              orientation = "y", 
              stat = "identity") +
-  labs(colour = "Clade") +
-  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db")) 
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db")) +
+  theme(legend.position = "top",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 14)) +
+  guides(colour = guide_legend(override.aes = list(shape = c(16),
+                                                  size = 4,
+                                                  alpha = 1)))
 
 #not related to h-index
 ggplot(includeh, aes(y = order)) +
