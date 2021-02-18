@@ -18,8 +18,8 @@ library(scales)
 library(ggbeeswarm)
 library(ggridges)
 library(ggnewscale)
-library(bbplot)
-
+library(gghalves)
+library(ggpol)
 
 hindex <- read.csv(file = "outputs/hindex.csv", header = T)
 combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)
@@ -361,12 +361,22 @@ ggplot(includeh, aes(x = logmass,
                                         linetype = "longdash"))
 
 #iucn category
+includeh$redlistCategory2 <- paste0(includeh$redlistCategory, "2")
+includeh$redlistCategory2 <- factor(includeh$redlistCategory2, levels = c("Least Concern", "Near Threaten", "Vulnerable",
+                                                                        "Endangered", "Critically Endangered",
+                                                                        "Regionally Extinct", "Extinct in the Wild", "Extinct",
+                                                                        "Data Deficient"))
+
 ggplot(includeh, aes(x = logh1,
-                     y = redlistCategory,
-                     colour = clade)) +
-  geom_quasirandom(groupOnX = FALSE,
+                     y = redlistCategory)) +
+  geom_quasirandom(aes(colour = clade),
+                   groupOnX = FALSE,
                    size = 2,
                    alpha = 0.4) +
+  geom_boxplot(fill = "grey80",
+               size = 0.8,
+               width = 0.4,
+               alpha = 0.2) +
   labs(x = "h-index") +
   scale_y_discrete(limits = rev,
                    labels = label_wrap(16)) +
@@ -463,16 +473,20 @@ med_use <- includeh_pivot %>%
   ungroup()
 med_use <- med_use %>%
   arrange(logh1)
-med_use <- med_use[c(1, 3:8, 2, 9),]
+med_use <- med_use[c(2, 4:9, 3, 1),]
 
 includeh_pivot$human_use_group <- factor(includeh_pivot$human_use_group, levels = med_use$human_use_group)
 
 ggplot(includeh_pivot, aes(x = logh1,
-                           y = human_use_group,
-                           colour = clade)) +
-  geom_quasirandom(groupOnX = FALSE,
+                           y = human_use_group)) +
+  geom_quasirandom(aes(colour = clade),
+                   groupOnX = FALSE,
                    size = 2,
                    alpha = 0.4) +
+  geom_boxplot(fill = "grey80",
+               size = 0.8,
+               width = 0.4,
+               alpha = 0.2) +
   labs(x = "h-index") +
   scale_y_discrete(limits = rev,
                    labels = label_wrap(18)) +
@@ -647,7 +661,7 @@ ggplot(includeh, aes(x = log10(years_publishing),
 #save and read
 
 write.csv(includeh, file = "outputs/includeh.csv")
-includeh <- read.csv(file = "outputs/includeh.csv", header = T)[-c(1)]
+includeh <- read_csv(file = "outputs/includeh.csv")[-c(1)]
 
 write.csv(indices_df, file = "intermediate_data/domestication_h.csv")
 indices_df <- read.csv(file = "intermediate_data/domestication_h.csv", header = T)[-c(1)]
