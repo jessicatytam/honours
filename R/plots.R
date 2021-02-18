@@ -337,6 +337,7 @@ ggplot(includeh, aes(x = logmass,
        y = "h-index") +
   scale_x_log10() +
   coord_trans(y = "log1p") +
+  scale_y_continuous(labels = math_format(10^.x)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
@@ -378,6 +379,7 @@ ggplot(includeh, aes(x = logh1,
                width = 0.4,
                alpha = 0.2) +
   labs(x = "h-index") +
+  scale_x_continuous(labels = math_format(10^.x)) +
   scale_y_discrete(limits = rev,
                    labels = label_wrap(16)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
@@ -488,6 +490,7 @@ ggplot(includeh_pivot, aes(x = logh1,
                width = 0.4,
                alpha = 0.2) +
   labs(x = "h-index") +
+  scale_x_continuous(labels = math_format(10^.x)) +
   scale_y_discrete(limits = rev,
                    labels = label_wrap(18)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
@@ -513,20 +516,26 @@ ggplot(includeh_pivot, aes(x = logh1,
 
 #domestication
 ggplot(includeh, aes(x = logh1,
-                     y = reorder(domestication, logh1),
-                     colour = clade)) +
-  geom_quasirandom(groupOnX = FALSE,
+                     y = reorder(domestication, logh1))) +
+  geom_quasirandom(aes(colour = clade),
+                   groupOnX = FALSE,
                    size = 2,
                    alpha = 0.4) +
+  geom_boxplot(fill = "grey80",
+               size = 0.8,
+               width = 0.4,
+               alpha = 0.2) +
   labs(x = "h-index",
        colour = "Clade") +
+  scale_x_continuous(labels = math_format(10^.x)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
   theme(axis.title = element_text(size = 14),
         axis.title.y = element_blank(),
         axis.text.x = element_text(size = 10),
-        axis.text.y = element_text(size = 14),
+        axis.text.y = element_text(size = 14,
+                                   colour = "black"),
         axis.line = element_line(colour = "black"),
         legend.title = element_blank(),
         legend.text = element_text(size = 14),
@@ -537,7 +546,8 @@ ggplot(includeh, aes(x = logh1,
         panel.grid.minor.y = element_blank(),
         panel.grid.major.x = element_line(colour = "grey80"),
         panel.grid.minor.x = element_line(colour = "grey80",
-                                        linetype = "longdash"))
+                                        linetype = "longdash")) +
+  scale_y_discrete(labels = function(x) sub("-","-\n", x, fixed = TRUE))
 
 #latitude
 med_lat <- ggplot(includeh, aes(x = median_lat,
@@ -549,6 +559,7 @@ med_lat <- ggplot(includeh, aes(x = median_lat,
   labs(x = "Latitude (median)",
        y = "h-index",
        colour = "Clade") +
+  scale_y_continuous(labels = math_format(10^.x)) +
   theme(axis.title = element_text(size = 14),
         axis.text = element_text(size = 10),
         axis.line = element_line(colour = "black"),

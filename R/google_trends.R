@@ -10,7 +10,7 @@ library(sf)
 #get the data
 
 output7 <- list()
-for (i in 5347:6788) {
+for (i in 5453:6788) {
   print(paste(i, "getting data for", includeh$genus_species[i]))
   search_term <- includeh$genus_species[i]
   output7[[i]] <- gtrends(keyword = search_term,
