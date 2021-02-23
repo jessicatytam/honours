@@ -192,6 +192,24 @@ includeh <- includeh[-c(22, 23)]
 includeh <- includeh %>%
   rename(redlistCategory = redlistCategory1)
 
+#fill in red list status with rredlist
+
+iucn <- rl_history(name = "Dorcopsis veterum", key = "4eacf586ea255313b1646429c0f5b566cfa6f789cfb634f9704a8050a6123933")#$result[1,3]
+length(iucn$result)
+iucn <- rl_history(name = "Dugong dugon", key = "4eacf586ea255313b1646429c0f5b566cfa6f789cfb634f9704a8050a6123933")
+
+for (i in 2001:6788) {
+  if (is.na(includeh$redlistCategory[i])) {
+    print(paste(i, genus_species, "missing IUCN status."))
+    iucn_query <- rl_history(name = includeh$genus_species[i], key = "4eacf586ea255313b1646429c0f5b566cfa6f789cfb634f9704a8050a6123933")
+    iucn_df <- data.frame(iucn_query$result)
+    includeh$redlistCategory <- as.character(includeh$redlistCategory)
+    if (nrow(iucn_df > 0)) {
+      print(paste("filling in missing data."))
+      includeh$redlistCategory[i] <- iucn_df[1,"category"]
+    }
+  }
+}
 
 
 #LOG TRANSFORM
@@ -362,12 +380,6 @@ ggplot(includeh, aes(x = logmass,
                                         linetype = "longdash"))
 
 #iucn category
-includeh$redlistCategory2 <- paste0(includeh$redlistCategory, "2")
-includeh$redlistCategory2 <- factor(includeh$redlistCategory2, levels = c("Least Concern", "Near Threaten", "Vulnerable",
-                                                                        "Endangered", "Critically Endangered",
-                                                                        "Regionally Extinct", "Extinct in the Wild", "Extinct",
-                                                                        "Data Deficient"))
-
 ggplot(includeh, aes(x = logh1,
                      y = redlistCategory)) +
   geom_quasirandom(aes(colour = clade),
@@ -640,12 +652,11 @@ ggtree(tree_join, #should change to just colour the tip of the node
              orientation = "y", 
              stat = "identity") +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db")) +
+  guides(colour = guide_legend(override.aes = list(shape = 16,
+                                                   size = 4))) + #shape of legend icons not changing need to find out why
   theme(legend.position = "top",
         legend.title = element_blank(),
-        legend.text = element_text(size = 14)) +
-  guides(colour = guide_legend(override.aes = list(shape = c(16),
-                                                  size = 4,
-                                                  alpha = 1)))
+        legend.text = element_text(size = 14)) 
 
 #not related to h-index
 ggplot(includeh, aes(y = order)) +
@@ -679,42 +690,16 @@ indices_df <- read.csv(file = "intermediate_data/domestication_h.csv", header = 
 
 #testing
 
-test <- includeh[185:194,]
+test <- includeh[1761:1770,]
 
-for (i in 1:length(test$order)) {
-  if (test$order[i] == "Pilosa"|
-      test$order[i] == "Cingulata") {
-    test$clade[i] <- "Xenarthra"
-  } else if (test$order[i] == "Macroscelidea"|
-             test$order[i] == "Afrosoricida"|
-             test$order[i] == "Proboscidea"|
-             test$order[i] == "Sirenia"|
-             test$order[i] == "Hyracoidea") {
-    test$clade[i] <- "Afrotheria"
-  } else if (test$order[i] == "Chiroptera"|
-             test$order[i] == "Perissodactyla"|
-             test$order[i] == "Artiodactyla"|
-             test$order[i] == "Cetacea"|
-             test$order[i] == "Pholidota"|
-             test$order[i] == "Carnivora"|
-             test$order[i] == "Eulipotyphla"|
-             test$order[i] == "Soricomorpha"|
-             test$order[i] == "Erinaceomorpha") {
-    test$clade[i] <- "Laurasiatheria"
-  } else if (test$order[i] == "Primates"|
-             test$order[i] == "Scandentia"|
-             test$order[i] == "Lagomorpha"|
-             test$order[i] == "Rodentia"|
-             test$order[i] == "Dermoptera") {
-    test$clade[i] <- "Euarchontoglires"
-  } else if (test$order[i] == "Diprotodontia"|
-             test$order[i] == "Dasyuromorphia"|
-             test$order[i] == "Microbiotheria"|
-             test$order[i] == "Peramelemorphia"|
-             test$order[i] == "Notoryctemorphia"|
-             test$order[i] == "Monotremata"|
-             test$order[i] == "Paucituberculata"|
-             test$order[i] == "Didelphimorphia") {
-    test$clade[i] <- "Marsupials & monotremes"
+for (i in 1:length(test$genus_species)) {
+  if (is.na(test$redlistCategory[i])) {
+    iucn_query <- rl_history(name = test$genus_species[i], key = "4eacf586ea255313b1646429c0f5b566cfa6f789cfb634f9704a8050a6123933")
+    iucn_df <- data.frame(iucn_query$result)
+    test$redlistCategory <- as.character(test$redlistCategory)
+    if (nrow(iucn_df > 0)) {
+      test$redlistCategory[i] <- iucn_df[1,"category"]
+    }
   }
 }
+
