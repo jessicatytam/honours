@@ -20,6 +20,7 @@ library(ggridges)
 library(ggnewscale)
 library(gghalves)
 library(ggpol)
+library(plotly)
 
 hindex <- read.csv(file = "outputs/hindex.csv", header = T)
 combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)
@@ -130,6 +131,10 @@ for (i in 1:nrow(includeh)) {
   }
 }
 
+includeh[6731, "family"] <- "Muridae"
+includeh[6731, "order"] <- "Rodentia"
+includeh[6731, "clade"] <- "Euarchontoglires"
+
 #remove extinct mammals
 
 includeh <- includeh[!(includeh$order == "Ascaridida"),] #worm
@@ -198,7 +203,7 @@ iucn <- rl_history(name = "Dorcopsis veterum", key = "4eacf586ea255313b1646429c0
 length(iucn$result)
 iucn <- rl_history(name = "Dugong dugon", key = "4eacf586ea255313b1646429c0f5b566cfa6f789cfb634f9704a8050a6123933")
 
-for (i in 2001:6788) {
+for (i in 5249:6788) {
   if (is.na(includeh$redlistCategory[i])) {
     print(paste(i, includeh$genus_species[i], "missing IUCN status."))
     iucn_query <- rl_history(name = includeh$genus_species[i], key = "4eacf586ea255313b1646429c0f5b566cfa6f789cfb634f9704a8050a6123933")
@@ -351,11 +356,12 @@ ggplot(includeh, aes(x = logmass,
                      colour = clade)) +
   geom_point(size = 2,
              alpha = 0.4) +
-  labs(x = "Body mass (kg)",
+  labs(x = "Body mass (kg; need to correct the unit)",
        y = "h-index") +
   scale_x_log10() +
   coord_trans(y = "log1p") +
-  scale_y_continuous(labels = math_format((10^.x)-1)) +
+  scale_y_continuous(breaks = c(0, 1, 2),
+                     labels = c(0, 9, 99)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
@@ -391,7 +397,8 @@ ggplot(includeh, aes(x = logh1,
                width = 0.4,
                alpha = 0.2) +
   labs(x = "h-index") +
-  scale_x_continuous(labels = math_format((10^.x)-1)) +
+  scale_x_continuous(breaks = c(0, 1, 2),
+                     labels = c(0, 9, 99)) +
   scale_y_discrete(limits = rev,
                    labels = label_wrap(16)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
@@ -502,7 +509,8 @@ ggplot(includeh_pivot, aes(x = logh1,
                width = 0.4,
                alpha = 0.2) +
   labs(x = "h-index") +
-  scale_x_continuous(labels = math_format((10^.x)-1)) +
+  scale_x_continuous(breaks = c(0, 1, 2),
+                     labels = c(0, 9, 99)) +
   scale_y_discrete(limits = rev,
                    labels = label_wrap(18)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
@@ -539,7 +547,8 @@ ggplot(includeh, aes(x = logh1,
                alpha = 0.2) +
   labs(x = "h-index",
        colour = "Clade") +
-  scale_x_continuous(labels = math_format((10^.x)-1)) +
+  scale_x_continuous(breaks = c(0, 1, 2),
+                     labels = c(0, 9, 99)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
@@ -571,7 +580,8 @@ med_lat <- ggplot(includeh, aes(x = median_lat,
   labs(x = "Latitude (median)",
        y = "h-index",
        colour = "Clade") +
-  scale_y_continuous(labels = math_format((10^.x)-1)) +
+  scale_y_continuous(breaks = c(0, 1, 2),
+                     labels = c(0, 9, 99)) +
   theme(axis.title = element_text(size = 14),
         axis.text = element_text(size = 10),
         axis.line = element_line(colour = "black"),
@@ -642,7 +652,7 @@ tree <- as_tibble(tree)
 tree_join <- full_join(tree, includeh_join, by = "label")
 tree_join <- as.treedata(tree_join)
 
-ggtree(tree_join, #should change to just colour the tip of the node
+ggtree(tree_join,
        layout = "circular") +
   geom_tippoint(aes(colour = clade)) +
   geom_fruit(geom = geom_bar,
@@ -683,7 +693,7 @@ ggplot(includeh, aes(x = log10(years_publishing),
 #save and read
 
 write.csv(includeh, file = "outputs/includeh.csv")
-includeh <- read_csv(file = "outputs/includeh.csv")[-c(1)]
+includeh <- read.csv(file = "outputs/includeh.csv")[-c(1)]
 
 write.csv(indices_df, file = "intermediate_data/domestication_h.csv")
 indices_df <- read.csv(file = "intermediate_data/domestication_h.csv", header = T)[-c(1)]
