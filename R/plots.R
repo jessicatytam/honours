@@ -21,6 +21,7 @@ library(ggnewscale)
 library(gghalves)
 library(ggpol)
 library(plotly)
+library(extrafont)
 
 hindex <- read.csv(file = "outputs/hindex.csv", header = T)
 combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)
