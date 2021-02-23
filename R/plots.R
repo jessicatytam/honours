@@ -200,7 +200,7 @@ iucn <- rl_history(name = "Dugong dugon", key = "4eacf586ea255313b1646429c0f5b56
 
 for (i in 2001:6788) {
   if (is.na(includeh$redlistCategory[i])) {
-    print(paste(i, genus_species, "missing IUCN status."))
+    print(paste(i, includeh$genus_species[i], "missing IUCN status."))
     iucn_query <- rl_history(name = includeh$genus_species[i], key = "4eacf586ea255313b1646429c0f5b566cfa6f789cfb634f9704a8050a6123933")
     iucn_df <- data.frame(iucn_query$result)
     includeh$redlistCategory <- as.character(includeh$redlistCategory)
@@ -351,11 +351,11 @@ ggplot(includeh, aes(x = logmass,
                      colour = clade)) +
   geom_point(size = 2,
              alpha = 0.4) +
-  labs(x = "Body mass (kg, pls double check)",
+  labs(x = "Body mass (kg)",
        y = "h-index") +
   scale_x_log10() +
   coord_trans(y = "log1p") +
-  scale_y_continuous(labels = math_format(10^.x)) +
+  scale_y_continuous(labels = math_format((10^.x)-1)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
@@ -391,7 +391,7 @@ ggplot(includeh, aes(x = logh1,
                width = 0.4,
                alpha = 0.2) +
   labs(x = "h-index") +
-  scale_x_continuous(labels = math_format(10^.x)) +
+  scale_x_continuous(labels = math_format((10^.x)-1)) +
   scale_y_discrete(limits = rev,
                    labels = label_wrap(16)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
@@ -502,7 +502,7 @@ ggplot(includeh_pivot, aes(x = logh1,
                width = 0.4,
                alpha = 0.2) +
   labs(x = "h-index") +
-  scale_x_continuous(labels = math_format(10^.x)) +
+  scale_x_continuous(labels = math_format((10^.x)-1)) +
   scale_y_discrete(limits = rev,
                    labels = label_wrap(18)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
@@ -539,7 +539,7 @@ ggplot(includeh, aes(x = logh1,
                alpha = 0.2) +
   labs(x = "h-index",
        colour = "Clade") +
-  scale_x_continuous(labels = math_format(10^.x)) +
+  scale_x_continuous(labels = math_format((10^.x)-1)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
@@ -571,7 +571,7 @@ med_lat <- ggplot(includeh, aes(x = median_lat,
   labs(x = "Latitude (median)",
        y = "h-index",
        colour = "Clade") +
-  scale_y_continuous(labels = math_format(10^.x)) +
+  scale_y_continuous(labels = math_format((10^.x)-1)) +
   theme(axis.title = element_text(size = 14),
         axis.text = element_text(size = 10),
         axis.line = element_line(colour = "black"),
