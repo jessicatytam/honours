@@ -49,26 +49,61 @@ ggplot(mammal$interest_over_time, aes(x = date,
                                       y = hits)) +
   geom_line()
 
-#combine them into 1 list
+#get missing spp
+
+missing_spp <- data.frame(c("Pteropus livingstonii", "Pteropus lombocensis", "Pteropus loochoensis", "Soricomys kalinga"))
+missing_spp <- missing_spp %>%
+  rename(spp = c..Pteropus.livingstonii....Pteropus.lombocensis....Pteropus.loochoensis...)
+
+output <- list()
+for (i in 1:length(missing_spp$spp)) {
+  print(paste(i, "getting data for", missing_spp$spp[i]))
+  search_term <- missing_spp$spp[i]
+  output[[i]] <- gtrends(keyword = search_term,
+                          time = "all")
+  Sys.sleep(1)
+}
+
+#combine them into 1 list + checking
 
 gtrends_results1 <- readRDS(file = "intermediate_data/gtrends_results1.RDS")
 gtrends_results2 <- readRDS(file = "intermediate_data/gtrends_results2.RDS")
 gtrends_results3 <- readRDS(file = "intermediate_data/gtrends_results3.RDS")
 gtrends_results4 <- readRDS(file = "intermediate_data/gtrends_results4.RDS")
 gtrends_results5 <- readRDS(file = "intermediate_data/gtrends_results5.RDS")
+gtrends_results6 <- readRDS(file = "intermediate_data/gtrends_results6.RDS")
+gtrends_results7 <- readRDS(file = "intermediate_data/gtrends_results7.RDS")
+gtrends_results8 <- readRDS(file = "intermediate_data/gtrends_results8.RDS")
 
 gtrends_results2 <- gtrends_results2[1612:1725]
 gtrends_results3 <- gtrends_results3[1726:3234]
 gtrends_results4 <- gtrends_results4[3235:4862]
 gtrends_results5 <- gtrends_results5[4863:5346]
+gtrends_results6 <- gtrends_results6[5347:5452]
+gtrends_results7 <- gtrends_results7[5453:6030]
+gtrends_results8 <- gtrends_results8[6031:6788]
 
-gtrends_results1[1]
+gtrends_list <- do.call(c, list(gtrends_results1, gtrends_results2, gtrends_results3, gtrends_results4,
+                                gtrends_results5, gtrends_results6, gtrends_results7, gtrends_results8))
+gtrends_list <- do.call(c, list(gtrends_list, output))
 
+spp <- data.frame()
+for (i in 1:length(gtrends_list)) {
+  print(gtrends_list[[i]]$interest_by_country[1, "keyword"])
+  spp[i, 1] <- gtrends_list[[i]]$interest_by_country[1, "keyword"]
+}
 
+unique(spp$V1)
+
+for (i in 1:length(includeh$genus_species)) {
+  if (!includeh$genus_species[i] %in% spp$V1) {
+    print(includeh$genus_species[i])
+  }
+} #the lists match now
 
 #sum, slope, intercept
 
-glm <- glm(hits ~ date, output$interest_over_time, family = poisson)
+glm <- glm(hits ~ date, output[6030]$interest_over_time, family = poisson)
 summary(glm)
 plot(glm)
 
@@ -100,3 +135,42 @@ includeh <- read.csv(file = "outputs/includeh.csv", header = T)[-c(1)]
 
 #testing
 
+for (i in 1:length(gtrends_list)) {
+  if (!is.null(gtrends_list[[i]]$interest_over_time)) {
+    print(i)
+  }
+}
+
+test <- gtrends_list[2891:2900]
+
+test_df <- data.frame()
+for (i in 1:length(test)) {
+  if (!is.null(gtrends_list[[i]]$interest_over_time)) {
+    print(i)
+  }
+}
+
+test_glm <- summary(glm(hits ~ date, test[[8]]$interest_over_time, family = poisson))
+
+test_stat <- data.frame(genus_species = character(), intercept = numeric(), slope = numeric(),
+                        se = numeric(), p = numeric(),
+                        null_dev = numeric(), null_df = numeric(), resid_dev = numeric(), resid_df = numeric())
+
+for (i in 1:length(test)) {
+  if (!is.null(test[[i]]$interest_over_time)) {
+    print(test[[i]]$interest_over_time[1, "keyword"])
+    glm <- summary(glm(hits ~ date, test[[i]]$interest_over_time, family = poisson))
+    test_stat[test_stat$genus_species[i]] <- test[[i]]$interest_over_time[1, "keyword"]
+    test_stat[test_stat$intercept[i]] <- glm$coefficients[1, 1]
+    test_stat[test_stat$slope[i]] <- glm$coefficients[2, 1]
+    test_stat[test_stat$se[i]] <- glm$coefficients[2, 2]
+    test_stat[test_stat$p[i]] <- glm$coefficients[2, 4]
+    test_stat[test_stat$null_dev[i]] <- glm$null.deviance
+    test_stat[test_stat$null_df[i]] <- glm$df.null
+    test_stat[test_stat$resid_dev[i]] <- glm$deviance
+    test_stat[test_stat$null_df[i]] <- glm$df.resid
+  } else {
+    test_stat[test_stat$genus_species[i]] <- test[[i]]$interest_by_country[1, "keyword"]
+    test_stat[test_stat[i, 2:9]] <- 0
+  }
+}
