@@ -3,8 +3,8 @@ devtools::install_github("jessicatytam/specieshindex", force = TRUE, build_vigne
 library(specieshindex)
 
 syn <- read_csv("intermediate_data/synonyms.csv")
-sp1 <- read_csv("outputs/includeh.csv")[1:3500,]
-sp2 <- read_csv("intermediate_data/species_list_from_phylo.csv")[3501:6788,]
+sp1 <- includeh$genus_species[1:3500]
+sp2 <- includeh$genus[3501:6788]
 
 #list to get citation records
 scopus_out1 <- list() #initializing empty list 1

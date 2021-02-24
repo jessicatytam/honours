@@ -43,6 +43,15 @@ for (i in 1:length(includeh$domestication)) {
   }
 }
 
+#count complete cases
+
+complete_list <- data.frame() #3393 records
+for (i in 1:length(includeh$genus_species)) {
+  if (!is.na(includeh$BodyMass.Value[i]) & !is.na(includeh$median_lat[i]) & !is.na(includeh$redlistCategory[i])) {
+    complete_list <- rbind(complete_list, includeh[i,])
+  }
+}
+
 #save and read
 
 write.csv(includeh, file = "outputs/includeh.csv")
