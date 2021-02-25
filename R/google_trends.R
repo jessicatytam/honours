@@ -118,6 +118,18 @@ glm <- glm(hits ~ date, output[6030]$interest_over_time, family = poisson)
 summary(glm)
 plot(glm)
 
+rapply(gtrends_list,function(x) ifelse(x == "<1", "0" ,x), how = "replace") #replace "<1" with "0"
+
+glm_list <- list() #828, 2551
+for (i in 829:length(gtrends_list)) {
+  if (!is.null(gtrends_list[[i]]$interest_over_time)) {
+    print(paste(i, gtrends_list[[i]]$interest_over_time[1, "keyword"]))
+    glm_list[[i]] <- summary(glm(hits ~ date, gtrends_list[[i]]$interest_over_time, family = poisson))
+    glm_list[[i]][["genus_species"]] <- gtrends_list[[i]]$interest_over_time[1, "keyword"]
+  }
+}
+
+
 #map
 
 by_country <- output$interest_by_country
@@ -166,6 +178,7 @@ for (i in 1:length(test)) {
   if (!is.null(test[[i]]$interest_over_time)) {
     print(test[[i]]$interest_over_time[1, "keyword"])
     glm <- summary(glm(hits ~ date, test[[i]]$interest_over_time, family = poisson))
+    print("glm done.")
     test_stat[test_stat$genus_species[i]] <- test[[i]]$interest_over_time[1, "keyword"]
     test_stat[test_stat$intercept[i]] <- glm$coefficients[1, 1]
     test_stat[test_stat$slope[i]] <- glm$coefficients[2, 1]
@@ -192,3 +205,12 @@ test_stat <- data.frame(genus_species[i] = test[[i]]$interest_over_time[1, "keyw
                         null_df[i] = glm$df.resid)
 
 test_map <- map(test, glm(hits ~ date, test$interest_over_time, family = poisson))
+
+glm_list <- list()
+for (i in 1:length(test)) {
+  if (!is.null(test[[i]]$interest_over_time)) {
+    print(test[[i]]$interest_over_time[1, "keyword"])
+    glm_list[[i]] <- summary(glm(hits ~ date, test[[i]]$interest_over_time, family = poisson))
+    glm_list[[i]][["genus_species"]] <- test[[i]]$interest_over_time[1, "keyword"]
+  }
+}
