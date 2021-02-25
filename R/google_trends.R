@@ -51,6 +51,8 @@ ggplot(mammal$interest_over_time, aes(x = date,
 
 #get missing spp
 
+
+
 missing_spp <- data.frame(c("Pteropus livingstonii", "Pteropus lombocensis", "Pteropus loochoensis", "Soricomys kalinga"))
 missing_spp <- missing_spp %>%
   rename(spp = c..Pteropus.livingstonii....Pteropus.lombocensis....Pteropus.loochoensis...)
@@ -93,6 +95,8 @@ for (i in 1:length(gtrends_list)) {
   spp[i, 1] <- gtrends_list[[i]]$interest_by_country[1, "keyword"]
 }
 
+gtrends_list <- gtrends_list[-c(6030)]
+
 unique(spp$V1)
 
 for (i in 1:length(includeh$genus_species)) {
@@ -100,6 +104,13 @@ for (i in 1:length(includeh$genus_species)) {
     print(includeh$genus_species[i])
   }
 } #the lists match now
+
+for (i in 1:length(gtrends_list)) {
+  if (is.null(gtrends_list[[i]])) {
+    print(i)
+  }
+}
+
 
 #sum, slope, intercept
 
@@ -133,6 +144,8 @@ ggplot(world) +
 write.csv(includeh, file = "outputs/includeh.csv")
 includeh <- read.csv(file = "outputs/includeh.csv", header = T)[-c(1)]
 
+write.(gtrends_list, file = "outputs/gtrends_list")
+
 #testing
 
 for (i in 1:length(gtrends_list)) {
@@ -141,20 +154,13 @@ for (i in 1:length(gtrends_list)) {
   }
 }
 
-test <- gtrends_list[2891:2900]
-
-test_df <- data.frame()
-for (i in 1:length(test)) {
-  if (!is.null(gtrends_list[[i]]$interest_over_time)) {
-    print(i)
-  }
-}
+test <- gtrends_list[3001:3010]
 
 test_glm <- summary(glm(hits ~ date, test[[8]]$interest_over_time, family = poisson))
 
-test_stat <- data.frame(genus_species = character(), intercept = numeric(), slope = numeric(),
-                        se = numeric(), p = numeric(),
-                        null_dev = numeric(), null_df = numeric(), resid_dev = numeric(), resid_df = numeric())
+test_stat <- data.frame(matrix(ncol = 9, nrow = 0))
+names <- c("genus_species", "intercept", "slope", "se", "p", "null_dev", "null_df", "resid_dev", "resid_df")
+colnames(test_stat) <- names
 
 for (i in 1:length(test)) {
   if (!is.null(test[[i]]$interest_over_time)) {
@@ -171,6 +177,18 @@ for (i in 1:length(test)) {
     test_stat[test_stat$null_df[i]] <- glm$df.resid
   } else {
     test_stat[test_stat$genus_species[i]] <- test[[i]]$interest_by_country[1, "keyword"]
-    test_stat[test_stat[i, 2:9]] <- 0
+    test_stat[test_stat[i, 2:9]] <- NA
   }
 }
+
+test_stat <- data.frame(genus_species[i] = test[[i]]$interest_over_time[1, "keyword"],
+                        intercept[i] = glm$coefficients[1, 1],
+                        slope[i] = glm$coefficients[2, 1],
+                        se[i] = glm$coefficients[2, 2],
+                        p[i] = glm$coefficients[2, 4],
+                        null_dev[i] = glm$null.deviance,
+                        null_df[i] = glm$df.null,
+                        resid_dev[i] = glm$deviance,
+                        null_df[i] = glm$df.resid)
+
+test_map <- map(test, glm(hits ~ date, test$interest_over_time, family = poisson))

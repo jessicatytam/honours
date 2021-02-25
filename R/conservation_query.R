@@ -3,10 +3,70 @@ devtools::install_github("jessicatytam/specieshindex", force = TRUE, build_vigne
 library(specieshindex)
 
 syn <- read_csv("intermediate_data/synonyms.csv")
-sp1 <- includeh$genus_species[1:3500]
-sp2 <- includeh$genus[3501:6788]
+includeh <- read_csv("outputs/includeh.csv")
+sp1 <- data.frame(includeh[1:3500,])
+sp2 <- data.frame(includeh[3501:6788,])
 
-#list to get citation records
+#add quotation marks to synonyms
+
+syn$synonyms <- shQuote(syn$synonyms, "cmd")
+
+#list to get citation records for "conserv*"
+scopus_out1 <- list() #initializing empty list 1
+for (i in 1:length(sp1$genus_species)) {  
+  if (!sp1$id[i] %in% syn$id) {
+    scopus_out1[[i]] <- FetchSpTAK(genus = str_split(sp1$genus_species[i], pattern = " ")[[1]][1],
+                                   species = str_split(sp1$genus_species[i], pattern = " ")[[1]][2],
+                                   additionalkeywords = "conserv*",
+                                   APIkey = "442b9048417ef20cf680a0ae26ee4d86")
+  } else {
+    syns <- syn$synonyms[match(sp1$id[i], syn$id)]
+    scopus_out1[[i]] <- FetchSpTAK(genus = str_split(sp1$genus_species[i], pattern = " ")[[1]][1],
+                                   species = str_split(sp1$genus_species[i], pattern = " ")[[1]][2],
+                                   synonyms = syns,
+                                   additionalkeywords = "conserv*",
+                                   APIkey = "442b9048417ef20cf680a0ae26ee4d86")
+  }
+}
+
+scopus_out2 <- list() #initializing empty list 2
+for (i in 1:length(sp2$genus_species)) {  
+  if (!sp2$id[i] %in% syn$id) {
+    scopus_out2[[i]] <- FetchSpTAK(genus = str_split(sp2$genus_species[i], pattern = " ")[[1]][1],
+                                   species = str_split(sp2$genus_species[i], pattern = " ")[[1]][2],
+                                   additionalkeywords = "conserv*",
+                                   APIkey = "442b9048417ef20cf680a0ae26ee4d86")
+  } else {
+    syns <- syn$synonyms[match(sp2$id[i], syn$id)]
+    scopus_out2[[i]] <- FetchSpTAK(genus = str_split(sp2$genus_species[i], pattern = " ")[[1]][1],
+                                   species = str_split(sp2$genus_species[i], pattern = " ")[[1]][2],
+                                   synonyms = syns,
+                                   additionalkeywords = "conserv*",
+                                   APIkey = "442b9048417ef20cf680a0ae26ee4d86")
+  }
+}
+
+indices1 <- list()
+for (i in 1:length(scopus_out1)){
+  indices1[[i]] <- Allindices(scopus_out1[[i]],
+                              genus = str_split(sp1$genus_species[i], pattern = " ")[[1]][1],
+                              species = str_split(sp1$genus_species[i], pattern = " ")[[1]][2])
+}
+
+indices2 <- list()
+for (i in 1:length(scopus_out2)){
+  indices2[[i]] <- Allindices(scopus_out2[[i]],
+                              genus = str_split(sp2$genus_species[i], pattern = " ")[[1]][1],
+                              species = str_split(sp2$genus_species[i], pattern = " ")[[1]][2])
+}
+
+indices1_df <- bind_rows(indices1)
+indices2_df <- bind_rows(indices2)
+conserv_indices_df <- rbind(indices1_df, indices2_df)
+
+write.csv(conserv_indices_df, file = "outputs/hindex_conserv.csv")
+
+#list to get citation records for "conservation"
 scopus_out1 <- list() #initializing empty list 1
 for (i in 1:length(sp1$genus_species)) {  
   if (!sp1$id[i] %in% syn$id) {
@@ -24,41 +84,64 @@ for (i in 1:length(sp1$genus_species)) {
   }
 }
 
-scopus_out2 <- list() #initializing empty list 2 using shinichi's api
-for (i in 1:length(sp2$species)) {  
+scopus_out2 <- list() #initializing empty list 2
+for (i in 1:length(sp2$genus_species)) {  
   if (!sp2$id[i] %in% syn$id) {
-    scopus_out2[[i]] <- FetchSpTAK(genus = str_split(sp2$species[i], pattern = " ")[[1]][1],
-                                   species = str_split(sp2$species[i], pattern = " ")[[1]][2],
-                                   APIkey = "01adbe5c94f9e02cc94bcb3348382a76")
+    scopus_out2[[i]] <- FetchSpTAK(genus = str_split(sp2$genus_species[i], pattern = " ")[[1]][1],
+                                   species = str_split(sp2$genus_species[i], pattern = " ")[[1]][2],
+                                   additionalkeywords = "conservation",
+                                   APIkey = "442b9048417ef20cf680a0ae26ee4d86")
   } else {
     syns <- syn$synonyms[match(sp2$id[i], syn$id)]
-    scopus_out2[[i]] <- FetchSpTAK(genus = str_split(sp2$species[i], pattern = " ")[[1]][1],
-                                   species = str_split(sp2$species[i], pattern = " ")[[1]][2],
+    scopus_out2[[i]] <- FetchSpTAK(genus = str_split(sp2$genus_species[i], pattern = " ")[[1]][1],
+                                   species = str_split(sp2$genus_species[i], pattern = " ")[[1]][2],
                                    synonyms = syns,
-                                   APIkey = "01adbe5c94f9e02cc94bcb3348382a76")
+                                   additionalkeywords = "conservation",
+                                   APIkey = "442b9048417ef20cf680a0ae26ee4d86")
   }
 }
 
-#currently getting at error at index 14 and also later on
 indices1 <- list()
 for (i in 1:length(scopus_out1)){
   indices1[[i]] <- Allindices(scopus_out1[[i]],
-                              genus = str_split(sp1$species[i], pattern = " ")[[1]][1],
-                              species = str_split(sp1$species[i], pattern = " ")[[1]][2])
+                              genus = str_split(sp1$genus_species[i], pattern = " ")[[1]][1],
+                              species = str_split(sp1$genus_species[i], pattern = " ")[[1]][2])
 }
 
 indices2 <- list()
 for (i in 1:length(scopus_out2)){
   indices2[[i]] <- Allindices(scopus_out2[[i]],
-                              genus = str_split(sp2$species[i], pattern = " ")[[1]][1],
-                              species = str_split(sp2$species[i], pattern = " ")[[1]][2])
+                              genus = str_split(sp2$genus_species[i], pattern = " ")[[1]][1],
+                              species = str_split(sp2$genus_species[i], pattern = " ")[[1]][2])
 }
 
 indices1_df <- bind_rows(indices1)
 indices2_df <- bind_rows(indices2)
-indices_df <- rbind(indices1_df, indices2_df)
+conservation_indices_df <- rbind(indices1_df, indices2_df)
 
-write.csv(indices_df, file = "outputs/hindex.csv")
+write.csv(conservation_indices_df, file = "outputs/hindex_conservation.csv")
 
-scopus_out1 <- readRDS("intermediate_data/scopus_results1.RDS")
 
+#LOG TRANSFORM
+
+conserv_indices_df <- conserv_indices_df %>%
+  mutate(logh1 = log10(h+1))
+
+#plots
+
+ggplot() +
+  geom_density(data = conserv_indices_df,
+             mapping = aes(x = logh1,
+                           fill = 'with keyword "conserv*"'),
+             alpha = 0.5) +
+  geom_density(data = includeh,
+             mapping = aes(x = logh1,
+                           fill = "without keywords"),
+             alpha = 0.5) +
+  theme(legend.title = element_blank()) +
+  scale_x_continuous(breaks = c(0.3, 0.6, 1, 1.4),
+                     labels = c(1, 3, 9, 24)) 
+
+#testing
+
+FetchSpTAK()
