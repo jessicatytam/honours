@@ -118,7 +118,8 @@ glm <- glm(hits ~ date, output[6030]$interest_over_time, family = poisson)
 summary(glm)
 plot(glm)
 
-rapply(gtrends_list,function(x) ifelse(x == "<1", "0" ,x), how = "replace") #replace "<1" with "0"
+rapply(gtrends_list$interest_over_time$hits,function(x) ifelse(x == "<1", "0.5" ,x), how = "replace") #replace "<1" with "0.5"
+gtrends_list[gtrends_list$interest_over_time$hits=="<1", hits] <- "0.5" #this didn't do anything
 
 glm_list <- list() #828, 2551
 for (i in 829:length(gtrends_list)) {
