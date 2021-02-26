@@ -51,14 +51,12 @@ ggplot(mammal$interest_over_time, aes(x = date,
 
 #get missing spp
 
-
-
 missing_spp <- data.frame(c("Pteropus livingstonii", "Pteropus lombocensis", "Pteropus loochoensis", "Soricomys kalinga"))
 missing_spp <- missing_spp %>%
   rename(spp = c..Pteropus.livingstonii....Pteropus.lombocensis....Pteropus.loochoensis...)
 
 output <- list()
-for (i in 1:length(missing_spp$spp)) {
+for (i in 3:length(missing_spp$spp)) {
   print(paste(i, "getting data for", missing_spp$spp[i]))
   search_term <- missing_spp$spp[i]
   output[[i]] <- gtrends(keyword = search_term,
@@ -90,7 +88,7 @@ gtrends_list <- do.call(c, list(gtrends_results1, gtrends_results2, gtrends_resu
 gtrends_list <- do.call(c, list(gtrends_list, output))
 
 spp <- data.frame()
-for (i in 1:length(gtrends_list)) {
+for (i in 6031:length(gtrends_list)) {
   print(gtrends_list[[i]]$interest_by_country[1, "keyword"])
   spp[i, 1] <- gtrends_list[[i]]$interest_by_country[1, "keyword"]
 }
@@ -111,7 +109,6 @@ for (i in 1:length(gtrends_list)) {
   }
 }
 
-
 #sum, slope, intercept
 
 glm <- glm(hits ~ date, output[6030]$interest_over_time, family = poisson)
@@ -129,7 +126,6 @@ for (i in 829:length(gtrends_list)) {
     glm_list[[i]][["genus_species"]] <- gtrends_list[[i]]$interest_over_time[1, "keyword"]
   }
 }
-
 
 #map
 
@@ -155,9 +151,9 @@ ggplot(world) +
 #reading and writing
 
 write.csv(includeh, file = "outputs/includeh.csv")
-includeh <- read.csv(file = "outputs/includeh.csv", header = T)[-c(1)]
+includeh <- read_csv("outputs/includeh.csv")[-c(1)]
 
-write.(gtrends_list, file = "outputs/gtrends_list")
+saveRDS(gtrends_list, "intermediate_data/gtrends_list.RDS")
 
 #testing
 

@@ -127,9 +127,16 @@ write.csv(conservation_indices_df, file = "outputs/hindex_conservation.csv")
 conserv_indices_df <- conserv_indices_df %>%
   mutate(logh1 = log10(h+1))
 
+conservation_indices_df <- conservation_indices_df %>%
+  mutate(logh1 = log10(h+1))
+
 #plots
 
 ggplot() +
+  geom_density(data = conservation_indices_df,
+               mapping = aes(x = logh1,
+                             fill = 'with keyword "conservation"'),
+               alpha = 0.5)+
   geom_density(data = conserv_indices_df,
              mapping = aes(x = logh1,
                            fill = 'with keyword "conserv*"'),
@@ -142,6 +149,13 @@ ggplot() +
   scale_x_continuous(breaks = c(0.3, 0.6, 1, 1.4),
                      labels = c(1, 3, 9, 24)) 
 
+#reading and saving
+
+includeh <- read_csv("outputs/includeh.csv")[-c(1)]
+conserv_indices_df <- read_csv("outputs/hindex_conserv.csv")[-c(1)]
+conservation_indices_df <- read_csv("outputs/hindex_conservation.csv")[-c(1)]
+
+write.csv(conservation_indices_df, file = "outputs/hindex_conservation.csv")
+
 #testing
 
-FetchSpTAK()
