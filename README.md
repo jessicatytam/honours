@@ -48,7 +48,7 @@
         20,000 requests this week
   - [ ] Missing data (mice)
   - [ ] Altmetrics (rAltmetric)
-  - [ ] Google Trends (gtrendsR) :round\_pushpin:
+  - [x] Google Trends (gtrendsR)
 
 ## :art: Making graphs :round\_pushpin:
 
@@ -59,9 +59,10 @@
   - [x] h vs human use
   - [x] h vs domestication
   - [x] h vs iucn
-  - [ ] h with vs without conservation keyword
-      - [ ] check for patterns
+  - [x] h with vs without conservation keyword
+      - [x] check for patterns
   - [ ] Google Trends sum, slope, intercept
+      - [ ] get the sum first :round\_pushpin:
   - [ ] Google Trends map
   - For all plots
       - [ ] change font
@@ -69,6 +70,7 @@
 
 ## :rocket: Statistical analysis
 
+  - [ ] correlation matrix of complete entries :round\_pushpin:
   - [ ] MCMCglmm
   - [ ] PGLS
   - [ ] Phylogenetic signals (phylosignal)
