@@ -49,20 +49,6 @@ ggplot(mammal$interest_over_time, aes(x = date,
                                       y = hits)) +
   geom_line()
 
-#get missing spp
-
-missing_spp <- data.frame(c("Pteropus livingstonii", "Pteropus lombocensis", "Pteropus loochoensis", "Soricomys kalinga"))
-missing_spp <- missing_spp %>%
-  rename(spp = c..Pteropus.livingstonii....Pteropus.lombocensis....Pteropus.loochoensis...)
-
-output <- list()
-for (i in 3:length(missing_spp$spp)) {
-  print(paste(i, "getting data for", missing_spp$spp[i]))
-  search_term <- missing_spp$spp[i]
-  output[[i]] <- gtrends(keyword = search_term,
-                          time = "all")
-  Sys.sleep(1)
-}
 
 #combine them into 1 list + checking
 
@@ -85,10 +71,9 @@ gtrends_results8 <- gtrends_results8[6031:6788]
 
 gtrends_list <- do.call(c, list(gtrends_results1, gtrends_results2, gtrends_results3, gtrends_results4,
                                 gtrends_results5, gtrends_results6, gtrends_results7, gtrends_results8))
-gtrends_list <- do.call(c, list(gtrends_list, output))
 
 spp <- data.frame()
-for (i in 6031:length(gtrends_list)) {
+for (i in 1:length(gtrends_list)) {
   print(gtrends_list[[i]]$interest_by_country[1, "keyword"])
   spp[i, 1] <- gtrends_list[[i]]$interest_by_country[1, "keyword"]
 }
@@ -103,6 +88,25 @@ for (i in 1:length(includeh$genus_species)) {
   }
 } #the lists match now
 
+#get missing spp
+
+missing_spp <- data.frame(c("Pteropus livingstonii", "Pteropus lombocensis", "Pteropus loochoensis", "Soricomys kalinga"))
+missing_spp <- missing_spp %>%
+  rename(spp = c..Pteropus.livingstonii....Pteropus.lombocensis....Pteropus.loochoensis...)
+
+output <- list()
+for (i in 1:length(missing_spp$spp)) {
+  print(paste(i, "getting data for", missing_spp$spp[i]))
+  search_term <- missing_spp$spp[i]
+  output[[i]] <- gtrends(keyword = search_term,
+                          time = "all")
+  Sys.sleep(1)
+}
+
+gtrends_list <- do.call(c, list(gtrends_list, output))
+
+#check for null
+
 for (i in 1:length(gtrends_list)) {
   if (is.null(gtrends_list[[i]])) {
     print(i)
@@ -111,7 +115,7 @@ for (i in 1:length(gtrends_list)) {
 
 #sum, slope, intercept
 
-glm <- glm(hits ~ date, output[6030]$interest_over_time, family = poisson)
+glm <- glm(hits ~ date, output[6787]$interest_over_time, family = poisson)
 summary(glm)
 plot(glm)
 
@@ -119,7 +123,7 @@ rapply(gtrends_list$interest_over_time$hits,function(x) ifelse(x == "<1", "0.5" 
 gtrends_list[gtrends_list$interest_over_time$hits=="<1", hits] <- "0.5" #this didn't do anything
 
 glm_list <- list() #828, 2551
-for (i in 829:length(gtrends_list)) {
+for (i in 1:length(gtrends_list)) {
   if (!is.null(gtrends_list[[i]]$interest_over_time)) {
     print(paste(i, gtrends_list[[i]]$interest_over_time[1, "keyword"]))
     glm_list[[i]] <- summary(glm(hits ~ date, gtrends_list[[i]]$interest_over_time, family = poisson))
