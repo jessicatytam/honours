@@ -113,14 +113,34 @@ for (i in 1:length(gtrends_list)) {
   }
 }
 
+#replace <1 with 0.5
+
+replace(gtrends_list[[2551]]$interest_over_time[, "hits"],
+        gtrends_list[[2551]]$interest_over_time[, "hits"] == "<1", "0.5")
+
+for (i in 1:length(gtrends_list)) {
+  gtrends_list[[i]]$interest_over_time[, "hits"] <- replace(gtrends_list[[i]]$interest_over_time[, "hits"],
+                                                            gtrends_list[[i]]$interest_over_time[, "hits"] == "<1", "0.5")
+}
+
+#only the sum
+
+hits <- data.frame()
+for (i in 1:length(gtrends_list)) {
+  hits$genus_species[i] <- gtrends_list[[i]]$interest_by_country[1, "keyword"]
+  if (!is.null(gtrends_list[[i]]$interest_by_country)) {
+    hits$sum[i] <- sum(as.numeric(gtrends_list[[i]]$interest_over_time[, "hits"]))
+  } else {
+    hits$sum[i] <- 0
+  }
+}
+
 #sum, slope, intercept
 
 glm <- glm(hits ~ date, output[6787]$interest_over_time, family = poisson)
 summary(glm)
 plot(glm)
 
-rapply(gtrends_list$interest_over_time$hits,function(x) ifelse(x == "<1", "0.5" ,x), how = "replace") #replace "<1" with "0.5"
-gtrends_list[gtrends_list$interest_over_time$hits=="<1", hits] <- "0.5" #this didn't do anything
 
 glm_list <- list() #828, 2551
 for (i in 1:length(gtrends_list)) {
@@ -168,7 +188,7 @@ for (i in 1:length(gtrends_list)) {
   }
 }
 
-test <- gtrends_list[3001:3010]
+test <- gtrends_list[6071:6080]
 
 test_glm <- summary(glm(hits ~ date, test[[8]]$interest_over_time, family = poisson))
 

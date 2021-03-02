@@ -1,4 +1,5 @@
 library(tidyverse)
+library(GGally)
 
 #adding coloums
 
@@ -51,6 +52,10 @@ for (i in 1:length(includeh$genus_species)) {
     complete_list <- rbind(complete_list, includeh[i,])
   }
 }
+
+#correlation matrix of complete cases
+
+ggpairs(complete_list, columns = c(39, 40, 20, 21))
 
 #save and read
 

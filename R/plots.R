@@ -645,6 +645,8 @@ ggplot(data = world) +
 #phylogenetic tree
 tree <- tol_induced_subtree(ott_ids = includeh$id, label_format = "name")
 
+write.tree(tree, "intermediate_data/tree.tre")
+
 includeh_join <- includeh %>%
   rename(label = genus_species)
 includeh_join$label <- str_replace_all(includeh_join$label, " ", "_")
