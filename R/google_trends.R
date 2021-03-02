@@ -158,6 +158,7 @@ write.csv(includeh, file = "outputs/includeh.csv")
 includeh <- read_csv("outputs/includeh.csv")[-c(1)]
 
 saveRDS(gtrends_list, "intermediate_data/gtrends_list.RDS")
+gtrends_list <- readRDS("intermediate_data/gtrends_list.RDS")
 
 #testing
 
