@@ -53,16 +53,43 @@ for (i in 1:length(includeh$genus_species)) {
   }
 }
 
+#change above variables to discrete
+
+complete_list$iucn_bin <- as.factor(complete_list$iucn_bin)
+complete_list$humanuse_bin <- as.factor(complete_list$humanuse_bin)
+complete_list$domestication_bin <- as.factor(complete_list$domestication_bin)
+
 #correlation matrix of complete cases
 
-ggpairs(complete_list, columns = c(39, 40, 20, 46, 47, 48, 49),
+ggpairs(complete_list, columns = c(10, 40, 20, 46, 47, 48, 49),
         aes(colour = clade),
+        upper = list(combo = wrap("box",
+                                  alpha = 0.3),
+                     mapping = aes(fill = clade)),
         lower = list(continuous = wrap("smooth",
-                                       alpha = 0.3)),
+                                       alpha = 0.3),
+                     discrete = "facetbar",
+                     combo = "facetdensity"),
         diag = list(continuous = wrap("densityDiag",
                                      alpha = 0.5))) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"))
   
+#h & mass
+
+summary(lm(h ~ BodyMass.Value, includeh)) # r2 = 0.01388
+
+#h & phylogeny
+
+#h & latitude
+
+#h & iucn
+
+
+#h & human use
+
+#h & domestication
+
+summary(lm(h ~ domestication-1, includeh))
 
 #save and read
 
@@ -73,3 +100,5 @@ includeh <- read.csv(file = "outputs/includeh.csv")[-c(1)]
 #testing
 
 
+
+CountSpT("Ailuropoda", "melanoleuca", additionalkeywords = "(LANGUAGE(chinese))", APIkey = "442b9048417ef20cf680a0ae26ee4d86")
