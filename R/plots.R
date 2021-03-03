@@ -674,8 +674,7 @@ ggtree(tree_join,
         legend.title = element_blank(),
         legend.text = element_text(size = 14)) 
 
-#h-index
-
+#google trends
 ggplot(includeh, aes(y = log_sumgtrends,
                      x = reorder(genus_species, log_sumgtrends))) +
   geom_point(alpha = 0.5) 

@@ -76,20 +76,26 @@ ggpairs(complete_list, columns = c(10, 40, 20, 46, 47, 48, 49),
   
 #h & mass
 
-summary(lm(h ~ BodyMass.Value, includeh)) # r2 = 0.01388
+summary(lm(h ~ BodyMass.Value, includeh)) 
+summary(glm(h ~ BodyMass.Value, includeh, family = poisson))
 
 #h & phylogeny
 
 #h & latitude
 
+summary(lm(h ~ median_lat, includeh))
+
 #h & iucn
 
+summary(aov(h ~ iucn_bin, includeh))
 
 #h & human use
 
+summary(aov(h ~ humanuse_bin, includeh))
+
 #h & domestication
 
-summary(lm(h ~ domestication-1, includeh))
+summary(aov(h ~ domestication_bin, includeh))
 
 #save and read
 
