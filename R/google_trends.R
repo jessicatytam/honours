@@ -115,7 +115,7 @@ for (i in 1:length(gtrends_list)) {
 
 #replace <1 with 0.5
 
-replace(gtrends_list[[2551]]$interest_over_time[, "hits"],
+replace(gtrends_list[[2551]]$interest_over_time[, "hits"], #test
         gtrends_list[[2551]]$interest_over_time[, "hits"] == "<1", "0.5")
 
 for (i in 1:length(gtrends_list)) {
@@ -125,17 +125,33 @@ for (i in 1:length(gtrends_list)) {
 
 #only the sum
 
-hits <- data.frame()
+hits <- data.frame(genus_species = as.character(),
+                   sum_gtrends = as.numeric())
+
+data.frame(genus_species = gtrends_list[[1]]$interest_by_country[1, "keyword"],
+           sum_gtrends = 0)
+
 for (i in 1:length(gtrends_list)) {
-  hits$genus_species[i] <- gtrends_list[[i]]$interest_by_country[1, "keyword"]
-  if (!is.null(gtrends_list[[i]]$interest_by_country)) {
-    hits$sum[i] <- sum(as.numeric(gtrends_list[[i]]$interest_over_time[, "hits"]))
+  if (is.null(gtrends_list[[i]]$interest_by_country)) {
+    gtrends_hits <- data.frame(genus_species = gtrends_list[[i]]$interest_by_country[1, "keyword"],
+                               sum_gtrends = 0)
   } else {
-    hits$sum[i] <- 0
+    gtrends_hits <- data.frame(genus_species = gtrends_list[[i]]$interest_by_country[1, "keyword"],
+                               sum_gtrends = sum(as.numeric(gtrends_list[[i]]$interest_over_time[, "hits"])))
   }
+  hits <- rbind(hits, gtrends_hits)
 }
 
-#sum, slope, intercept
+#checking
+
+sum(hits$sum_gtrends==0) #5799 species with 0
+
+#combine with includeh
+
+includeh <- left_join(includeh, hits, by = "genus_species")
+table(is.na(includeh$sum_gtrends))
+
+#slope, intercept
 
 glm <- glm(hits ~ date, output[6787]$interest_over_time, family = poisson)
 summary(glm)

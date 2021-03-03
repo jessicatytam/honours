@@ -227,6 +227,9 @@ includeh <- includeh %>%
 includeh <- includeh %>%
   mutate(logh1 = log10(h+1), .after = logh)
 
+includeh <- includeh %>%
+  mutate(log_sumgtrends = log10(sum_gtrends+1))
+
 #fill in domestication
 
 for (i in 1:length(includeh$genus_species)) {
@@ -671,6 +674,12 @@ ggtree(tree_join,
         legend.title = element_blank(),
         legend.text = element_text(size = 14)) 
 
+#h-index
+
+ggplot(includeh, aes(y = log_sumgtrends,
+                     x = reorder(genus_species, log_sumgtrends))) +
+  geom_point(alpha = 0.5) 
+  
 #not related to h-index
 ggplot(includeh, aes(y = order)) +
   geom_bar(aes(fill = redlistCategory),

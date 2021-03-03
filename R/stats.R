@@ -55,7 +55,14 @@ for (i in 1:length(includeh$genus_species)) {
 
 #correlation matrix of complete cases
 
-ggpairs(complete_list, columns = c(39, 40, 20, 21))
+ggpairs(complete_list, columns = c(39, 40, 20, 46, 47, 48, 49),
+        aes(colour = clade),
+        lower = list(continuous = wrap("smooth",
+                                       alpha = 0.3)),
+        diag = list(continuous = wrap("densityDiag",
+                                     alpha = 0.5))) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"))
+  
 
 #save and read
 
