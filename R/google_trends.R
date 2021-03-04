@@ -5,6 +5,7 @@ library(data.table)
 library(rnaturalearth)
 library(rnaturalearthdata)
 library(sf)
+library(wesanderson)
 
 
 #get the data
@@ -187,6 +188,52 @@ ggplot(world) +
        fill = "Number of hits") +
   theme(panel.background = element_rect(fill = "aliceblue")) +
   scale_fill_viridis_c(option = "plasma") 
+
+#map of sum
+
+ggplot(world) +
+  geom_sf() +
+  geom_point(data = includeh, aes(x = x,
+                                  y = y,
+                                  colour = log_sumgtrends),
+             size = 2,
+             alpha = 0.4) +
+  coord_sf(expand = FALSE) +
+  labs(x = "Longitude",
+       y = "Latitude",
+       colour = "Google searches") +
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 10),
+        legend.title = element_text(size = 12),
+        legend.text = element_text(size = 10),
+        panel.background = element_rect(fill = "white"),
+        panel.grid = element_line(colour = "grey80",
+                                  linetype = "dashed")) +
+  scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous")) 
+
+ggplot(includeh, aes(x = median_lat,
+                     y = log_sumgtrends,
+                     colour = clade)) +
+  geom_point(size = 2,
+             alpha = 0.4) +
+  geom_smooth(colour = "black") +
+  labs(x = "Latitude (median)",
+       y = "Google searches",
+       colour = "Clade") +
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 10),
+        axis.line = element_line(colour = "black"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 14),
+        legend.key = element_rect(fill = "white"),
+        legend.position = "top",
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major = element_line(colour = "grey80"),
+        panel.grid.minor = element_line(colour = "grey80",
+                                        linetype = "longdash")) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 4,
+                                                               alpha = 1)))
 
 #reading and writing
 

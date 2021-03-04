@@ -678,6 +678,28 @@ ggtree(tree_join,
 ggplot(includeh, aes(y = log_sumgtrends,
                      x = reorder(genus_species, log_sumgtrends))) +
   geom_point(alpha = 0.5) 
+
+ggplot(includeh, aes(x = logmass,
+                     y = log_sumgtrends,
+                     colour = clade)) +
+  geom_point(size = 2,
+             alpha = 0.4) +
+  labs(x = "Body mass (kg; need to correct the unit)",
+       y = "Google hits") +
+  scale_x_log10() +
+  coord_trans(y = "log1p") +
+  scale_colour_manual(values = c("#d4ac0d", "#ca6f1e", "#cb4335", "#7d3c98", "#2e86c1")) +
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 10),
+        axis.line = element_line(colour = "black"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 14),
+        legend.key = element_rect(fill = "white"),
+        legend.position = "top",
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major = element_line(colour = "grey80"),
+        panel.grid.minor = element_line(colour = "grey80",
+                                        linetype = "longdash"))
   
 #not related to h-index
 ggplot(includeh, aes(y = order)) +
