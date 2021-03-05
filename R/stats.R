@@ -105,6 +105,3 @@ includeh <- read.csv(file = "outputs/includeh.csv")[-c(1)]
 
 #testing
 
-
-
-CountSpT("Ailuropoda", "melanoleuca", additionalkeywords = "(LANGUAGE(chinese))", APIkey = "442b9048417ef20cf680a0ae26ee4d86")
