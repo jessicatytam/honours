@@ -44,6 +44,18 @@ for (i in 1:length(includeh$domestication)) {
   }
 }
 
+#add h-index of conserv* to the master df
+
+conserv <- read_csv("outputs/hindex_conserv.csv")[-c(1)]
+conserv_select <- conserv[, c("genus_species", "h")]
+conserv_select <- conserv_select %>%
+  rename(h_conserv = h)
+conserv_select$genus_species <- str_replace_all(conserv_select$genus_species, "_", " ")
+
+includeh <- left_join(includeh, conserv_select)
+
+includeh$logh1_conserv <- log10(includeh$h_conserv+1)
+
 #count complete cases
 
 complete_list <- data.frame() #3393 records
@@ -100,7 +112,7 @@ summary(aov(h ~ domestication_bin, includeh))
 #save and read
 
 write.csv(includeh, file = "outputs/includeh.csv")
-includeh <- read.csv(file = "outputs/includeh.csv")[-c(1)]
+includeh <- read_csv("outputs/includeh.csv")[-c(1)]
 
 
 #testing
