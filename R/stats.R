@@ -1,5 +1,6 @@
 library(tidyverse)
 library(GGally)
+library(glmmTMB)
 
 #adding coloums
 
@@ -97,6 +98,7 @@ sum(is.na(includeh$BodyMass.SpecLevel))
 
 summary(lm(h ~ BodyMass.Value, includeh)) 
 summary(glm(h ~ BodyMass.Value, includeh, family = poisson))
+summary(glmmTMB(h ~ BodyMass.Value, includeh, family = poisson))
 
 #h & phylogeny
 
