@@ -227,9 +227,6 @@ includeh <- includeh %>%
 includeh <- includeh %>%
   mutate(logh1 = log10(h+1), .after = logh)
 
-includeh <- includeh %>%
-  mutate(log_sumgtrends = log10(sum_gtrends+1))
-
 #fill in domestication
 
 for (i in 1:length(includeh$genus_species)) {
@@ -648,8 +645,6 @@ ggplot(data = world) +
 #phylogenetic tree
 tree <- tol_induced_subtree(ott_ids = includeh$id, label_format = "name")
 
-write.tree(tree, "intermediate_data/tree.tre")
-
 includeh_join <- includeh %>%
   rename(label = genus_species)
 includeh_join$label <- str_replace_all(includeh_join$label, " ", "_")
@@ -674,33 +669,6 @@ ggtree(tree_join,
         legend.title = element_blank(),
         legend.text = element_text(size = 14)) 
 
-#google trends
-ggplot(includeh, aes(y = log_sumgtrends,
-                     x = reorder(genus_species, log_sumgtrends))) +
-  geom_point(alpha = 0.5) 
-
-ggplot(includeh, aes(x = logmass,
-                     y = log_sumgtrends,
-                     colour = clade)) +
-  geom_point(size = 2,
-             alpha = 0.4) +
-  labs(x = "Body mass (kg; need to correct the unit)",
-       y = "Google hits") +
-  scale_x_log10() +
-  coord_trans(y = "log1p") +
-  scale_colour_manual(values = c("#d4ac0d", "#ca6f1e", "#cb4335", "#7d3c98", "#2e86c1")) +
-  theme(axis.title = element_text(size = 14),
-        axis.text = element_text(size = 10),
-        axis.line = element_line(colour = "black"),
-        legend.title = element_blank(),
-        legend.text = element_text(size = 14),
-        legend.key = element_rect(fill = "white"),
-        legend.position = "top",
-        panel.background = element_rect(fill = "white"),
-        panel.grid.major = element_line(colour = "grey80"),
-        panel.grid.minor = element_line(colour = "grey80",
-                                        linetype = "longdash"))
-  
 #not related to h-index
 ggplot(includeh, aes(y = order)) +
   geom_bar(aes(fill = redlistCategory),
@@ -730,6 +698,8 @@ includeh <- read.csv(file = "outputs/includeh.csv")[-c(1)]
 
 write.csv(indices_df, file = "intermediate_data/domestication_h.csv")
 indices_df <- read.csv(file = "intermediate_data/domestication_h.csv", header = T)[-c(1)]
+
+write.tree(tree, "intermediate_data/tree.")
 
 #testing
 

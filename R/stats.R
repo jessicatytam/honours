@@ -88,6 +88,13 @@ ggpairs(complete_list, columns = c(10, 40, 20, 46, 47, 48, 49),
   
 #h & mass
 
+table(includeh$BodyMass.SpecLevel)
+#0 inferred from genus of family typical values = 703 species
+#1 based on species level data = 3276 species
+#2 based on phylogenetically imputed values = 502 species
+sum(is.na(includeh$BodyMass.SpecLevel))
+#NA = 2308 species
+
 summary(lm(h ~ BodyMass.Value, includeh)) 
 summary(glm(h ~ BodyMass.Value, includeh, family = poisson))
 
