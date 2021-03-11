@@ -31,8 +31,8 @@ saveRDS(output8, "intermediate_data/gtrends_results8.RDS") #spp 6031-6788
 gtrends_output <- bind_rows(output)
 
 
-output <- c("Bos taurus")
-cow <- gtrends(keyword = output,
+output <- c("Martes pennanti")
+fisher <- gtrends(keyword = output,
                  time = "all")
 
 output <- c("Glis glis")
