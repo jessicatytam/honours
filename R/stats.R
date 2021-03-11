@@ -98,7 +98,7 @@ sum(is.na(includeh$BodyMass.SpecLevel))
 
 summary(lm(h ~ BodyMass.Value, includeh)) 
 summary(glm(h ~ BodyMass.Value, includeh, family = poisson))
-summary(glmmTMB(h ~ BodyMass.Value, includeh, family = poisson))
+summary(glmmTMB(h ~ BodyMass.Value, includeh, ziformula = ~1, family = poisson))
 
 #h & phylogeny
 
