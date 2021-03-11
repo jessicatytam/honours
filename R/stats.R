@@ -1,6 +1,9 @@
 library(tidyverse)
 library(GGally)
 library(glmmTMB)
+library(here)
+library(ape)
+library(phylolm)
 
 #adding coloums
 
@@ -44,6 +47,9 @@ for (i in 1:length(includeh$domestication)) {
     includeh$domestication_bin[i] <- 3
   }
 }
+
+includeh$gtrend_bin <- ifelse(includeh$sum_gtrends == 0, 0, 1)
+
 
 #add h-index of conserv* to the master df
 
@@ -123,6 +129,38 @@ summary(aov(h ~ domestication_bin, includeh))
 write.csv(includeh, file = "outputs/includeh.csv")
 includeh <- read_csv("outputs/includeh.csv")[-c(1)]
 
+# get phylo
+tree <- read.tree(here("intermediate_data", "tree.tre"))
+tree <- compute.brlen(tree) 
+#ultrametric(tree)
 
 #testing
+# wrong model but it is a nice start
+
+mod1 <- glm(h ~ logmass + 
+              scale(median_lat) + 
+              I(scale(median_lat)^2) + 
+              scale(iucn_bin) + 
+             # I(scale(iucn_bin)^2)  + # original hypothesis has this
+              humanuse_bin + 
+              domestication_bin + 
+              gtrend_bin, 
+            family = "quasipoisson", 
+            data = includeh)
+summary(mod1)
+
+# phylo model
+
+mod2 <- phyloglm(h ~ logmass + 
+              scale(median_lat) + 
+              I(scale(median_lat)^2) + 
+              scale(iucn_bin) + 
+              # I(scale(iucn_bin)^2)  + # original hypothesis has this
+              humanuse_bin + 
+              domestication_bin + 
+              gtrend_bin, 
+            phy=tree,
+            method  = "poisson_GEE", 
+            data = includeh)
+summary(mod2)  
 
