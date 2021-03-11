@@ -235,6 +235,16 @@ ggplot(includeh, aes(x = median_lat,
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1)))
 
+#h vs sum
+
+ggplot(includeh, aes(x = log_sumgtrends,
+                     y = logh1,
+                     colour = redlistCategory)) +
+  geom_point(size = 2,
+             alpha = 0.4) +
+  scale_colour_manual(values = c("#0d1e7d", "#194cb3", "#6b40e1", "#aa55ea", "#ea559d", "#cd2d54", "#951433"),
+                      na.value = c("#a5a5a5"))
+
 #reading and writing
 
 write.csv(includeh, file = "outputs/includeh.csv")
