@@ -144,7 +144,7 @@ mod1 <- glm(h ~ logmass +
              # I(scale(iucn_bin)^2)  + # original hypothesis has this
               humanuse_bin + 
               domestication_bin + 
-              gtrend_bin, 
+              log_sumgtrends, 
             family = "quasipoisson", 
             data = includeh)
 summary(mod1)
