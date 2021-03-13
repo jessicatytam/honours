@@ -357,10 +357,12 @@ ggplot(includeh, aes(x = logmass,
                      colour = clade)) +
   geom_point(size = 2,
              alpha = 0.4) +
-  labs(x = "Body mass (kg; need to correct the unit)",
+  labs(x = "Body mass (g)",
        y = "h-index") +
   scale_x_log10() +
   coord_trans(y = "log1p") +
+  scale_x_continuous(breaks = c(0.3, 1.0, 3.0),
+                     labels = c(2.0, 10.0, 1000.0)) +
   scale_y_continuous(breaks = c(0, 1, 2),
                      labels = c(0, 9, 99)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
