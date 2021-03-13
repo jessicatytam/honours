@@ -699,7 +699,7 @@ includeh <- read.csv(file = "outputs/includeh.csv")[-c(1)]
 write.csv(indices_df, file = "intermediate_data/domestication_h.csv")
 indices_df <- read.csv(file = "intermediate_data/domestication_h.csv", header = T)[-c(1)]
 
-write.tree(tree, "intermediate_data/tree.")
+write.tree(tree, "intermediate_data/tree.tre")
 
 #testing
 
