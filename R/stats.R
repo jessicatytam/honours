@@ -4,6 +4,7 @@ library(glmmTMB)
 library(here)
 library(ape)
 library(phylolm)
+library(car)
 
 #adding coloums
 
@@ -48,7 +49,7 @@ for (i in 1:length(includeh$domestication)) {
   }
 }
 
-includeh$gtrend_bin <- ifelse(includeh$sum_gtrends == 0, 0, 1)
+includeh$gtrends_bin <- ifelse(includeh$sum_gtrends == 0, 0, 1)
 
 
 #add h-index of conserv* to the master df
@@ -148,6 +149,7 @@ mod1 <- glm(h ~ logmass +
             family = "quasipoisson", 
             data = includeh)
 summary(mod1)
+vif(mod1)
 
 # phylo model
 
@@ -158,9 +160,13 @@ mod2 <- phyloglm(h ~ logmass +
               # I(scale(iucn_bin)^2)  + # original hypothesis has this
               humanuse_bin + 
               domestication_bin + 
-              gtrend_bin, 
-            phy=tree,
-            method  = "poisson_GEE", 
-            data = includeh)
+              gtrends_bin, 
+            data = includeh,
+            phy = tree,
+            method  = "poisson_GEE")
 summary(mod2)  
 
+
+
+
+includeh$genus_species <- str_replace(includeh$genus_species, " ", "_")

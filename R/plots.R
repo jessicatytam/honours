@@ -643,6 +643,8 @@ ggplot(data = world) +
   scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous")) 
 
 #phylogenetic tree
+includeh <- includeh %>%
+  unique()
 tree <- tol_induced_subtree(ott_ids = includeh$id, label_format = "name")
 
 includeh_join <- includeh %>%
