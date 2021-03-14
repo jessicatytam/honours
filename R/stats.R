@@ -3,6 +3,7 @@ library(GGally)
 library(glmmTMB)
 library(here)
 library(ape)
+library(rotl)
 library(phylolm)
 library(car)
 
@@ -93,6 +94,10 @@ ggpairs(complete_list, columns = c(10, 40, 20, 46, 47, 48, 49),
         diag = list(continuous = wrap("densityDiag",
                                      alpha = 0.5))) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"))
+
+#get tree for complete cases
+
+tree_complete <- tol_induced_subtree(ott_ids = complete_list$id, label_format = "name")
   
 #h & mass
 
@@ -128,11 +133,13 @@ summary(aov(h ~ domestication_bin, includeh))
 #save and read
 
 write.csv(includeh, file = "outputs/includeh.csv")
-includeh <- read_csv("outputs/includeh.csv")[-c(1)]
+includeh <- read.csv("outputs/includeh.csv")[-c(1)]
 
 # get phylo
 tree <- read.tree(here("intermediate_data", "tree.tre"))
 tree <- compute.brlen(tree) 
+tree_complete <- compute.brlen(tree_complete) 
+
 #ultrametric(tree)
 
 #testing
@@ -166,7 +173,17 @@ mod2 <- phyloglm(h ~ logmass +
             method  = "poisson_GEE")
 summary(mod2)  
 
+#phylo model of only the complete cases
+mod3 <- phyloglm(h ~ logmass + #still not working
+                   scale(median_lat) + 
+                   I(scale(median_lat)^2) + 
+                   scale(iucn_bin) + 
+                   # I(scale(iucn_bin)^2)  + # original hypothesis has this
+                   humanuse_bin + 
+                   domestication_bin + 
+                   gtrends_bin, 
+                 data = complete_list,
+                 phy = tree_complete,
+                 method  = "poisson_GEE")
 
 
-
-includeh$genus_species <- str_replace(includeh$genus_species, " ", "_")
