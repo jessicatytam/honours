@@ -6,6 +6,7 @@ library(ape)
 library(rotl)
 library(phylolm)
 library(car)
+library(phyr)
 
 #adding coloums
 
@@ -138,7 +139,10 @@ includeh <- read.csv("outputs/includeh.csv")[-c(1)]
 # get phylo
 tree <- read.tree(here("intermediate_data", "tree.tre"))
 tree <- compute.brlen(tree) 
-tree_complete <- compute.brlen(tree_complete) 
+#tree_complete <- compute.brlen(tree_complete) 
+
+# this seems to make correlation matrix anyways!!!
+cov_tree <- vcv2(tree, corr = FALSE)
 
 #ultrametric(tree)
 
@@ -158,9 +162,32 @@ mod1 <- glm(h ~ logmass +
 summary(mod1)
 vif(mod1)
 
+# pglmm
+
+includeh$sp <- includeh$genus_species
+
+mod_p <-  pglmm(h ~ logmass + 
+                     #scale(median_lat) + 
+                     #I(scale(median_lat)^2) + 
+                     #scale(iucn_bin) + 
+                     # I(scale(iucn_bin)^2)  + # original hypothesis has this
+                     #humanuse_bin + 
+                     #domestication_bin +
+                     #gtrends_bin +
+                     (1 |sp__), 
+                   cov_ranef = list(sp = cov_tree),
+                   add.obs.re = TRUE,
+                   family  = "poisson",
+                   data = includeh,
+                   verbose = TRUE)
+summary(mod_p)  
+
+
+
+# forget about this 
 # phylo model
 
-mod2 <- phyloglm(h ~ logmass + 
+mod3 <- phyloglm(h ~ logmass + 
               scale(median_lat) + 
               I(scale(median_lat)^2) + 
               scale(iucn_bin) + 
