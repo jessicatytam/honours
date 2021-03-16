@@ -139,7 +139,7 @@ includeh <- read.csv("outputs/includeh.csv")[-c(1)]
 # get phylo
 tree <- read.tree(here("intermediate_data", "tree.tre"))
 tree <- compute.brlen(tree) 
-#tree_complete <- compute.brlen(tree_complete) 
+tree_complete <- compute.brlen(tree_complete) 
 
 # this seems to make correlation matrix anyways!!!
 cov_tree <- vcv2(tree, corr = FALSE)
@@ -150,8 +150,8 @@ cov_tree <- vcv2(tree, corr = FALSE)
 # wrong model but it is a nice start
 
 mod1 <- glm(h ~ logmass + 
-              scale(median_lat) + 
-              I(scale(median_lat)^2) + 
+              abs(median_lat) + 
+              #I(scale(median_lat)^2) + 
               scale(iucn_bin) + 
              # I(scale(iucn_bin)^2)  + # original hypothesis has this
               humanuse_bin + 
@@ -188,8 +188,8 @@ summary(mod_p)
 # phylo model
 
 mod3 <- phyloglm(h ~ logmass + 
-              scale(median_lat) + 
-              I(scale(median_lat)^2) + 
+              scale(abs(median_lat)) + 
+              #I(scale(median_lat)^2) + 
               scale(iucn_bin) + 
               # I(scale(iucn_bin)^2)  + # original hypothesis has this
               humanuse_bin + 
@@ -200,17 +200,19 @@ mod3 <- phyloglm(h ~ logmass +
             method  = "poisson_GEE")
 summary(mod2)  
 
+
+row.names(complete_list)<-complete_list$genus_species
 #phylo model of only the complete cases
-mod3 <- phyloglm(h ~ logmass + #still not working
-                   scale(median_lat) + 
-                   I(scale(median_lat)^2) + 
+mod3 <- phyloglm(h ~ scale(logmass) + #still not working
+                   scale(abs(median_lat)) + 
+                   #I(scale(median_lat)^2) + 
                    scale(iucn_bin) + 
                    # I(scale(iucn_bin)^2)  + # original hypothesis has this
-                   humanuse_bin + 
-                   domestication_bin + 
-                   gtrends_bin, 
+                   scale(humanuse_bin) + 
+                   scale(domestication_bin) + 
+                   scale(gtrends_bin), 
                  data = complete_list,
                  phy = tree_complete,
                  method  = "poisson_GEE")
-
+summary(mod3)
 
