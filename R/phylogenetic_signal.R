@@ -11,7 +11,7 @@ tree_node_dated <- read.nexus("trees/tree_pruner_node_dated/output.nex")
 tree_tip_dated <- read.nexus("trees/tree_pruner_tip_dated/output.nex")
 includeh <- read.csv(file = "outputs/includeh.csv")[-c(1)]
 
-#match trees
+#check for matches
 
 table(tree_node_dated$tree_7415$tip.label %in% tree_node_dated$tree_6783$tip.label) #they should all be the same
 table(tree_node_dated$tree_8943$tip.label %in% tree_tip_dated$tree_3732$tip.label) #both files the same
@@ -27,7 +27,8 @@ tree_test <- tree_node_dated$tree_7415
 tree_test <- as_tibble(tree_test)
 
 tree_test <- tree_test %>%
-  filter(label %in% includeh$genus_species)
+  filter(label %in% includeh$genus_species) %>%
+  arrange(by = label)
 
 table(tree_test$label %in% includeh_tree$genus_species)
 
@@ -43,8 +44,7 @@ psignal_mass <- phylosig(tree_test,
                          x = includeh_tree$BodyMass.Value) #this keeps crashing
 
 p4d <- phylo4d(tree_test, includeh_tree$h) #Number of labels does not match number of nodes
-
-
+phyloSignal(p4d = p4d, method = "all")
 
 
 
