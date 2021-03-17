@@ -26,11 +26,9 @@ includeh_tree <- includeh %>%
 tree_test <- tree_node_dated$tree_7415
 tree_test <- as_tibble(tree_test)
 
-for (i in 1:length(tree_test$label)) { #run this until FALSE = 0
-  if (!tree_test$label[i] %in% includeh_tree$genus_species) {
-    tree_test <- tree_test[-i,]
-  }
-}
+tree_test <- tree_test %>%
+  filter(label %in% includeh$genus_species)
+
 table(tree_test$label %in% includeh_tree$genus_species)
 
 tree_test <- as.phylo(tree_test)
@@ -44,10 +42,7 @@ table(tree_test$tip.label %in% includeh_tree$genus_species)
 psignal_mass <- phylosig(tree_test,
                          x = includeh_tree$BodyMass.Value) #this keeps crashing
 
-tree_test <- as_tibble(tree_test)
-tree_test <- as.phylo(tree_test)
-
-p4d <- phylo4d(tree_test, includeh_tree$h)
+p4d <- phylo4d(tree_test, includeh_tree$h) #Number of labels does not match number of nodes
 
 
 
