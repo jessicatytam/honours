@@ -61,19 +61,18 @@
   - [x] h vs iucn
   - [x] h with vs without conservation keyword
       - [x] check for patterns
-  - [ ] Google Trends sum, slope, intercept
-      - [ ] get the sum first :round\_pushpin:
+  - [x] Google Trends sum
   - [ ] Google Trends map
   - For all plots
       - [ ] change font
       - [ ] change h-index axis scale to true values
 
-## :rocket: Statistical analysis
+## :rocket: Statistical analysis :gem::round\_pushpin:
 
-  - [ ] correlation matrix of complete entries :round\_pushpin:
+  - [x] correlation matrix of complete entries
   - [ ] MCMCglmm
   - [ ] PGLS
-  - [ ] Phylogenetic signals (phylosignal)
+  - [x] Phylogenetic signals (phytools)
   - [ ] *h*<sup>2</sup>
   - [ ] Pagel’s λ
 

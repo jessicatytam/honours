@@ -2,8 +2,8 @@ library(dplyr)
 library(tidytree)
 library(ape)
 library(phytools)
-library(phylosignal)
-library(phylobase)
+#library(phylosignal)
+#library(phylobase)
 
 #loading datasets
 
