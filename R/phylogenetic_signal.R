@@ -2,6 +2,8 @@ library(dplyr)
 library(tidytree)
 library(ape)
 library(phytools)
+library(phylosignal)
+library(phylobase)
 
 #loading datasets
 
@@ -23,12 +25,12 @@ includeh_tree <- includeh %>%
 
 tree_test <- tree_node_dated$tree_7415
 tree_test <- as_tibble(tree_test)
+
 for (i in 1:length(tree_test$label)) { #run this until FALSE = 0
   if (!tree_test$label[i] %in% includeh_tree$genus_species) {
     tree_test <- tree_test[-i,]
   }
 }
-
 table(tree_test$label %in% includeh_tree$genus_species)
 
 tree_test <- as.phylo(tree_test)
@@ -40,4 +42,14 @@ table(tree_test$tip.label %in% includeh_tree$genus_species)
 #phylo signal
 
 psignal <- phylosig(tree_test,
-                    x = includeh_tree$h)
+                    x = includeh_tree$h) #this keeps crashing
+
+p4d <- phylo4d(tree_test, includeh_tree$h, includeh_tree$BodyMass.Value)
+
+
+
+
+
+
+
+
