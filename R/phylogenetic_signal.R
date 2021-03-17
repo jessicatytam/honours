@@ -41,10 +41,13 @@ table(tree_test$tip.label %in% includeh_tree$genus_species)
 
 #phylo signal
 
-psignal <- phylosig(tree_test,
-                    x = includeh_tree$h) #this keeps crashing
+psignal_mass <- phylosig(tree_test,
+                         x = includeh_tree$BodyMass.Value) #this keeps crashing
 
-p4d <- phylo4d(tree_test, includeh_tree$h, includeh_tree$BodyMass.Value)
+tree_test <- as_tibble(tree_test)
+tree_test <- as.phylo(tree_test)
+
+p4d <- phylo4d(tree_test, includeh_tree$h)
 
 
 
