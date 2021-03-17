@@ -24,24 +24,33 @@ includeh_tree <- includeh %>%
   filter(includeh$genus_species %in% tree_node_dated$tree_7415$tip.label)
 
 tree_test <- tree_node_dated$tree_7415
-tree_test <- as_tibble(tree_test)
+#tree_test <- as_tibble(tree_test)
 
-tree_test <- tree_test %>%
-  filter(label %in% includeh$genus_species) %>%
-  arrange(by = label)
+#tree_test <- tree_test %>%
+#  filter(label %in% includeh$genus_species) %>%
+#  arrange(by = label)
 
-table(tree_test$label %in% includeh_tree$genus_species)
+#table(tree_test$label %in% includeh_tree$genus_species)
 
-tree_test <- as.phylo(tree_test)
+#tree_test <- as.phylo(tree_test)
 
 #check again
 
 table(tree_test$tip.label %in% includeh_tree$genus_species)
 
+body_mass<-as.array(includeh_tree$logmass)
+row.names(body_mass)<-includeh_tree$genus_species
+
+
+table(includeh_tree$genus_species %in% tree_test$tip.label)
+table(tree_test$tip.label %in% includeh_tree$genus_species)
+
+sum(is.na(body_mass))
 #phylo signal
 
 psignal_mass <- phylosig(tree_test,
-                         x = includeh_tree$BodyMass.Value) #this keeps crashing
+                         x = body_mass,
+                         test=TRUE) #this keeps crashing
 
 p4d <- phylo4d(tree_test, includeh_tree$h) #Number of labels does not match number of nodes
 phyloSignal(p4d = p4d, method = "all")
