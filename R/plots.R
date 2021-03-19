@@ -360,9 +360,11 @@ ggplot(includeh, aes(x = logmass,
   labs(x = "Body mass (g)",
        y = "h-index") +
   scale_x_log10() +
-  coord_trans(y = "log1p") +
-  scale_x_continuous(breaks = c(0.3, 1.0, 3.0),
-                     labels = c(2.0, 10.0, 1000.0)) +
+  scale_y_log10() +
+  coord_trans(x = "log1p",
+              y = "log1p") +
+  scale_x_continuous(breaks = c(1.0, 2.0, 3.0, 4.0),
+                     labels = c(10.0, 100.0, 1000.0, 10000.0)) +
   scale_y_continuous(breaks = c(0, 1, 2),
                      labels = c(0, 9, 99)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
@@ -423,6 +425,8 @@ ggplot(includeh, aes(x = logh1,
         panel.grid.major.x = element_line(colour = "grey80"),
         panel.grid.minor.x = element_line(colour = "grey80",
                                           linetype = "longdash")) 
+
+#EW: oryx dammah, elaphurus davidianus
 
 #human use
 includeh_pivot <- includeh %>%
@@ -574,7 +578,7 @@ ggplot(includeh, aes(x = logh1,
   scale_y_discrete(labels = function(x) sub("-","-\n", x, fixed = TRUE))
 
 #latitude
-med_lat <- ggplot(includeh, aes(x = median_lat,
+ggplot(includeh, aes(x = median_lat,
                                 y = logh1,
                                 colour = clade)) +
   geom_point(size = 2,
@@ -599,11 +603,6 @@ med_lat <- ggplot(includeh, aes(x = median_lat,
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1)))
-
-ggMarginal(med_lat,
-           type = "histogram",
-           margins = "x",
-           bins = 100)
 
 #map
 sbs <- read.csv(file = "intermediate_data/gbif_processed.csv", header = T)
