@@ -4,6 +4,7 @@ library(ape)
 library(phytools)
 #library(phylosignal)
 #library(phylobase)
+library(formattable)
 
 #loading datasets
 
@@ -108,6 +109,11 @@ saveRDS(psignal_use, file = "outputs/stats/psignal_use.R")
 saveRDS(psignal_domestication, file = "outputs/stats/psignal_domestication.R")
 saveRDS(psignal_gtrends, file = "outputs/stats/psignal_gtrends.R")
 
-#combine and convert to df
+#make a table
 
-data.frame(psignal_h)
+psignal_df <- data.frame("variable" = c("log(h+1)", "log(mass)", "latitude", "IUCN status", "human use", "domestication", "gtrends"),
+                         "Blomberg's k" = c(0.01398515, 0.2739998, 0.03703145, 0.01600188, 0.02266098, 0.0109628, 0.02473557))
+
+formattable(psignal_df,
+            align = c("l", "r"),
+            list("Blomberg.s.k" = color_bar("#71CA97")))
