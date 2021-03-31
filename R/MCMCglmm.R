@@ -35,7 +35,7 @@ dat$animal <- dat$genus_species
 #tree <- read.tree(here("intermediate_data", "tree.tre"))
 #tree <- compute.brlen(tree) 
 
-tree_complete <- tol_induced_subtree(ott_ids = complete_list$id, label_format = "name")
+tree_complete <- tol_induced_subtree(ott_ids = dat$id, label_format = "name")
 
 tree <- compute.brlen(tree_complete)
 
@@ -61,7 +61,7 @@ system.time(mod_op <- MCMCglmm(h ~ logmass +
                                nitt=13000*10, 
                                thin=10*10, 
                                burnin=3000*10,
-                               prior = piror1)
+                               prior = prior1)
             )
 
 
@@ -71,8 +71,17 @@ system.time(mod_op <- MCMCglmm(h ~ logmass +
 summary(mod_op)
 plot(mod_op) # this looks good
 
-# probably try ZIP
+saveRDS(mod_op, file = here("Rdata", "mod_op.rds"))
 
+v_dist <- log(1+ 1/mean(dat$h))
+
+# phylogenetic signal
+
+5.097/(5.097 + 0.6279 + v_dist)
+
+
+### it is fine but takes a lot longer
+# probably try ZIP
 
 #prior 
 prior2 <- list(R = list(V = diag(2), nu = 0.002),
@@ -86,14 +95,15 @@ system.time(mod_zip <- MCMCglmm(h ~ logmass +
                                  log_sumgtrends, 
                                random = ~ idh(trait):animal, 
                                rcov = ~idh(trait):units,
-                               family = "zppoisson", 
+                               family = "zipoisson", 
                                pedigree = tree, 
                                dat = dat,  
-                               nitt=13000, 
-                               thin=10, 
-                               burnin=3000,
+                               nitt=13000*100, 
+                               thin=10*1000, 
+                               burnin=3000*100,
                                prior = prior2)
 )
 
 
-
+summary(mod_zip)
+plot(mod_zip) # this looks good
