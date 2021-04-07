@@ -23,6 +23,18 @@ library(ggpol)
 library(plotly)
 library(extrafont)
 
+#save and read
+
+write.csv(includeh, file = "outputs/includeh.csv")
+includeh <- read.csv(file = "outputs/includeh.csv")[-c(1)]
+
+write.csv(indices_df, file = "intermediate_data/domestication_h.csv")
+indices_df <- read.csv(file = "intermediate_data/domestication_h.csv", header = T)[-c(1)]
+
+write.tree(tree, "intermediate_data/tree.tre")
+
+#wrangling
+
 hindex <- read.csv(file = "outputs/hindex.csv", header = T)
 combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)
 
@@ -363,8 +375,8 @@ ggplot(includeh, aes(x = logmass,
   scale_y_log10() +
   coord_trans(x = "log1p",
               y = "log1p") +
-  scale_x_continuous(breaks = c(1.0, 2.0, 3.0, 4.0),
-                     labels = c(10.0, 100.0, 1000.0, 10000.0)) +
+  scale_x_continuous(breaks = c(0.3, 1.0, 2.0, 3.0, 4.0, 5.0),
+                     labels = c(2.0, 10.0, 100.0, "1,000", "10,000", "100,000")) +
   scale_y_continuous(breaks = c(0, 1, 2),
                      labels = c(0, 9, 99)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
@@ -693,16 +705,6 @@ ggplot(includeh, aes(x = log10(years_publishing),
                      y = logh1)) +
   geom_point(aes(size = log10(m+1)),
              alpha = 0.5)
-
-#save and read
-
-write.csv(includeh, file = "outputs/includeh.csv")
-includeh <- read.csv(file = "outputs/includeh.csv")[-c(1)]
-
-write.csv(indices_df, file = "intermediate_data/domestication_h.csv")
-indices_df <- read.csv(file = "intermediate_data/domestication_h.csv", header = T)[-c(1)]
-
-write.tree(tree, "intermediate_data/tree.tre")
 
 #testing
 
