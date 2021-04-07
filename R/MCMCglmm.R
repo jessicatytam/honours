@@ -22,7 +22,7 @@ names(dat)[names(dat) == "family"] <- "spp_family"
 complete_list <- data.frame() #3393 records
 for (i in 1:length(dat$genus_species)) {
   if (!is.na(dat$BodyMass.Value[i]) & !is.na(dat$median_lat[i]) & !is.na(dat$redlistCategory[i])) {
-    complete_list <- rbind(complete_list, includeh[i,])
+    complete_list <- rbind(complete_list, dat[i,])
   }
 }
 # swapping with apply
@@ -107,3 +107,5 @@ system.time(mod_zip <- MCMCglmm(h ~ logmass +
 
 summary(mod_zip)
 plot(mod_zip) # this looks good
+
+saveRDS(mod_op, file = here("Rdata", "mod_zip.rds"))
