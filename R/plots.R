@@ -655,6 +655,8 @@ ggplot(data = world) +
                                         linetype = "dashed")) +
   scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous")) 
 
+
+
 #phylogenetic tree
 includeh <- includeh %>%
   unique()

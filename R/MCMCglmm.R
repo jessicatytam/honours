@@ -108,4 +108,8 @@ system.time(mod_zip <- MCMCglmm(h ~ logmass +
 summary(mod_zip)
 plot(mod_zip) # this looks good
 
-saveRDS(mod_op, file = here("Rdata", "mod_zip.rds"))
+saveRDS(mod_zip, file = here("Rdata", "mod_zip.rds"))
+
+#look at the models
+mod_op <- readRDS("Rdata/mod_op.rds")
+mod_zip <- readRDS("Rdata/mod_zip.rds")
