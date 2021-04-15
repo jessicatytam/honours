@@ -131,7 +131,7 @@ mod_zip <- readRDS("Rdata/mod_zip.rds")
 data_imp<- dat[, c("animal","h","logmass",  "humanuse_bin", "domestication_bin", "log_sumgtrends","iucn_bin")]
 #col.names(data_imp) <- c("species","h","logmass", "median_lat", "humanuse_bin", "domestication_bin", "log_sumgtrends")
 
-data_imp$abs_lab <- abs(dat$median_lat)
+data_imp$abs_lat <- abs(dat$median_lat)
 
 #test <- phylopars(trait_data = data_imp,tree = tree, model = "BM")
 
@@ -171,7 +171,42 @@ imp <- mice(data_imp,
 
 comp1 <- complete(imp, 1)
 
+#add ids to imputed data
+for (i in 1:length(comp1$animal)) {
+  comp1$id[i] <- tnrs_match_names(comp1$animal[i])$ott_id
+  print(paste("Done:", comp1$animal[i]))
+}
 
+#trying lapply
+comp1$id <- lapply(comp1, function(x) tnrs_match_names(x$animal)$ott_id) #don't know if this works
 
+#add Mus bufo id
+comp1[comp1$animal == "Mus_bufo",]
+comp1$id[3806] <- tnrs_match_names("Mus bufo")$ott_id
+
+#new tree with matched synonyms
+tree100 <- readRDS("trees/tree100.nex")
+tree100$tree_6061 <- tol_induced_subtree(ott_ids = comp1$id, label_format = "name")
+
+test_tree <- compute.brlen(tree100$tree_6061) #get branch lengths
+test_tree <- tol_induced_subtree(ott_ids = comp1$id, label_format = "name")
+
+# model using imputed data
+system.time(mod_op_test <- MCMCglmm(h ~ logmass + 
+                                 abs_lat + 
+                                 humanuse_bin + 
+                                 domestication_bin + 
+                                 iucn_bin +
+                                 log_sumgtrends, 
+                               random = ~ animal, 
+                               family = "poisson", 
+                               pedigree = tree100$tree_6061, 
+                               dat = comp1,  
+                               nitt=13000*10, 
+                               thin=10*10, 
+                               burnin=3000*10,
+                               prior = prior1)
+)
+#can't scale non-ultrametric trees
 
 
