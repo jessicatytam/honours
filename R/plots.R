@@ -363,7 +363,7 @@ ggplot(includeh, aes(x = h,
                      fill = order)) +
   geom_bar() 
 
-#mass; fix the body mass values
+#mass
 ggplot(includeh, aes(x = logmass,
                      y = logh1,
                      colour = clade)) +
@@ -686,7 +686,7 @@ ggtree(tree_join,
         legend.title = element_blank(),
         legend.text = element_text(size = 14)) 
 
-#not related to h-index
+#supp
 ggplot(includeh, aes(y = order)) +
   geom_bar(aes(fill = redlistCategory),
            position = "fill") +

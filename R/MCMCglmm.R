@@ -186,10 +186,10 @@ comp1$id[3806] <- tnrs_match_names("Mus bufo")$ott_id
 
 #new tree with matched synonyms
 tree100 <- readRDS("trees/tree100.nex")
-tree100$tree_6061 <- tol_induced_subtree(ott_ids = comp1$id, label_format = "name")
+tree100$tree_6061 <- tol_induced_subtree(ott_ids = comp1$id, label_format = "name") #not working
 
 test_tree <- compute.brlen(tree100$tree_6061) #get branch lengths
-test_tree <- tol_induced_subtree(ott_ids = comp1$id, label_format = "name")
+test_tree <- tol_induced_subtree(ott_ids = comp1$id, label_format = "name") #not working
 
 # model using imputed data
 system.time(mod_op_test <- MCMCglmm(h ~ logmass + 

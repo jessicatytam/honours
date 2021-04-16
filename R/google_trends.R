@@ -8,6 +8,14 @@ library(sf)
 library(wesanderson)
 
 
+#reading and writing
+
+write.csv(includeh, file = "outputs/includeh.csv")
+includeh <- read_csv("outputs/includeh.csv")[-c(1)]
+
+saveRDS(gtrends_list, "intermediate_data/gtrends_list.RDS")
+gtrends_list <- readRDS("intermediate_data/gtrends_list.RDS")
+
 #get the data
 
 output8 <- list()
@@ -168,6 +176,10 @@ for (i in 1:length(gtrends_list)) {
   }
 }
 
+#sorting clade
+
+includeh$clade <- factor(includeh$clade, levels = c("Afrotheria", "Xenarthra", "Euarchontoglires", "Laurasiatheria", "Marsupials & monotremes"))
+
 #map
 
 by_country <- output$interest_by_country
@@ -239,19 +251,29 @@ ggplot(includeh, aes(x = median_lat,
 
 ggplot(includeh, aes(x = log_sumgtrends,
                      y = logh1,
-                     colour = redlistCategory)) +
+                     colour = clade)) +
   geom_point(size = 2,
-             alpha = 0.4) +
-  scale_colour_manual(values = c("#0d1e7d", "#194cb3", "#6b40e1", "#aa55ea", "#ea559d", "#cd2d54", "#951433"),
-                      na.value = c("#a5a5a5"))
-
-#reading and writing
-
-write.csv(includeh, file = "outputs/includeh.csv")
-includeh <- read_csv("outputs/includeh.csv")[-c(1)]
-
-saveRDS(gtrends_list, "intermediate_data/gtrends_list.RDS")
-gtrends_list <- readRDS("intermediate_data/gtrends_list.RDS")
+             alpha = 0.5) +
+  labs(x = "Sum of Google Trends index",
+       y = "h-index") +
+  scale_x_continuous(breaks = c(0, 2, 3, 4),
+                     labels = c(0, 100, "1,000", "10,000")) +
+  scale_y_continuous(breaks = c(0, 1, 2),
+                     labels = c(0, 9, 99)) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 4,
+                                                               alpha = 1))) +
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 10),
+        axis.line = element_line(colour = "black"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 14),
+        legend.key = element_rect(fill = "white"),
+        legend.position = "top",
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major = element_line(colour = "grey80"),
+        panel.grid.minor = element_line(colour = "grey80",
+                                        linetype = "longdash"))
 
 #testing
 
