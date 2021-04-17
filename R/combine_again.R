@@ -1,4 +1,5 @@
 library(dplyr)
+library(stringr)
 library(rotl)
 library(rredlist)
 library(letsR)
@@ -7,6 +8,7 @@ library(geosphere)
 #saving and loading
 write.csv(combinedf2, file = "outputs/combinedf2.csv")
 combinedf2 <- read.csv(file = "outputs/combinedf2.csv", header = T)[-c(1)]
+includeh <- read.csv(file = "outputs/includeh.csv")[-c(1)]
 domestication_h <- read.csv(file = "intermediate_data/domestication_h.csv", header = T)
 
 #datasets
@@ -314,6 +316,11 @@ for (i in 1:length(combinedf2$order)) {
 
 table(combinedf2$clade) #check
 table(is.na(combinedf2$clade)) #check
+
+combinedf2 <- combinedf2[!(combinedf2$genus_species == "Musserakis sulawesiensis"),] #remove the nematode
+
+combinedf2$genus_species <- str_replace(combinedf2$genus_species, " ", "_")
+combinedf2$genus_species[!combinedf2$genus_species %in% includeh$genus_species]
 
 #prep synonyms for h-index
 
