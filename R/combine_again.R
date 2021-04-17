@@ -1,10 +1,12 @@
-library(tidyverse)
+library(dplyr)
 library(rotl)
 library(rredlist)
+library(letsR)
+library(geosphere)
 
 #saving and loading
 write.csv(combinedf2, file = "outputs/combinedf2.csv")
-combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)[-c(1)]
+combinedf2 <- read.csv(file = "outputs/combinedf2.csv", header = T)[-c(1)]
 domestication_h <- read.csv(file = "intermediate_data/domestication_h.csv", header = T)
 
 #datasets
@@ -116,11 +118,11 @@ combinedf2 <- combinedf2[c(4, 5, 1, 8, 2:3, 6:7, 9:28)]
 #remove duplicates
 
 combinedf2$genus_species[duplicated(combinedf2$genus_species)]
-combinedf2 <- unique(combinedf2)
+combinedf2 <- combinedf2[!duplicated(combinedf2$genus_species),] #keeping the first record
 
-#manually remove duplicates
+#subset phylogeny = yes
 
-
+combinedf2 <- subset(combinedf2, phylogeny == "Yes")
 
 #fill in ids
 
@@ -197,28 +199,27 @@ for (i in 1:length(combinedf2$genus_species)) {
 #add lat long
 
 sbs <- read.csv(file = "intermediate_data/gbif_processed.csv", header = T)
-PAM <- lets.presab.points(cbind(sbs$decimalLongitude,sbs$decimalLatitude), sbs$species,
+PAM <- letsR::lets.presab.points(cbind(sbs$decimalLongitude,sbs$decimalLatitude), sbs$species,
                           xmn = -180, xmx = 180, 
                           ymn = -90, ymx = 90,resol = 2)
 ##lets.midpoint.fixed() in file "R/geo_plotting"
-mid <- lets.midpoint.fixed(PAM)
+mid <- geosphere::lets.midpoint.fixed(PAM)
 mid$x <- as.numeric(mid$x)
 mid$y<-as.numeric(mid$y)
+
 for (i in 1:length(mid$Species)) {
   mid$genus_species[i] <- tnrs_match_names(mid$Species[i])$unique_name
   print(paste("Done:", mid$Species[i]))
 }
-combinedf2 <- list(combinedf2, mid) %>%
-  reduce(left_join, by = "genus_species")
 
+combinedf2 <- left_join(combinedf2, mid, by = "genus_species")
 
-
-
-
+combinedf2 <- combinedf2[-c(27)]
+combinedf2 <- combinedf2[c(1:25, 27:28, 26)]
 
 #fill in orders and families
 
-for (i in 1382:length(combinedf2$id)) { #will do this later when there is more time
+for (i in 4631:length(combinedf2$id)) { #using ott_id
   if (is.na(combinedf2$order[i])) {
     print(i)
     tax_df <- reshape::melt(tax_lineage(taxonomy_taxon_info(ott_ids = combinedf2$id[i], include_lineage = TRUE)))
@@ -227,88 +228,95 @@ for (i in 1382:length(combinedf2$id)) { #will do this later when there is more t
     order <- tax_filter$unique_name
     combinedf2$order[i] <- as.character(order)
   }
-} #209, 230, 231, 232, 419, 421, 507, 581, 721, 722, 1107, 1223, 1251:1254, 1256:1257, 1278, 1288, 1331, 1381, 1425
+} #188, 624, 1081:1084, 1086:1087, 2661, 3575, 3577:3578, 3581, 3588, 3590, 4232, 4325:4326, 4630
 
-for (i in 1:length(combinedf2$id)) { #will do this later when there is more time
+for (i in 5156:length(combinedf2$id)) { #using ott_id
   if (is.na(combinedf2$family[i])) {
     print(i)
     tax_df <- reshape::melt(tax_lineage(taxonomy_taxon_info(ott_ids = combinedf2$id[i], include_lineage = TRUE)))
     tax_filter <- tax_df %>%
       filter(rank == "family")
     family <- tax_filter$unique_name
-    icombinedf2$family[i] <- as.character(family)
+    combinedf2$family[i] <- as.character(family)
+  }
+} #573, 860, 928:929, 3515, 4200, 5155
+
+#fill in orders and families manually
+
+for (i in 1:length(combinedf2$order)) { #looks like they are all Afrosoricida
+  if (is.na(combinedf2$order[i])) {
+    combinedf2$order[i] <- "Afrosoricida"
   }
 }
 
-#add clade
-
-for (i in 1:length(includeh$order)) {
-  if (includeh$order[i] == "Pilosa"|
-      includeh$order[i] == "Cingulata") {
-    includeh$clade[i] <- "Xenarthra"
-  } else if (includeh$order[i] == "Macroscelidea"|
-             includeh$order[i] == "Afrosoricida"|
-             includeh$order[i] == "Proboscidea"|
-             includeh$order[i] == "Sirenia"|
-             includeh$order[i] == "Hyracoidea") {
-    includeh$clade[i] <- "Afrotheria"
-  } else if (includeh$order[i] == "Chiroptera"|
-             includeh$order[i] == "Perissodactyla"|
-             includeh$order[i] == "Artiodactyla"|
-             includeh$order[i] == "Cetacea"|
-             includeh$order[i] == "Pholidota"|
-             includeh$order[i] == "Carnivora"|
-             includeh$order[i] == "Eulipotyphla"|
-             includeh$order[i] == "Soricomorpha"|
-             includeh$order[i] == "Erinaceomorpha") {
-    includeh$clade[i] <- "Laurasiatheria"
-  } else if (includeh$order[i] == "Primates"|
-             includeh$order[i] == "Scandentia"|
-             includeh$order[i] == "Lagomorpha"|
-             includeh$order[i] == "Rodentia"|
-             includeh$order[i] == "Dermoptera") {
-    includeh$clade[i] <- "Euarchontoglires"
-  } else if (includeh$order[i] == "Diprotodontia"|
-             includeh$order[i] == "Dasyuromorphia"|
-             includeh$order[i] == "Microbiotheria"|
-             includeh$order[i] == "Peramelemorphia"|
-             includeh$order[i] == "Notoryctemorphia"|
-             includeh$order[i] == "Monotremata"|
-             includeh$order[i] == "Paucituberculata"|
-             includeh$order[i] == "Didelphimorphia") {
-    includeh$clade[i] <- "Marsupials & monotremes"
-  }
-}
-
-#remove extinct spp
+#remove extinct spp; looks like the NA in families are extinct cetaceans
 
 status <- data.frame(tnrs_match_names(names = combinedf2$genus_species)$flags)
 status <- status %>%
   rename(status = tnrs_match_names.names...combinedf2.genus_species..flags)
-combinedf2 <- cbind(combinedf2, status, .after = use16)
-
-combinedf2 <- combinedf2[!(combinedf2$genus_species == "Mylodon darwinii"),] #ground sloth
-combinedf2 <- combinedf2[!(combinedf2$genus_species == "Orrorin tugenensis"),] #early human
-combinedf2 <- combinedf2[!(combinedf2$genus_species == "Brandtocetus chongulek"),] #miocene whale
-
+combinedf2 <- cbind(combinedf2, status)
 combinedf2 <- combinedf2[!(combinedf2$status == "extinct"),] #status from rotl
-combinedf2 <- combinedf2[!(combinedf2$order == "Ascaridida"),] #worm
-combinedf2 <- combinedf2[!(combinedf2$genus == "Homo"),] #humans
-combinedf2 <- combinedf2[!(combinedf2$genus == "Mammuthus"),] #woolly mammoth
+combinedf2 <- combinedf2[!grepl("extinct", combinedf2$status),]
 
+#check orders
 
+table(combinedf2$order) #check
+for (i in 1:length(combinedf2$order)) {
+  if (combinedf2$order[i] == "Cingulata (order in Deuterostomia)") {
+    combinedf2$order[i] <- "Cingulata"
+  } else if (combinedf2$order[i] == "Pilosa (order in Deuterostomia)") {
+    combinedf2$order[i] <- "Pilosa"
+  } else if (combinedf2$order[i] == "Proboscidea (order in Deuterostomia)") {
+    combinedf2$order[i] <- "Proboscidea"
+  }
+}
+table(combinedf2$order) #check
 
+#add clade
 
+for (i in 1:length(combinedf2$order)) {
+  if (combinedf2$order[i] == "Pilosa"|
+      combinedf2$order[i] == "Cingulata") {
+    combinedf2$clade[i] <- "Xenarthra"
+  } else if (combinedf2$order[i] == "Macroscelidea"|
+             combinedf2$order[i] == "Afrosoricida"|
+             combinedf2$order[i] == "Proboscidea"|
+             combinedf2$order[i] == "Sirenia"|
+             combinedf2$order[i] == "Hyracoidea") {
+    combinedf2$clade[i] <- "Afrotheria"
+  } else if (combinedf2$order[i] == "Chiroptera"|
+             combinedf2$order[i] == "Perissodactyla"|
+             combinedf2$order[i] == "Artiodactyla"|
+             combinedf2$order[i] == "Cetacea"|
+             combinedf2$order[i] == "Pholidota"|
+             combinedf2$order[i] == "Carnivora"|
+             combinedf2$order[i] == "Eulipotyphla"|
+             combinedf2$order[i] == "Soricomorpha"|
+             combinedf2$order[i] == "Erinaceomorpha") {
+    combinedf2$clade[i] <- "Laurasiatheria"
+  } else if (combinedf2$order[i] == "Primates"|
+             combinedf2$order[i] == "Scandentia"|
+             combinedf2$order[i] == "Lagomorpha"|
+             combinedf2$order[i] == "Rodentia"|
+             combinedf2$order[i] == "Dermoptera") {
+    combinedf2$clade[i] <- "Euarchontoglires"
+  } else if (combinedf2$order[i] == "Diprotodontia"|
+             combinedf2$order[i] == "Dasyuromorphia"|
+             combinedf2$order[i] == "Microbiotheria"|
+             combinedf2$order[i] == "Peramelemorphia"|
+             combinedf2$order[i] == "Notoryctemorphia"|
+             combinedf2$order[i] == "Monotremata"|
+             combinedf2$order[i] == "Paucituberculata"|
+             combinedf2$order[i] == "Didelphimorphia") {
+    combinedf2$clade[i] <- "Marsupials & monotremes"
+  }
+}
+
+table(combinedf2$clade) #check
+table(is.na(combinedf2$clade)) #check
 
 #h-index
 
 #google trends
 
 
-
-#testing
-
-tax_df <- reshape::melt(tax_lineage(taxonomy_taxon_info(ott_ids = combinedf2$id[1257], include_lineage = TRUE)))
-filter(rank == "order")
-order <- tax_filter$unique_name
-combinedf2$order[i] <- as.character(order)
