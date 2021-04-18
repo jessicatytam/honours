@@ -322,45 +322,8 @@ combinedf2 <- combinedf2[!(combinedf2$genus_species == "Musserakis sulawesiensis
 combinedf2$genus_species <- str_replace(combinedf2$genus_species, " ", "_")
 combinedf2$genus_species[!combinedf2$genus_species %in% includeh$genus_species]
 
-#prep synonyms for h-index
+#looks like the entire list is already in the other one
+#attach h-index & google trends
 
-
-
-#h-index
-
-sp1 <- combinedf2$genus_species[1:3500,]
-sp2 <- combinedf2$genus_species[3501:6739,]
-
-scopus_out1 <- list() #initializing empty list 1
-for (i in 1:length(sp1$species)) {  
-  if (!sp1$id[i] %in% syn$id) {
-    scopus_out1[[i]] <- FetchSpTAK(genus = str_split(sp1$species[i], pattern = " ")[[1]][1],
-                                   species = str_split(sp1$species[i], pattern = " ")[[1]][2],
-                                   APIkey = "442b9048417ef20cf680a0ae26ee4d86")
-  } else {
-    syns <- syn$synonyms[match(sp1$id[i], syn$id)]
-    scopus_out1[[i]] <- FetchSpTAK(genus = str_split(sp1$species[i], pattern = " ")[[1]][1],
-                                   species = str_split(sp1$species[i], pattern = " ")[[1]][2],
-                                   synonyms = syns,
-                                   APIkey = "442b9048417ef20cf680a0ae26ee4d86")
-  }
-}
-
-scopus_out2 <- list() #initializing empty list 2 using shinichi's api
-for (i in 1:length(sp2$species)) {  
-  if (!sp2$id[i] %in% syn$id) {
-    scopus_out2[[i]] <- FetchSpTAK(genus = str_split(sp2$species[i], pattern = " ")[[1]][1],
-                                   species = str_split(sp2$species[i], pattern = " ")[[1]][2],
-                                   APIkey = "442b9048417ef20cf680a0ae26ee4d86")
-  } else {
-    syns <- syn$synonyms[match(sp2$id[i], syn$id)]
-    scopus_out2[[i]] <- FetchSpTAK(genus = str_split(sp2$species[i], pattern = " ")[[1]][1],
-                                   species = str_split(sp2$species[i], pattern = " ")[[1]][2],
-                                   synonyms = syns,
-                                   APIkey = "442b9048417ef20cf680a0ae26ee4d86")
-  }
-}
-
-#google trends
-
-
+h_gtrends <- includeh[,c(1:13, 39:40, 46:53)]
+combinedf2 <- left_join(combinedf2, h_gtrends)
