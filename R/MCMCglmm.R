@@ -11,6 +11,7 @@ library(ape)
 library(mice)
 library(Rphylopars)
 library(GGally)
+library(phytools)
 
 dat <- read.csv(here("outputs", "includeh.csv"))[-c(1)]
 
@@ -128,7 +129,7 @@ mod_zip <- readRDS("Rdata/mod_zip.rds")
 
 # first cleaning up data
 # this clasked
-data_imp<- dat[, c("animal","h","logmass",  "humanuse_bin", "domestication_bin", "log_sumgtrends","iucn_bin")]
+data_imp<- dat[, c("animal","h","logmass", "humanuse_bin", "domestication_bin", "log_sumgtrends","iucn_bin")]
 #col.names(data_imp) <- c("species","h","logmass", "median_lat", "humanuse_bin", "domestication_bin", "log_sumgtrends")
 
 data_imp$abs_lat <- abs(dat$median_lat)
@@ -207,6 +208,6 @@ system.time(mod_op_test <- MCMCglmm(h ~ logmass +
                                burnin=3000*10,
                                prior = prior1)
 )
-#can't scale non-ultrametric trees
-
+#convert to ultrametric trees
+#trim tree
 
