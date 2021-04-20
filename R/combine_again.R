@@ -177,6 +177,8 @@ for (i in 1:nrow(combinedf2)) {
 combinedf2 <- combinedf2[-c(10, 11)] %>%
   rename(redlistCategory = redlistCategory1)
 
+#fill in red list status
+
 for (i in 1:length(combinedf2$genus_species)) {
   if (is.na(combinedf2$redlistCategory[i])) {
     print(paste(i, combinedf2$genus_species[i], "missing IUCN status."))

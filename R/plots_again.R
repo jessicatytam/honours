@@ -21,11 +21,30 @@ library(ggnewscale)
 library(gghalves)
 library(ggpol)
 library(plotly)
+library(sysfonts)
 
 #loading df
 
 combinedf2 <- read.csv(file = "outputs/combinedf2.csv", header = T)[-c(1)]
-includeh <- read.csv(file = "outputs/includeh.csv")[-c(1)]
+write.csv(combinedf2, file = "outputs/combinedf2.csv")
+includeh <- read.csv(file = "outputs/includeh.csv")[-c(1)] #only for checking here
+
+#more cleaning
+
+combinedf2$genus_species <- str_replace(combinedf2$genus_species, "_", " ")
+
+for (i in 1:length(combinedf2$genus_species)) { #fill in red list status
+  if (is.na(combinedf2$redlistCategory[i])) {
+    print(paste(i, combinedf2$genus_species[i], "missing IUCN status."))
+    iucn_query <- rl_history(name = combinedf2$genus_species[i], key = "4eacf586ea255313b1646429c0f5b566cfa6f789cfb634f9704a8050a6123933")
+    iucn_df <- data.frame(iucn_query$result)
+    combinedf2$redlistCategory <- as.character(combinedf2$redlistCategory)
+    if (nrow(iucn_df > 0)) {
+      print(paste("filling in missing data."))
+      combinedf2$redlistCategory[i] <- iucn_df[1,"category"]
+    }
+  }
+}
 
 #sorting
 
@@ -44,6 +63,10 @@ combinedf2$redlistCategory <- factor(combinedf2$redlistCategory, levels = c("Lea
                                                                         "Endangered", "Critically Endangered",
                                                                         "Regionally Extinct", "Extinct in the Wild", "Extinct",
                                                                         "Data Deficient"))
+
+#add font
+
+font_add_google("Source Sans Pro")
 
 #h by order
 ggplot(combinedf2, aes(x = logh1,
@@ -152,7 +175,7 @@ ggplot(combinedf2, aes(x = logh1,
         legend.title = element_blank(),
         legend.text = element_text(size = 14),
         legend.key = element_rect(fill = "white"),
-        legend.position = "top",
+        legend.position = "top",v
         panel.background = element_rect(fill = "white"),
         panel.grid.major.y = element_blank(),
         panel.grid.minor.y = element_blank(),
@@ -339,21 +362,6 @@ ggplot(combinedf2, aes(x = median_lat,
                                                                alpha = 1)))
 
 #map
-sbs <- read.csv(file = "intermediate_data/gbif_processed.csv", header = T)
-
-PAM <- lets.presab.points(cbind(sbs$decimalLongitude,sbs$decimalLatitude), sbs$species,
-                          xmn = -180, xmx = 180, 
-                          ymn = -90, ymx = 90,resol = 2)
-summary(PAM)
-plot(PAM)
-#lets.midpoint.fixed() in file "R/geo_plotting"
-mid <- lets.midpoint.fixed(PAM)
-mid$x<-as.numeric(mid$x)
-mid$y<-as.numeric(mid$y)
-mid <- mid %>%
-  rename(genus_species = Species)
-combinedf2 <- list(combinedf2, mid) %>%
-  reduce(left_join, by = "genus_species")
 
 world <- ne_countries(scale = "large", returnclass = "sf")
 
@@ -380,8 +388,8 @@ ggplot(data = world) +
 
 
 #phylogenetic tree
-combinedf2 <- combinedf2 %>%
-  unique()
+#combinedf2 <- combinedf2 %>%
+#  unique()
 tree <- tol_induced_subtree(ott_ids = combinedf2$id, label_format = "name")
 
 combinedf2_join <- combinedf2 %>%
