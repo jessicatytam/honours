@@ -66,7 +66,7 @@ combinedf2$redlistCategory <- factor(combinedf2$redlistCategory, levels = c("Lea
 
 #add font
 
-font_add_google("Source Sans Pro")
+font_add_google("Roboto")
 
 #h by order
 ggplot(combinedf2, aes(x = logh1,
@@ -135,11 +135,15 @@ ggplot(combinedf2, aes(x = logmass,
                 lineend = "round") +
   scale_colour_manual(values = c("#d4ac0d", "#ca6f1e", "#cb4335", "#7d3c98", "#2e86c1")) +
   guides(colour = FALSE) +
-  theme(axis.title = element_text(size = 14),
-        axis.text = element_text(size = 10),
+  theme(axis.title = element_text(family = "Roboto",
+                                  face = "bold",
+                                  size = 14),
+        axis.text = element_text(family = "Roboto",
+                                 size = 10),
         axis.line = element_line(colour = "black"),
         legend.title = element_blank(),
-        legend.text = element_text(size = 14),
+        legend.text = element_text(family = "Roboto",
+                                   size = 14),
         legend.key = element_rect(fill = "white"),
         legend.position = "top",
         panel.background = element_rect(fill = "white"),
@@ -156,7 +160,8 @@ ggplot(combinedf2, aes(x = logh1,
                    alpha = 0.4) +
   geom_boxplot(fill = "grey80",
                size = 0.8,
-               width = 0.4,
+               width = 0.4,face = "bold",
+               
                alpha = 0.2) +
   labs(x = "h-index") +
   scale_x_continuous(breaks = c(0, 1, 2),
@@ -166,16 +171,21 @@ ggplot(combinedf2, aes(x = logh1,
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
-  theme(axis.title = element_text(size = 14),
+  theme(axis.title = element_text(family = "Roboto",
+                                  face = "bold",
+                                  size = 14),
         axis.title.y = element_blank(),
-        axis.text.x = element_text(size = 10),
-        axis.text.y = element_text(size = 14,
+        axis.text.x = element_text(family = "Roboto",
+                                   size = 10),
+        axis.text.y = element_text(family = "Roboto",
+                                   size = 14,
                                    colour = "black"),
         axis.line = element_line(colour = "black"),
         legend.title = element_blank(),
-        legend.text = element_text(size = 14),
+        legend.text = element_text(family = "Roboto",
+                                   size = 14),
         legend.key = element_rect(fill = "white"),
-        legend.position = "top",v
+        legend.position = "top",
         panel.background = element_rect(fill = "white"),
         panel.grid.major.y = element_blank(),
         panel.grid.minor.y = element_blank(),
@@ -280,14 +290,19 @@ ggplot(combinedf2_pivot, aes(x = logh1,
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
-  theme(axis.title = element_text(size = 14),
+  theme(axis.title = element_text(family = "Roboto",
+                                  face = "bold",
+                                  size = 14),
         axis.title.y = element_blank(),
-        axis.text.x = element_text(size = 10),
-        axis.text.y = element_text(size = 14,
+        axis.text.x = element_text(family = "Roboto",
+                                   size = 10),
+        axis.text.y = element_text(family = "Roboto",
+                                   size = 14,
                                    colour = "black"),
         axis.line = element_line(colour = "black"),
         legend.title = element_blank(),
-        legend.text = element_text(size = 14),
+        legend.text = element_text(family = "Roboto",
+                                   size = 14),
         legend.key = element_rect(fill = "white"),
         legend.position = "top",
         panel.background = element_rect(fill = "white"),
@@ -316,14 +331,19 @@ ggplot(combinedf2, aes(x = logh1,
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
-  theme(axis.title = element_text(size = 14),
+  theme(axis.title = element_text(family = "Roboto",
+                                  face = "bold",
+                                  size = 14),
         axis.title.y = element_blank(),
-        axis.text.x = element_text(size = 10),
-        axis.text.y = element_text(size = 14,
+        axis.text.x = element_text(family = "Roboto",
+                                   size = 10),
+        axis.text.y = element_text(family = "Roboto",
+                                   size = 14,
                                    colour = "black"),
         axis.line = element_line(colour = "black"),
         legend.title = element_blank(),
-        legend.text = element_text(size = 14),
+        legend.text = element_text(family = "Roboto",
+                                   size = 14),
         legend.key = element_rect(fill = "white"),
         legend.position = "top",
         panel.background = element_rect(fill = "white"),
@@ -346,11 +366,15 @@ ggplot(combinedf2, aes(x = median_lat,
        colour = "Clade") +
   scale_y_continuous(breaks = c(0, 1, 2),
                      labels = c(0, 9, 99)) +
-  theme(axis.title = element_text(size = 14),
-        axis.text = element_text(size = 10),
+  theme(axis.title = element_text(family = "Roboto",
+                                  face = "bold",
+                                  size = 14),
+        axis.text = element_text(family = "Roboto",
+                                 size = 10),
         axis.line = element_line(colour = "black"),
         legend.title = element_blank(),
-        legend.text = element_text(size = 14),
+        legend.text = element_text(family = "Roboto",
+                                   size = 14),
         legend.key = element_rect(fill = "white"),
         legend.position = "top",
         panel.background = element_rect(fill = "white"),
@@ -376,10 +400,16 @@ ggplot(data = world) +
   labs(x = "Longitude",
        y = "Latitude",
        colour = "h-index") +
-  theme(axis.title = element_text(size = 14),
-        axis.text = element_text(size = 10),
-        legend.title = element_text(size = 12),
-        legend.text = element_text(size = 10),
+  theme(axis.title = element_text(family = "Roboto",
+                                  face = "bold",
+                                  size = 14),
+        axis.text = element_text(family = "Roboto",
+                                 size = 10),
+        legend.title = element_text(family = "Roboto",
+                                    face = "bold",
+                                    size = 12),
+        legend.text = element_text(family = "Roboto",
+                                   size = 10),
         panel.background = element_rect(fill = "white"),
         panel.grid = element_line(colour = "grey80",
                                   linetype = "dashed")) +
@@ -388,8 +418,7 @@ ggplot(data = world) +
 
 
 #phylogenetic tree
-#combinedf2 <- combinedf2 %>%
-#  unique()
+
 tree <- tol_induced_subtree(ott_ids = combinedf2$id, label_format = "name")
 
 combinedf2_join <- combinedf2 %>%
@@ -414,7 +443,40 @@ ggtree(tree_join,
                                                    size = 4))) + #shape of legend icons not changing need to find out why
   theme(legend.position = "top",
         legend.title = element_blank(),
-        legend.text = element_text(size = 14)) 
+        legend.text = element_text(family = "Roboto",
+                                   size = 14)) 
+
+#google trends
+
+ggplot(combinedf2, aes(x = log_sumgtrends,
+                     y = logh1,
+                     colour = clade)) +
+  geom_point(size = 2,
+             alpha = 0.5) +
+  labs(x = "Google Trends index (sum)",
+       y = "h-index") +
+  scale_x_continuous(breaks = c(0, 2, 3, 4),
+                     labels = c(0, 100, "1,000", "10,000")) +
+  scale_y_continuous(breaks = c(0, 1, 2),
+                     labels = c(0, 9, 99)) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 4,
+                                                               alpha = 1))) +
+  theme(axis.title = element_text(family = "Roboto",
+                                  face = "bold",
+                                  size = 14),
+        axis.text = element_text(family = "Roboto",
+                                 size = 10),
+        axis.line = element_line(colour = "black"),
+        legend.title = element_blank(),
+        legend.text = element_text(family = "Roboto",
+                                   size = 14),
+        legend.key = element_rect(fill = "white"),
+        legend.position = "top",
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major = element_line(colour = "grey80"),
+        panel.grid.minor = element_line(colour = "grey80",
+                                        linetype = "longdash"))
 
 #supp
 ggplot(combinedf2, aes(y = order)) +
