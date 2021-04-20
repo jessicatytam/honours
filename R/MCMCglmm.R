@@ -13,7 +13,7 @@ library(Rphylopars)
 library(GGally)
 library(phytools)
 
-dat <- read.csv(here("outputs", "includeh.csv"))[-c(1)]
+dat <- read.csv(here("outputs/data/", "includeh.csv"))[-c(1)]
 
 # MCMCglmm does not like family as a name in the dataset
 
@@ -49,7 +49,7 @@ cov_tree <- vcv2(tree, corr = TRUE)
 
 # read 100 trees
 # do not run for now
-tree100 <- read.nexus(here("trees/tree_pruner_tip_dated/output.nex"))
+tree100 <- read.nexus(here("data/raw_data/trees/tree_pruner_tip_dated/output.nex"))
 
 sum(tree100[[1]]$tip.label %in% dat$genus_species)
 
@@ -186,7 +186,7 @@ comp1[comp1$animal == "Mus_bufo",]
 comp1$id[3806] <- tnrs_match_names("Mus bufo")$ott_id
 
 #new tree with matched synonyms
-tree100 <- readRDS("trees/tree100.nex")
+tree100 <- readRDS("data/intermediate_data/tree100.nex")
 tree100$tree_6061 <- tol_induced_subtree(ott_ids = comp1$id, label_format = "name") #not working
 
 test_tree <- compute.brlen(tree100$tree_6061) #get branch lengths

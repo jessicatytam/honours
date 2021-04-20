@@ -10,11 +10,11 @@ library(wesanderson)
 
 #reading and writing
 
-write.csv(includeh, file = "outputs/includeh.csv")
-includeh <- read_csv("outputs/includeh.csv")[-c(1)]
+write.csv(includeh, file = "outputs/data/includeh.csv")
+includeh <- read_csv("outputs/data/includeh.csv")[-c(1)]
 
-saveRDS(gtrends_list, "intermediate_data/gtrends_list.RDS")
-gtrends_list <- readRDS("intermediate_data/gtrends_list.RDS")
+saveRDS(gtrends_list, "data/intermediate_data/gtrends_list.RDS")
+gtrends_list <- readRDS("data/intermediate_data/gtrends_list.RDS")
 
 #get the data
 
@@ -27,14 +27,14 @@ for (i in 6031:6788) {
   Sys.sleep(1)
 }
 
-saveRDS(output, "intermediate_data/gtrends_results1.RDS") #spp 1-1611
-saveRDS(output2, "intermediate_data/gtrends_results2.RDS") #spp 1612-1725
-saveRDS(output3, "intermediate_data/gtrends_results3.RDS") #spp 1726-3234
-saveRDS(output4, "intermediate_data/gtrends_results4.RDS") #spp 3235-4862
-saveRDS(output5, "intermediate_data/gtrends_results5.RDS") #spp 4863-5346
-saveRDS(output6, "intermediate_data/gtrends_results6.RDS") #spp 5347-5452
-saveRDS(output7, "intermediate_data/gtrends_results7.RDS") #spp 5453-6030
-saveRDS(output8, "intermediate_data/gtrends_results8.RDS") #spp 6031-6788
+saveRDS(output, "data/intermediate_data/gtrends_results1.RDS") #spp 1-1611
+saveRDS(output2, "data/intermediate_data/gtrends_results2.RDS") #spp 1612-1725
+saveRDS(output3, "data/intermediate_data/gtrends_results3.RDS") #spp 1726-3234
+saveRDS(output4, "data/intermediate_data/gtrends_results4.RDS") #spp 3235-4862
+saveRDS(output5, "data/intermediate_data/gtrends_results5.RDS") #spp 4863-5346
+saveRDS(output6, "data/intermediate_data/gtrends_results6.RDS") #spp 5347-5452
+saveRDS(output7, "data/intermediate_data/gtrends_results7.RDS") #spp 5453-6030
+saveRDS(output8, "data/intermediate_data/gtrends_results8.RDS") #spp 6031-6788
 
 gtrends_output <- bind_rows(output)
 
@@ -61,14 +61,14 @@ ggplot(mammal$interest_over_time, aes(x = date,
 
 #combine them into 1 list + checking
 
-gtrends_results1 <- readRDS(file = "intermediate_data/gtrends_results1.RDS")
-gtrends_results2 <- readRDS(file = "intermediate_data/gtrends_results2.RDS")
-gtrends_results3 <- readRDS(file = "intermediate_data/gtrends_results3.RDS")
-gtrends_results4 <- readRDS(file = "intermediate_data/gtrends_results4.RDS")
-gtrends_results5 <- readRDS(file = "intermediate_data/gtrends_results5.RDS")
-gtrends_results6 <- readRDS(file = "intermediate_data/gtrends_results6.RDS")
-gtrends_results7 <- readRDS(file = "intermediate_data/gtrends_results7.RDS")
-gtrends_results8 <- readRDS(file = "intermediate_data/gtrends_results8.RDS")
+gtrends_results1 <- readRDS(file = "data/intermediate_data/gtrends_results1.RDS")
+gtrends_results2 <- readRDS(file = "data/intermediate_data/gtrends_results2.RDS")
+gtrends_results3 <- readRDS(file = "data/intermediate_data/gtrends_results3.RDS")
+gtrends_results4 <- readRDS(file = "data/intermediate_data/gtrends_results4.RDS")
+gtrends_results5 <- readRDS(file = "data/intermediate_data/gtrends_results5.RDS")
+gtrends_results6 <- readRDS(file = "data/intermediate_data/gtrends_results6.RDS")
+gtrends_results7 <- readRDS(file = "data/intermediate_data/gtrends_results7.RDS")
+gtrends_results8 <- readRDS(file = "data/intermediate_data/gtrends_results8.RDS")
 
 gtrends_results2 <- gtrends_results2[1612:1725]
 gtrends_results3 <- gtrends_results3[1726:3234]

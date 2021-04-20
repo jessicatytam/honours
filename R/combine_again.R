@@ -6,18 +6,18 @@ library(letsR)
 library(geosphere)
 
 #saving and loading
-write.csv(combinedf2, file = "outputs/combinedf2.csv")
-combinedf2 <- read.csv(file = "outputs/combinedf2.csv", header = T)[-c(1)]
-includeh <- read.csv(file = "outputs/includeh.csv")[-c(1)]
-domestication_h <- read.csv(file = "intermediate_data/domestication_h.csv", header = T)
+write.csv(combinedf2, file = "outputs/data/combinedf2.csv")
+combinedf2 <- read.csv(file = "outputs/data/combinedf2.csv", header = T)[-c(1)]
+includeh <- read.csv(file = "outputs/data/includeh.csv")[-c(1)]
+domestication_h <- read.csv(file = "data/intermediate_data/domestication_h.csv", header = T)
 
 #datasets
-mass <- read.csv(file = "intermediate_data/EltonTraits.csv", header = T)
-phylogeny <- read.csv(file = "intermediate_data/species_list_from_phylo.csv", header = T)
-location <- read.csv(file = "intermediate_data/gbif_lat_medians.csv", header = T)
-humanuse <- read.csv(file = "intermediate_data/IUCN_use.csv", header = T)
-redlist <- read.csv(file = "intermediate_data/IUCN_redlist.csv", header = T)
-domestication <- read.csv(file = "intermediate_data/domestication_h.csv", header = T)
+mass <- read.csv(file = "data/intermediate_data/EltonTraits.csv", header = T)
+phylogeny <- read.csv(file = "data/intermediate_data/species_list_from_phylo.csv", header = T)
+location <- read.csv(file = "data/intermediate_data/gbif_lat_medians.csv", header = T)
+humanuse <- read.csv(file = "data/intermediate_data/IUCN_use.csv", header = T)
+redlist <- read.csv(file = "data/intermediate_data/IUCN_redlist.csv", header = T)
+domestication <- read.csv(file = "data/intermediate_data/domestication_h.csv", header = T)
 
 #synonym matching
 

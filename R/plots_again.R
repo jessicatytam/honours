@@ -25,9 +25,9 @@ library(sysfonts)
 
 #loading df
 
-combinedf2 <- read.csv(file = "outputs/combinedf2.csv", header = T)[-c(1)]
-write.csv(combinedf2, file = "outputs/combinedf2.csv")
-includeh <- read.csv(file = "outputs/includeh.csv")[-c(1)] #only for checking here
+combinedf2 <- read.csv(file = "outputs/data/combinedf2.csv", header = T)[-c(1)]
+write.csv(combinedf2, file = "outputs/data/combinedf2.csv")
+includeh <- read.csv(file = "outputs/data/includeh.csv")[-c(1)] #only for checking here
 
 #more cleaning
 

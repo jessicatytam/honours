@@ -8,11 +8,11 @@ library(rotl)
 
 #load datasets
 
-mass <- read.csv(file = "intermediate_data/EltonTraits.csv", header = T)
-phylogeny <- read.csv(file = "intermediate_data/species_list_from_phylo.csv", header = T)
-location <- read.csv(file = "intermediate_data/gbif_lat_medians.csv", header = T)
-humanuse <- read.csv(file = "intermediate_data/IUCN_use.csv", header = T)
-redlist <- read.csv(file = "intermediate_data/IUCN_redlist.csv", header = T)
+mass <- read.csv(file = "data/intermediate_data/EltonTraits.csv", header = T)
+phylogeny <- read.csv(file = "data/intermediate_data/species_list_from_phylo.csv", header = T)
+location <- read.csv(file = "data/intermediate_data/gbif_lat_medians.csv", header = T)
+humanuse <- read.csv(file = "data/intermediate_data/IUCN_use.csv", header = T)
+redlist <- read.csv(file = "data/intermediate_data/IUCN_redlist.csv", header = T)
 
 #renaming and cleaning for species matching
 
@@ -132,9 +132,9 @@ combinedf <- combinedf[c(1:2,28,3:27)]
 
 #REMEMBER TO SAVE
 
-write.csv(combinedf, file = "outputs/combinedf.csv")
+write.csv(combinedf, file = "outputs/data/combinedf.csv")
 
-combinedf <- read.csv(file = "outputs/combinedf.csv", header = T)[-c(1)]
+combinedf <- read.csv(file = "outputs/data/combinedf.csv", header = T)[-c(1)]
 
 
 

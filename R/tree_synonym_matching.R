@@ -2,8 +2,8 @@ library(ape)
 library(rotl)
 library(tidyverse)
 
-tree100 <- read.nexus("trees/tree_pruner_tip_dated/output.nex")
-includeh <- read.csv("outputs/includeh.csv", header = T)[-1]
+tree100 <- read.nexus("data/raw_data/trees/tree_pruner_tip_dated/output.nex")
+includeh <- read.csv("outputs/data/includeh.csv", header = T)[-1]
 
 #get species names
 
@@ -45,5 +45,5 @@ for (i in 1:length(tree100)) {
 
 #save new tree
 
-saveRDS(tree100, "trees/tree100.rds")
-tree100 <- readRDS("trees/tree100.rds") #to read the tree
+saveRDS(tree100, "data/intermediate_data/trees/tree100.rds")
+tree100 <- readRDS("data/intermediate_data/trees/tree100.rds") #to read the tree

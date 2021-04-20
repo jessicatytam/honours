@@ -8,6 +8,11 @@ library(phylolm)
 library(car)
 library(phyr)
 
+#save and read
+
+write.csv(includeh, file = "outputs/data/includeh.csv")
+includeh <- read.csv("outputs/data/includeh.csv")[-c(1)]
+
 #adding coloums
 
 includeh <- includeh %>% 
@@ -131,10 +136,7 @@ summary(aov(h ~ humanuse_bin, includeh))
 
 summary(aov(h ~ domestication_bin, includeh))
 
-#save and read
 
-write.csv(includeh, file = "outputs/includeh.csv")
-includeh <- read.csv("outputs/includeh.csv")[-c(1)]
 
 # get phylo
 tree <- read.tree(here("intermediate_data", "tree.tre"))
