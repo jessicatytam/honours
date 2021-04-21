@@ -37,8 +37,6 @@
       - will have to come back to do this after itis is working again
   - [x] Synonym matching (rotl)
       - [x] create a species list in long form with the ID
-  - [ ] Common name matching (rinat)
-      - resolve error “No encoding supplied: defaulting to UTF-8.”
   - [x] *h*-index (specieshindex)
       - [x] put quotation marks around synonyms
       - [x] fix weird NA dataframe (putting synonyms around the synonyms
@@ -46,8 +44,7 @@
       - [x] divide species list into 2 to fix timeout issue
       - [x] run the 2nd list next week since I’ve reached the limit of
         20,000 requests this week
-  - [ ] Missing data (mice)
-  - [ ] Altmetrics (rAltmetric)
+  - [x] Missing data (mice)
   - [x] Google Trends (gtrendsR)
 
 ## :art: Making graphs :round\_pushpin:
@@ -62,19 +59,21 @@
   - [x] h with vs without conservation keyword
       - [x] check for patterns
   - [x] Google Trends sum
-  - [ ] Google Trends map
   - For all plots
-      - [ ] change font
-      - [ ] change h-index axis scale to true values
+      - [x] change font
+      - [x] change h-index axis scale to true values
+      - [ ] add p-values / other stats on the plots
 
 ## :rocket: Statistical analysis :gem::round\_pushpin:
 
   - [x] correlation matrix of complete entries
-  - [ ] MCMCglmm
-  - [ ] PGLS
   - [x] Phylogenetic signals (phytools)
-  - [ ] *h*<sup>2</sup>
-  - [ ] Pagel’s λ
+  - MCMCglmm
+      - [ ] Pagel’s λ (calculated from MCMCglmm results)
+      - [ ] trim all trees + pick 50 randomly :round\_pushpin:
+      - [x] impute 10 datasets
+      - [ ] write nested loop + TESTING
+      - [ ] katana
 
  
 

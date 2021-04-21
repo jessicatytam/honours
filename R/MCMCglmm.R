@@ -14,6 +14,7 @@ library(GGally)
 library(phytools)
 
 dat <- read.csv(here("outputs/data/", "includeh.csv"))[-c(1)]
+dat <- read.csv("outputs/data/combinedf2.csv")[-c(1)]
 
 # MCMCglmm does not like family as a name in the dataset
 
@@ -206,8 +207,6 @@ system.time(mod_op_test <- MCMCglmm(h ~ logmass +
                                nitt=13000*10, 
                                thin=10*10, 
                                burnin=3000*10,
-                               prior = prior1) #non-informtive prior
+                               prior = prior1) #non-informative prior
 )
-#convert to ultrametric trees
-#trim tree
 
