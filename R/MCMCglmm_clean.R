@@ -1,12 +1,15 @@
-library(tidyverse)
+library(dplyr)
+library(stringr)
 library(MCMCglmm)
 library(rotl)
 library(ape)
 library(mice)
-library(Rphylopars)
-library(GGally)
 library(phytools)
 library(rlist)
+library(Rphylopars)
+library(GGally)
+
+
 
 #dataset
 dat <- read.csv("outputs/data/combinedf2.csv")[-c(1)]
@@ -45,6 +48,8 @@ table(tree_sub$tip.label %in% dat_sub$genus_species) #5029
 
 #IMPUTATION
 
+#add orders / families, remove h
+
 data_imp <- dat_sub[, c("animal", "h", "logmass", "humanuse_bin", "domestication_bin", "iucn_bin", "log_sumgtrends")]
 data_imp$abs_lat <- abs(dat_sub$median_lat)
 
@@ -79,6 +84,7 @@ imp <- mice(data_imp,
             method = imp_method,
             predictorMatrix = pred_matrix,
             seed = 777)
+plot(imp) #check convergence
 
 comp1 <- complete(imp, 1)
 comp2 <- complete(imp, 2)
@@ -102,6 +108,18 @@ saveRDS(comp7, "data/intermediate_data/MCMCglmm/comp7.rds")
 saveRDS(comp8, "data/intermediate_data/MCMCglmm/comp8.rds")
 saveRDS(comp9, "data/intermediate_data/MCMCglmm/comp9.rds")
 saveRDS(comp10, "data/intermediate_data/MCMCglmm/comp10.rds")
+
+#read imputed datasets
+comp1 <- readRDS("data/intermediate_data/MCMCglmm/comp1.rds")
+comp2 <- readRDS("data/intermediate_data/MCMCglmm/comp2.rds")
+comp3 <- readRDS("data/intermediate_data/MCMCglmm/comp3.rds")
+comp4 <- readRDS("data/intermediate_data/MCMCglmm/comp4.rds")
+comp5 <- readRDS("data/intermediate_data/MCMCglmm/comp5.rds")
+comp6 <- readRDS("data/intermediate_data/MCMCglmm/comp6.rds")
+comp7 <- readRDS("data/intermediate_data/MCMCglmm/comp7.rds")
+comp8 <- readRDS("data/intermediate_data/MCMCglmm/comp8.rds")
+comp9 <- readRDS("data/intermediate_data/MCMCglmm/comp9.rds")
+comp10 <- readRDS("data/intermediate_data/MCMCglmm/comp10.rds")
 
 #MCMCGLMM
 
