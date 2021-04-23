@@ -5,6 +5,13 @@ library(stringr)
 library(taxize)
 library(rinat)
 library(rotl)
+library(geosphere)
+
+#REMEMBER TO SAVE
+
+write.csv(combinedf, file = "outputs/data/combinedf.csv")
+write.csv(combinedf_dup, file = "outputs/data/combinedf_dup.csv")
+combinedf <- read.csv(file = "outputs/data/combinedf.csv", header = T)[-c(1)]
 
 #load datasets
 
@@ -13,6 +20,7 @@ phylogeny <- read.csv(file = "data/intermediate_data/species_list_from_phylo.csv
 location <- read.csv(file = "data/intermediate_data/gbif_lat_medians.csv", header = T)
 humanuse <- read.csv(file = "data/intermediate_data/IUCN_use.csv", header = T)
 redlist <- read.csv(file = "data/intermediate_data/IUCN_redlist.csv", header = T)
+domestication <- read.csv(file = "data/intermediate_data/domestication_h.csv", header = T)
 
 #renaming and cleaning for species matching
 
@@ -20,8 +28,7 @@ mass <- mass[-c(1)] %>%
   rename(species = Scientific,
          family = MSWFamilyLatin)
 
-phylogeny <- phylogeny %>%
-  rename(species = specieslist) %>%
+phylogeny <- phylogeny[-c(1)] %>%
   mutate(phylogeny = "Yes")
 
 humanuse <- humanuse[-c(1)] %>%
@@ -38,108 +45,208 @@ colnames(redlist) <- paste0("redlistCategory", colnames(redlist))
 redlist <- redlist %>%
   rename(species = redlistCategoryscientificName)
 
+domestication <- domestication[c("genus_species", "domestication")]
+domestication <- domestication %>%
+  rename(species = "genus_species")
+
 #combining the datasets
 
-combinedf <- list(mass, phylogeny, location, redlist, humanuse) %>% 
+combinedf <- list(mass, phylogeny, location, redlist, humanuse, domestication) %>% 
   reduce(full_join, by = "species") %>%
   arrange(species) %>% #8308
   unique() 
 
-combinedf <- combinedf[c(1:2,7,3:6,8:26)]
+combinedf <- combinedf[c(1:2,8,5,3:4,6:7,9:28)] #reordering
 
 length(unique(combinedf$species)) #8308
 count(unique(combinedf)) #8308
 
+#remove extinct spp
+
+status <- data.frame(tnrs_match_names(names = combinedf$species)$flags)
+status <- status %>%
+  rename(status = tnrs_match_names.names...combinedf.species..flags)
+combinedf <- cbind(combinedf, status)
+combinedf <- combinedf[!(combinedf$status == "extinct"),] #status from rotl
+combinedf <- combinedf[!grepl("extinct", combinedf$status),] #8081
+
+#add id
+
+for (i in 1:length(combinedf$species)) {
+  tryCatch (if (is.na(combinedf$id[i])) {
+    print(i)
+    combinedf$id[i] <- tnrs_match_names(combinedf$species[i])$ott_id
+  }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
+} 
+
+table(is.na(combinedf$species)) #7981 false, 100 true
+
 #add families and orders
 
-for (i in 1:nrow(combinedf)) { 
-  if (is.na(combinedf$family[i])) {
-    family <- tax_name(sci = combinedf$species[i], get = "family", db = "itis")
-    combinedf$family[i] <- as.character(family[3])
-  }
-} #not working suddenly
+for (i in 1:length(combinedf$id)) { #using ott_id
+  tryCatch (if (is.na(combinedf$order[i])) {
+    print(i)
+    tax_df <- reshape::melt(tax_lineage(taxonomy_taxon_info(ott_ids = combinedf$id[i], include_lineage = TRUE)))
+    tax_filter <- tax_df %>%
+      filter(rank == "order")
+    order <- tax_filter$unique_name
+    combinedf$order[i] <- as.character(order)
+  }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
+} 
 
-for (i in 1:nrow(combinedf)) { 
-  if (is.na(combinedf$order[i])) {
-    order <- tax_name(sci = combinedf$species[i], get = "order", db = "itis")
-    combinedf$order[i] <- as.character(order[3])
-  }
-} #not working suddenly
+for (i in 1:length(combinedf$id)) { #using ott_id
+  tryCatch (if (is.na(combinedf$family[i])) {
+    print(i)
+    tax_df <- reshape::melt(tax_lineage(taxonomy_taxon_info(ott_ids = combinedf$id[i], include_lineage = TRUE)))
+    tax_filter <- tax_df %>%
+      filter(rank == "family")
+    family <- tax_filter$unique_name
+    combinedf$family[i] <- as.character(family)
+  }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
+}
 
 #checking the number of NA values
 
-sum(is.na(combinedf$family)) #1741 for ncbi
-sum(is.na(combinedf$order)) #1669 for ncbi
+table(is.na(combinedf$order)) #7955 false, 126 true
+table(is.na(combinedf$family)) #7981 false, 100 true
 
 #replacing NA in phylogeny
 
-combinedf <- combinedf %>%
-  replace_na(list(phylogeny = "No"))
+#combinedf <- combinedf %>%
+#  replace_na(list(phylogeny = "No"))
 
 #remove species with 1 word in the string
 
-sum(lengths(gregexpr("\\w+", combinedf$species))==1) #3 
+sum(lengths(gregexpr("\\w+", combinedf$species))==1) #100 
 
-for (i in 1:nrow(combinedf)) {
+for (i in 1:nrow(combinedf)) { #do this twice
   if (lengths(gregexpr("\\w+", combinedf$species[i]))==1) {
     combinedf <- combinedf[-i,]
   }
-} #8305 species
+} #7981 species
 
-#update phylogeny list
+#more checking
 
-phylo_list <- combinedf %>%
-  filter(phylogeny=="Yes") %>%
-  select(species) %>%
-  write.csv("intermediate_data/species_list_from_phylo.csv")
+table(is.na(combinedf$id)) #all here
+table(is.na(combinedf$order)) #26 missing
+table(is.na(combinedf$family)) #all here 
+
+#fill in missing orders manually
+
+for (i in 1:length(combinedf$order)) { 
+  if (combinedf$family[i] == "Chrysochloridae" | combinedf$family[i] == "Tenrecidae") {
+    combinedf$order[i] <- "Afrosoricida"
+  }
+}
+table(is.na(combinedf$order)) #all here
+
+#remove weird worm
+
+combinedf <- combinedf[!(combinedf$species == "Musserakis sulawesiensis"),] #7980
+
+#clean red list status
+
+for (i in 1:nrow(combinedf)) {
+  if (!is.na(combinedf$redlistCategory1[i]) & combinedf$redlistCategory1[i] == "Not Applicable") {
+    combinedf$redlistCategory1[i] <- combinedf$redlistCategory2[i]
+    combinedf$redlistCategory2[i] <- NA
+  }
+}
+
+for (i in 1:nrow(combinedf)) {
+  if (is.na(combinedf$redlistCategory1[i]) & !is.na(combinedf$redlistCategory2[i])) {
+    combinedf$redlistCategory1[i] <- combinedf$redlistCategory2[i]
+    combinedf$redlistCategory2[i] <- NA
+  }
+}
+
+for (i in 1:nrow(combinedf)) {
+  if (is.na(combinedf$redlistCategory2[i]) & !is.na(combinedf$redlistCategory3[i])) {
+    combinedf$redlistCategory2[i] <- combinedf$redlistCategory3[i]
+    combinedf$redlistCategory3[i] <- NA
+  }
+}
+
+combinedf$redlistCategory2 <- na_if(combinedf$redlistCategory2, "Not Applicable")
+
+for (i in 1:nrow(combinedf)) {
+  if(!is.na(combinedf$redlistCategory3[i])) {
+    combinedf$redlistCategory2[i] <- combinedf$redlistCategory3[i]
+    combinedf$redlistCategory3[i] <- NA
+  }
+}
+
+for (i in 1:nrow(combinedf)) {
+  if(!is.na(combinedf$redlistCategory2[i])) {
+    combinedf$redlistCategory1[i] <- combinedf$redlistCategory2[i]
+    combinedf$redlistCategory2[i] <- NA
+  }
+}
+
+combinedf <- combinedf[-c(10, 11)] %>%
+  rename(redlistCategory = redlistCategory1)
+
+#fill in red list status
+
+for (i in 1:length(combinedf$species)) {
+  if (is.na(combinedf$redlistCategory[i])) {
+    print(paste(i, combinedf$species[i], "missing IUCN status."))
+    iucn_query <- rl_history(name = combinedf$species[i], key = "4eacf586ea255313b1646429c0f5b566cfa6f789cfb634f9704a8050a6123933")
+    iucn_df <- data.frame(iucn_query$result)
+    combinedf$redlistCategory <- as.character(combinedf$redlistCategory)
+    if (nrow(iucn_df > 0)) {
+      print(paste("filling in missing data."))
+      combinedf$redlistCategory[i] <- iucn_df[1,"category"]
+    }
+  }
+}
+
+table(is.na(combinedf$redlistCategory)) #5825 matches
+
+#fill in domestication
+
+for (i in 1:length(combinedf$species)) {
+  if (is.na(combinedf$domestication[i])) {
+    combinedf$domestication[i] <- "Wild"
+  }
+}
+
+table(combinedf$domestication)
+
+#add lat long
+
+sbs <- read.csv(file = "data/intermediate_data/gbif_processed.csv", header = T)
+PAM <- letsR::lets.presab.points(cbind(sbs$decimalLongitude, sbs$decimalLatitude), sbs$species,
+                                 xmn = -180, xmx = 180, 
+                                 ymn = -90, ymx = 90,resol = 2)
+##lets.midpoint.fixed() in file "R/geo_plotting"
+mid <- lets.midpoint.fixed(PAM)
+mid$x <- as.numeric(mid$x)
+mid$y <- as.numeric(mid$y)
+
+names(mid)[names(mid) == "Species"] <- "species"
+
+combinedf <- left_join(combinedf, mid, by = "species")
+
+combinedf <- combinedf[-c(27)]
+combinedf <- combinedf[c(1:25, 27:28, 26)]
+
 
 #synonym matching
 
-combinedf <- combinedf %>%
-  mutate(ID = tnrs_match_names(species)$ott_id, .after = species)
+length(combinedf$id) #7980
+length(unique(combinedf$id)) #7522
+dim(combinedf[duplicated(combinedf$id),])[1] #458
+unique(combinedf$id) #7522
 
-length(unique(combinedf$ID)) #7746
+combinedf_dup <- combinedf[!duplicated(combinedf$id),] #remove duplicated id
 
-tnrs_match_names("Macropus rufus")
-synonyms(tnrs_match_names("Macropus rufus"))
+#update phylogeny list; DONE
 
-
-#remove duplicates after synonyms are matched
-synonymsdf <- combinedf %>%
-  group_by(ID) %>%
-  fill(c(3:27), .direction = "downup") %>%
-  ungroup() #this didn't really do anything
-
-
-#common name matching
-
-get_inat_common_name <- function(scientificname){
-  a_mac <- get_inat_obs(taxon_name = scientificname, maxresults = 1000)
-  return(names(sort(table(a_mac$species_guess), decreasing = TRUE)[1]))
-}
-
-commondf <- data.frame()
-for (i in 1:nrow(combinedf)) {
-  common_name <- tryCatch(get_inat_common_name(combinedf$species[i]), error = function(e) NA)
-  common_name <- data.frame(common_name)
-  commondf <- rbind(commondf, common_name)
-} #could not get all of the common names; "No encoding supplied: defaulting to UTF-8."
-combinedf <- cbind(combinedf, commondf)
-combinedf <- combinedf[c(1:2,28,3:27)]
-
-#replace blanks with NA
-
-
-#REMEMBER TO SAVE
-
-write.csv(combinedf, file = "outputs/data/combinedf.csv")
-
-combinedf <- read.csv(file = "outputs/data/combinedf.csv", header = T)[-c(1)]
-
-
-
-
-
+#phylo_list <- combinedf %>%
+#  filter(phylogeny=="Yes") %>%
+#  select(species) %>%
+#  write.csv("intermediate_data/species_list_from_phylo.csv")
 
 #some testing
 

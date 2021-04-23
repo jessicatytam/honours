@@ -209,7 +209,7 @@ PAM <- letsR::lets.presab.points(cbind(sbs$decimalLongitude,sbs$decimalLatitude)
 ##lets.midpoint.fixed() in file "R/geo_plotting"
 mid <- geosphere::lets.midpoint.fixed(PAM)
 mid$x <- as.numeric(mid$x)
-mid$y<-as.numeric(mid$y)
+mid$y <- as.numeric(mid$y)
 
 for (i in 1:length(mid$Species)) {
   mid$genus_species[i] <- tnrs_match_names(mid$Species[i])$unique_name
@@ -329,3 +329,14 @@ combinedf2$genus_species[!combinedf2$genus_species %in% includeh$genus_species]
 
 h_gtrends <- includeh[,c(1:13, 39:40, 46:53)]
 combinedf2 <- left_join(combinedf2, h_gtrends)
+
+#clean domestication; looks like it missed a few domesticated animals
+
+table(combinedf2$domestication)
+
+names(combinedf2)[names(combinedf2) == "domestication"] <- "domestication_error"
+combinedf2$genus_species <- str_replace(combinedf2$genus_species, " ", "_")
+combinedf2 <- merge(combinedf2, includeh[, c("genus_species", "domestication")], by = "genus_species")
+
+#assign domestication categories again
+

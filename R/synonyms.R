@@ -3,21 +3,22 @@ library(rotl)
 
 
 phylo <- read.csv(file = "intermediate_data/species_list_from_phylo.csv")[-c(1)]
+combinedf_dup <- read.csv(file = "outputs/data/combinedf_dup.csv")[-c(1)]
 
 #get synonyms
 
 synonyms <- data.frame()
-for (i in 1:nrow(phylo)) {
-  results <- synonyms(tnrs_match_names(phylo$species))[i]
+for (i in 1:nrow(combinedf_dup)) {
+  results <- synonyms(tnrs_match_names(combinedf_dup$species))[i]
   resultsdf <- data.frame(results)
   if (length(resultsdf) > 0) {
     colnames(resultsdf) = colnames(synonyms)
     synonyms <- bind_rows(synonyms, resultsdf)
   }
-  print(paste("Done:", phylo$species[i]))
+  print(paste("Done:", combinedf_dup$species[i]))
 }
 
-synonyms <- synonyms %>% rename(synonyms = ...1)
+synonyms <- synonyms %>% rename(synonyms = ...1) #do this next
 
 #get species ID
 
@@ -28,6 +29,12 @@ for(i in 1:nrow(synonyms)) {
   id <- bind_rows(id, getID)
   print(paste("Done:", synonyms$synonyms[i]))
 }
+
+for(i in 1:nrow(synonyms)) {
+  synonyms$id[i] <- tnrs_match_names(synonyms$synonyms[i])$ott_id
+  print(paste("Done:", synonyms$synonyms[i]))
+}
+
 
 synonyms <- cbind(synonyms, id)
 synonyms <- synonyms %>% rename(id = getID.ott_id)

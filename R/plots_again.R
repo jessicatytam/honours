@@ -33,7 +33,7 @@ includeh <- read.csv(file = "outputs/data/includeh.csv")[-c(1)] #only for checki
 
 combinedf2$genus_species <- str_replace(combinedf2$genus_species, "_", " ")
 
-for (i in 1:length(combinedf2$genus_species)) { #fill in red list status
+for (i in 1:length(combinedf2$genus_species)) { #fill in red list status; DONE
   if (is.na(combinedf2$redlistCategory[i])) {
     print(paste(i, combinedf2$genus_species[i], "missing IUCN status."))
     iucn_query <- rl_history(name = combinedf2$genus_species[i], key = "4eacf586ea255313b1646429c0f5b566cfa6f789cfb634f9704a8050a6123933")

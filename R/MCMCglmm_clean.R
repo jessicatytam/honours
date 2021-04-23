@@ -53,20 +53,20 @@ table(tree_sub$tip.label %in% dat_sub$genus_species) #5029
 data_imp <- dat_sub[, c("animal", "h", "logmass", "humanuse_bin", "domestication_bin", "iucn_bin", "log_sumgtrends")]
 data_imp$abs_lat <- abs(dat_sub$median_lat)
 
-#let's try mice (prelimary)
+#let's try mice (preliminary)
 dim(data_imp)
 md.pattern(data_imp)
 
-#set up redictor matrix and imputation methods
+#set up predictor matrix and imputation methods
 pred_matrix <- make.predictorMatrix(data_imp)
 imp_method <- make.method(data_imp)
 
 #correlation matrix
 ggpairs(data_imp[,-1])
 #our cluster (-2)
-#pred_matrix[ , "species"] <- -2 # cluster varaible needs to be intergers
+#pred_matrix[ , "species"] <- -2 # cluster variable needs to be integers
 
-#stting 0 for non-missing data
+#setting 0 for non-missing data
 no_missing <- c("animal", "h", "humanuse_bin", "domestication_bin", "log_sumgtrends")
 pred_matrix[no_missing, ] <- 0
 
@@ -79,8 +79,8 @@ imp_method
 
 #perform the imputation
 imp <- mice(data_imp,
-            m = 10, # need to get at least 5 - perferably 10
-            maxit = 20, # we probably neeed to 20 to coverge
+            m = 10, # need to get at least 5 - preferably 10
+            maxit = 50, # we probably need to 20 to converge
             method = imp_method,
             predictorMatrix = pred_matrix,
             seed = 777)
