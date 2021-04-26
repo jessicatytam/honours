@@ -2,14 +2,14 @@ library(tidyverse)
 devtools::install_github("jessicatytam/specieshindex", force = TRUE, build_vignettes = FALSE)
 library(specieshindex)
 
-syn <- read_csv("intermediate_data/synonyms.csv")
-sp1 <- read_csv("intermediate_data/species_list_from_phylo.csv")[1:3500,]
-sp2 <- read_csv("intermediate_data/species_list_from_phylo.csv")[3501:6949,]
+syn <- read_csv("data/intermediate_data/synonyms.csv")
+sp1 <- read_csv("data/intermediate_data/species_list_from_phylo.csv")[1:4000,]
+sp2 <- read_csv("data/intermediate_data/species_list_from_phylo.csv")[4001:7522,]
 
-sp$species[16]
-syn$synonyms[match(sp$id[16], syn$id)]
+sp1$species[16]
+syn$synonyms[match(sp1$id[16], syn$id)]
 
-#checking that synomym search works
+#checking that synonmym search works
 FetchSpTAK(genus = "Abrothrix", species = "sanborni", synonyms = "Akodon sanborni", APIkey = "442b9048417ef20cf680a0ae26ee4d86")
 
 #add quotation marks around synonyms
@@ -31,18 +31,18 @@ for (i in 1:length(sp1$species)) {
   }
 }
 
-scopus_out2 <- list() #initializing empty list 2 using shinichi's api
+scopus_out2 <- list() #initializing empty list 2
 for (i in 1:length(sp2$species)) {  
   if (!sp2$id[i] %in% syn$id) {
     scopus_out2[[i]] <- FetchSpTAK(genus = str_split(sp2$species[i], pattern = " ")[[1]][1],
                                    species = str_split(sp2$species[i], pattern = " ")[[1]][2],
-                                   APIkey = "01adbe5c94f9e02cc94bcb3348382a76")
+                                   APIkey = "442b9048417ef20cf680a0ae26ee4d86")
   } else {
     syns <- syn$synonyms[match(sp2$id[i], syn$id)]
     scopus_out2[[i]] <- FetchSpTAK(genus = str_split(sp2$species[i], pattern = " ")[[1]][1],
                                    species = str_split(sp2$species[i], pattern = " ")[[1]][2],
                                    synonyms = syns,
-                                   APIkey = "01adbe5c94f9e02cc94bcb3348382a76")
+                                   APIkey = "442b9048417ef20cf680a0ae26ee4d86")
   }
 }
 
