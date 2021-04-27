@@ -1,5 +1,5 @@
 library(tidyverse)
-devtools::install_github("jessicatytam/specieshindex", force = TRUE, build_vignettes = FALSE)
+devtools::install_github("jessicatytam/specieshindex")
 library(specieshindex)
 
 syn <- read_csv("data/intermediate_data/synonyms.csv")
@@ -17,7 +17,7 @@ syn$synonyms <- shQuote(syn$synonyms, "cmd")
 
 #list to get citation records
 scopus_out1 <- list() #initializing empty list 1
-for (i in 1:length(sp1$species)) {  
+for (i in 1166:length(sp1$species)) {  
   if (!sp1$id[i] %in% syn$id) {
     scopus_out1[[i]] <- FetchSpTAK(genus = str_split(sp1$species[i], pattern = " ")[[1]][1],
                                    species = str_split(sp1$species[i], pattern = " ")[[1]][2],
@@ -46,7 +46,7 @@ for (i in 1:length(sp2$species)) {
   }
 }
 
-saveRDS(scopus_out1, "intermediate_data/scopus_results1.RDS")
+saveRDS(scopus_out1, "intermediate_data/scopus_results1.RDS") #run this next
 saveRDS(scopus_out2, "intermediate_data/scopus_results2.RDS")
 
 #currently getting at error at index 14 and also later on
@@ -100,5 +100,5 @@ for (i in 1:nrow(test)) {
 }
 
 
-CountSpTAK(genus = "Allactaga", species = "bullata", synonyms = "Allactaga (Orientallactaga) bullata", APIkey = "442b9048417ef20cf680a0ae26ee4d86") #not working
-CountSpTAK(genus = "Allactaga", species = "bullata", APIkey = "442b9048417ef20cf680a0ae26ee4d86") #this works
+CountSpTAK(genus = "Chlorocebus", species = "aethiops", synonyms = "Ceropithecus aethiops", APIkey = "442b9048417ef20cf680a0ae26ee4d86") #not working
+
