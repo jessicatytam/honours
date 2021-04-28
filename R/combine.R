@@ -241,6 +241,75 @@ unique(combinedf$id) #7522
 
 combinedf_dup <- combinedf[!duplicated(combinedf$id),] #remove duplicated id
 
+#clean orders
+
+table(combinedf_dup$order)
+
+for (i in 1:length(combinedf_dup$order)) {
+  if (combinedf_dup$order[i] == "Cingulata (order in Deuterostomia)") {
+    combinedf_dup$order[i] <- "Cingulata"
+  } else if (combinedf_dup$order[i] == "Pholidota (order in Opisthokonta)") {
+    combinedf_dup$order[i] <- "Pholidota"
+  } else if (combinedf_dup$order[i] == "Pilosa (order in Deuterostomia)") {
+    combinedf_dup$order[i] <- "Pilosa"
+  } else if (combinedf_dup$order[i] == "Proboscidea (order in Deuterostomia)") {
+    combinedf_dup$order[i] <- "Proboscidea"
+  }
+}
+
+table(combinedf_dup$order) #check again
+
+#clean bugs manually
+
+combinedf_dup$order[combinedf_dup$genus_species == "Galago cameronensis"] <- "Primates"
+combinedf_dup$order[combinedf_dup$genus_species == "Herpestes flavescens"] <- "Carnivora"
+combinedf_dup$order[combinedf_dup$genus_species == "Dasyprocta variegata"] <- "Rodentia"
+combinedf_dup$order[combinedf_dup$genus_species == "Nectomys grandis"] <- "Rodentia"
+
+table(combinedf_dup$order) #check again
+length(unique(combinedf_dup$order)) #30
+
+#add clades
+
+for (i in 1:length(combinedf_dup$order)) {
+  if (combinedf_dup$order[i] == "Pilosa"|
+      combinedf_dup$order[i] == "Cingulata") {
+    combinedf_dup$clade[i] <- "Xenarthra"
+  } else if (combinedf_dup$order[i] == "Macroscelidea"|
+             combinedf_dup$order[i] == "Afrosoricida"|
+             combinedf_dup$order[i] == "Proboscidea"|
+             combinedf_dup$order[i] == "Sirenia"|
+             combinedf_dup$order[i] == "Hyracoidea"|
+             combinedf_dup$order[i] == "Tubulidentata") {
+    combinedf_dup$clade[i] <- "Afrotheria"
+  } else if (combinedf_dup$order[i] == "Chiroptera"|
+             combinedf_dup$order[i] == "Perissodactyla"|
+             combinedf_dup$order[i] == "Artiodactyla"|
+             combinedf_dup$order[i] == "Cetacea"|
+             combinedf_dup$order[i] == "Pholidota"|
+             combinedf_dup$order[i] == "Carnivora"|
+             combinedf_dup$order[i] == "Eulipotyphla"|
+             combinedf_dup$order[i] == "Soricomorpha"|
+             combinedf_dup$order[i] == "Erinaceomorpha") {
+    combinedf_dup$clade[i] <- "Laurasiatheria"
+  } else if (combinedf_dup$order[i] == "Primates"|
+             combinedf_dup$order[i] == "Scandentia"|
+             combinedf_dup$order[i] == "Lagomorpha"|
+             combinedf_dup$order[i] == "Rodentia"|
+             combinedf_dup$order[i] == "Dermoptera") {
+    combinedf_dup$clade[i] <- "Euarchontoglires"
+  } else if (combinedf_dup$order[i] == "Diprotodontia"|
+             combinedf_dup$order[i] == "Dasyuromorphia"|
+             combinedf_dup$order[i] == "Microbiotheria"|
+             combinedf_dup$order[i] == "Peramelemorphia"|
+             combinedf_dup$order[i] == "Notoryctemorphia"|
+             combinedf_dup$order[i] == "Monotremata"|
+             combinedf_dup$order[i] == "Paucituberculata"|
+             combinedf_dup$order[i] == "Didelphimorphia") {
+    combinedf_dup$clade[i] <- "Marsupials & monotremes"
+  }
+}
+
 #update phylogeny list; DONE
 
 #phylo_list <- combinedf %>%

@@ -25,51 +25,43 @@ library(sysfonts)
 
 #loading df
 
-combinedf2 <- read.csv(file = "outputs/data/combinedf2.csv", header = T)[-c(1)]
-write.csv(combinedf2, file = "outputs/data/combinedf2.csv")
-includeh <- read.csv(file = "outputs/data/includeh.csv")[-c(1)] #only for checking here
+combinedf_dup <- read.csv(file = "outputs/data/combinedf_dup.csv", header = T)[-c(1)]
+indices_df <- read.csv(file = "outputs/data/hindex.csv", header = T)[-c(1)]
+includeh <- read.csv(file = "outputs/data/includeh.csv")[-c(1)] 
 
-#more cleaning
+write.csv(includeh, file = "outputs/data/includeh.csv")
 
-combinedf2$genus_species <- str_replace(combinedf2$genus_species, "_", " ")
+#combining
 
-for (i in 1:length(combinedf2$genus_species)) { #fill in red list status; DONE
-  if (is.na(combinedf2$redlistCategory[i])) {
-    print(paste(i, combinedf2$genus_species[i], "missing IUCN status."))
-    iucn_query <- rl_history(name = combinedf2$genus_species[i], key = "4eacf586ea255313b1646429c0f5b566cfa6f789cfb634f9704a8050a6123933")
-    iucn_df <- data.frame(iucn_query$result)
-    combinedf2$redlistCategory <- as.character(combinedf2$redlistCategory)
-    if (nrow(iucn_df > 0)) {
-      print(paste("filling in missing data."))
-      combinedf2$redlistCategory[i] <- iucn_df[1,"category"]
-    }
-  }
-}
+indices_df$genus_species <- str_replace(indices_df$genus_species, "_", " ")
+names(combinedf_dup)[names(combinedf_dup) == "species"] <- "genus_species"
+includeh <- left_join(indices_df, combinedf_dup,
+                      by = "genus_species")
+
+#TRANSFORMATIONS
+
+includeh <- includeh %>%
+  mutate(logh = log10(h),
+         logmass = log10(BodyMass.Value))
+
+includeh <- includeh %>%
+  mutate(logh1 = log10(h+1), .after = logh)
 
 #sorting
 
-med_mass <- combinedf2 %>%
-  group_by(order) %>%
-  summarise_at(vars(BodyMass.Value), median, na.rm = T) %>%
-  ungroup()
-med_mass <- med_mass %>%
-  arrange(by_group = BodyMass.Value)
-combinedf2$order <- factor(combinedf2$order, levels = med_mass$order)
+includeh$clade <- factor(includeh$clade, levels = c("Afrotheria", "Xenarthra", "Euarchontoglires", "Laurasiatheria", "Marsupials & monotremes"))
 
-combinedf2$clade <- factor(combinedf2$clade, levels = c("Afrotheria", "Xenarthra", "Euarchontoglires", "Laurasiatheria", "Marsupials & monotremes"))
-
-unique(combinedf2$redlistCategory)
-combinedf2$redlistCategory <- factor(combinedf2$redlistCategory, levels = c("Least Concern", "Near Threaten", "Vulnerable",
+unique(includeh$redlistCategory)
+includeh$redlistCategory <- factor(includeh$redlistCategory, levels = c("Least Concern", "Near Threaten", "Vulnerable",
                                                                         "Endangered", "Critically Endangered",
-                                                                        "Regionally Extinct", "Extinct in the Wild", "Extinct",
-                                                                        "Data Deficient"))
+                                                                        "Extinct in the Wild", "Extinct", "Data Deficient"))
 
 #add font
 
 font_add_google("Roboto")
 
 #h by order
-ggplot(combinedf2, aes(x = logh1,
+ggplot(includeh, aes(x = logh1,
                      y = order)) +
   geom_boxplot() +
   geom_jitter(aes(colour = redlistCategory),
@@ -90,7 +82,7 @@ ggplot(combinedf2, aes(x = logh1,
   scale_y_discrete(limits = rev)
 
 #h-index
-ggplot(combinedf2, aes(x = reorder(genus_species, logh1),
+ggplot(includeh, aes(x = reorder(genus_species, logh1),
                      y = logh1)) +
   geom_point(aes(colour = order),
              alpha = 0.5) +
@@ -100,28 +92,28 @@ ggplot(combinedf2, aes(x = reorder(genus_species, logh1),
   theme(legend.position = "bottom",
         axis.text.x = element_blank()) 
 
-ggplot(combinedf2, aes(x = logh1,
+ggplot(includeh, aes(x = logh1,
                      fill = order)) +
   geom_bar() 
 
-ggplot(combinedf2, aes(x = h,
+ggplot(includeh, aes(x = h,
                      fill = order)) +
   geom_bar() 
 
 #mass
-ggplot(combinedf2, aes(x = logmass,
+ggplot(includeh, aes(x = logmass,
                      y = logh1,
                      colour = clade)) +
   geom_point(size = 2,
              alpha = 0.4) +
-  labs(x = "Body mass (g)",
+  labs(x = "Body mass (kg)",
        y = "h-index") +
   scale_x_log10() +
   scale_y_log10() +
   coord_trans(x = "log1p",
               y = "log1p") +
-  scale_x_continuous(breaks = c(0.3, 1.0, 2.0, 3.0, 4.0, 5.0),
-                     labels = c(2.0, 10.0, 100.0, "1,000", "10,000", "100,000")) +
+  scale_x_continuous(breaks = c(0.3, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0),
+                     labels = c(0.002, 0.01, 0.1, 1, 10, 100, "1,000", "10,000", "100,000")) +
   scale_y_continuous(breaks = c(0, 1, 2),
                      labels = c(0, 9, 99)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
@@ -152,7 +144,7 @@ ggplot(combinedf2, aes(x = logmass,
                                         linetype = "longdash"))
 
 #iucn category
-ggplot(combinedf2, aes(x = logh1,
+ggplot(includeh, aes(x = logh1,
                      y = redlistCategory)) +
   geom_quasirandom(aes(colour = clade),
                    groupOnX = FALSE,
@@ -171,13 +163,13 @@ ggplot(combinedf2, aes(x = logh1,
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
-  theme(axis.title = element_text(family = "Roboto",
+  theme(axis.title = element_text(family = "Lato",
                                   face = "bold",
                                   size = 14),
         axis.title.y = element_blank(),
-        axis.text.x = element_text(family = "Roboto",
+        axis.text.x = element_text(family = "Lato",
                                    size = 10),
-        axis.text.y = element_text(family = "Roboto",
+        axis.text.y = element_text(family = "Lato",
                                    size = 14,
                                    colour = "black"),
         axis.line = element_line(colour = "black"),
@@ -186,6 +178,7 @@ ggplot(combinedf2, aes(x = logh1,
                                    size = 14),
         legend.key = element_rect(fill = "white"),
         legend.position = "top",
+        legend.justification = "center",
         panel.background = element_rect(fill = "white"),
         panel.grid.major.y = element_blank(),
         panel.grid.minor.y = element_blank(),
@@ -196,83 +189,83 @@ ggplot(combinedf2, aes(x = logh1,
 #EW: oryx dammah, elaphurus davidianus
 
 #human use
-combinedf2_pivot <- combinedf2 %>%
+includeh_pivot <- includeh %>%
   pivot_longer(cols = starts_with("use"),
                names_to = "use_count",
                values_to = "human_use")
-combinedf2_pivot$human_use <- str_to_title(toupper(combinedf2_pivot$human_use)) #first letter uppercase
-combinedf2_pivot$human_use <- str_replace_all(combinedf2_pivot$human_use, "_", " ")
+includeh_pivot$human_use <- str_to_title(toupper(includeh_pivot$human_use)) #first letter uppercase
+includeh_pivot$human_use <- str_replace_all(includeh_pivot$human_use, "_", " ")
 
-for (i in 1:nrow(combinedf2_pivot)) {
-  if (!is.na(combinedf2_pivot$human_use[i]) & combinedf2_pivot$human_use[i] == "Food animal") {
-    combinedf2_pivot$human_use[i] <- "Food (for animals)"
-  } else if (!is.na(combinedf2_pivot$human_use[i]) & combinedf2_pivot$human_use[i] == "Food human") {
-    combinedf2_pivot$human_use[i] <- "Food (for humans)"
-  } else if (!is.na(combinedf2_pivot$human_use[i]) & combinedf2_pivot$human_use[i] == "Handicrafts jewellery") {
-    combinedf2_pivot$human_use[i] <- "Handicrafts & jewellery"
-  } else if (!is.na(combinedf2_pivot$human_use[i]) & combinedf2_pivot$human_use[i] == "Pets display animals horticulture") {
-    combinedf2_pivot$human_use[i] <- "Pets, display animals & horticulture"
-  } else if (!is.na(combinedf2_pivot$human_use[i]) & combinedf2_pivot$human_use[i] == "Sport hunting specimen collecting") {
-    combinedf2_pivot$human_use[i] <- "Sport hunting & specimen collecting"
-  } else if (!is.na(combinedf2_pivot$human_use[i]) & combinedf2_pivot$human_use[i] == "Wearing apparel accessories") {
-    combinedf2_pivot$human_use[i] <- "Wearing apparel & accessories"
+for (i in 1:nrow(includeh_pivot)) {
+  if (!is.na(includeh_pivot$human_use[i]) & includeh_pivot$human_use[i] == "Food animal") {
+    includeh_pivot$human_use[i] <- "Food (for animals)"
+  } else if (!is.na(includeh_pivot$human_use[i]) & includeh_pivot$human_use[i] == "Food human") {
+    includeh_pivot$human_use[i] <- "Food (for humans)"
+  } else if (!is.na(includeh_pivot$human_use[i]) & includeh_pivot$human_use[i] == "Handicrafts jewellery") {
+    includeh_pivot$human_use[i] <- "Handicrafts & jewellery"
+  } else if (!is.na(includeh_pivot$human_use[i]) & includeh_pivot$human_use[i] == "Pets display animals horticulture") {
+    includeh_pivot$human_use[i] <- "Pets, display animals & horticulture"
+  } else if (!is.na(includeh_pivot$human_use[i]) & includeh_pivot$human_use[i] == "Sport hunting specimen collecting") {
+    includeh_pivot$human_use[i] <- "Sport hunting & specimen collecting"
+  } else if (!is.na(includeh_pivot$human_use[i]) & includeh_pivot$human_use[i] == "Wearing apparel accessories") {
+    includeh_pivot$human_use[i] <- "Wearing apparel & accessories"
   } 
 }
 
-combinedf2_pivot <- combinedf2_pivot %>%
+includeh_pivot <- includeh_pivot %>%
   mutate(human_use_group = NA)
 
-for (i in 1:length(combinedf2_pivot$human_use)) {
-  if (!is.na(combinedf2_pivot$human_use[i]) &
-      (combinedf2_pivot$human_use[i] == "Food (for humans)"|
-       combinedf2_pivot$human_use[i] == "Food (for animals)")) {
-    combinedf2_pivot$human_use_group[i] <- "Food"
-  } else if (!is.na(combinedf2_pivot$human_use[i]) &
-             (combinedf2_pivot$human_use[i] == "Fuels"|
-              combinedf2_pivot$human_use[i] == "Manufacturing chemicals"|
-              combinedf2_pivot$human_use[i] == "Other chemicals"|
-              combinedf2_pivot$human_use[i] == "Poisons")) {
-    combinedf2_pivot$human_use_group[i] <- "Chemicals"
-  } else if (!is.na(combinedf2_pivot$human_use[i]) &
-             (combinedf2_pivot$human_use[i] == "Wearing apparel & accessories"|
-              combinedf2_pivot$human_use[i] == "Handicrafts & jewellery")) {
-    combinedf2_pivot$human_use_group[i] <- "Clothes & accessories"
-  } else if (!is.na(combinedf2_pivot$human_use[i]) &
-             (combinedf2_pivot$human_use[i] == "Sport hunting & specimen collecting"|
-              combinedf2_pivot$human_use[i] == "Pets, display animals & horticulture")) {
-    combinedf2_pivot$human_use_group[i] <- "Recreational activities"
-  } else if (!is.na(combinedf2_pivot$human_use[i]) &
-             (combinedf2_pivot$human_use[i] == "Construction or structural materials"|
-              combinedf2_pivot$human_use[i] == "Fibre"|
-              combinedf2_pivot$human_use[i] == "Establishing ex situ production")) {
-    combinedf2_pivot$human_use_group[i] <- "Industrial goods"
-  } else if (!is.na(combinedf2_pivot$human_use[i]) &
-             combinedf2_pivot$human_use[i] == "Other household goods") {
-    combinedf2_pivot$human_use_group[i] <- "Other consumer goods"
-  } else if (!is.na(combinedf2_pivot$human_use[i]) &
-             (combinedf2_pivot$human_use[i] == "Research"|
-              combinedf2_pivot$human_use[i] == "Medicine")) {
-    combinedf2_pivot$human_use_group[i] <- "Research & medicine"
-  } else if (!is.na(combinedf2_pivot$human_use[i]) &
-             (combinedf2_pivot$human_use[i] == "Other")) {
-    combinedf2_pivot$human_use_group[i] <- "Others"
-  } else if (is.na(combinedf2_pivot$human_use[i])|
-             combinedf2_pivot$human_use[i] == "Unknown") {
-    combinedf2_pivot$human_use_group[i] <- "Unknown"
+for (i in 1:length(includeh_pivot$human_use)) {
+  if (!is.na(includeh_pivot$human_use[i]) &
+      (includeh_pivot$human_use[i] == "Food (for humans)"|
+       includeh_pivot$human_use[i] == "Food (for animals)")) {
+    includeh_pivot$human_use_group[i] <- "Food"
+  } else if (!is.na(includeh_pivot$human_use[i]) &
+             (includeh_pivot$human_use[i] == "Fuels"|
+              includeh_pivot$human_use[i] == "Manufacturing chemicals"|
+              includeh_pivot$human_use[i] == "Other chemicals"|
+              includeh_pivot$human_use[i] == "Poisons")) {
+    includeh_pivot$human_use_group[i] <- "Chemicals"
+  } else if (!is.na(includeh_pivot$human_use[i]) &
+             (includeh_pivot$human_use[i] == "Wearing apparel & accessories"|
+              includeh_pivot$human_use[i] == "Handicrafts & jewellery")) {
+    includeh_pivot$human_use_group[i] <- "Clothes & accessories"
+  } else if (!is.na(includeh_pivot$human_use[i]) &
+             (includeh_pivot$human_use[i] == "Sport hunting & specimen collecting"|
+              includeh_pivot$human_use[i] == "Pets, display animals & horticulture")) {
+    includeh_pivot$human_use_group[i] <- "Recreational activities"
+  } else if (!is.na(includeh_pivot$human_use[i]) &
+             (includeh_pivot$human_use[i] == "Construction or structural materials"|
+              includeh_pivot$human_use[i] == "Fibre"|
+              includeh_pivot$human_use[i] == "Establishing ex situ production")) {
+    includeh_pivot$human_use_group[i] <- "Industrial goods"
+  } else if (!is.na(includeh_pivot$human_use[i]) &
+             includeh_pivot$human_use[i] == "Other household goods") {
+    includeh_pivot$human_use_group[i] <- "Other consumer goods"
+  } else if (!is.na(includeh_pivot$human_use[i]) &
+             (includeh_pivot$human_use[i] == "Research"|
+              includeh_pivot$human_use[i] == "Medicine")) {
+    includeh_pivot$human_use_group[i] <- "Research & medicine"
+  } else if (!is.na(includeh_pivot$human_use[i]) &
+             (includeh_pivot$human_use[i] == "Other")) {
+    includeh_pivot$human_use_group[i] <- "Others"
+  } else if (is.na(includeh_pivot$human_use[i])|
+             includeh_pivot$human_use[i] == "Unknown") {
+    includeh_pivot$human_use_group[i] <- "Unknown"
   }
 }
 
-med_use <- combinedf2_pivot %>%
+med_use <- includeh_pivot %>%
   group_by(human_use_group) %>%
   summarise_at(vars(logh1), median, na.rm = T) %>%
   ungroup()
 med_use <- med_use %>%
   arrange(logh1)
-med_use <- med_use[c(2, 4:9, 3, 1),]
+med_use <- med_use[c(4:10, 3, 1, 2),]
 
-combinedf2_pivot$human_use_group <- factor(combinedf2_pivot$human_use_group, levels = med_use$human_use_group)
+includeh_pivot$human_use_group <- factor(includeh_pivot$human_use_group, levels = med_use$human_use_group)
 
-ggplot(combinedf2_pivot, aes(x = logh1,
+ggplot(includeh_pivot, aes(x = logh1,
                            y = human_use_group)) +
   geom_quasirandom(aes(colour = clade),
                    groupOnX = FALSE,
@@ -314,7 +307,7 @@ ggplot(combinedf2_pivot, aes(x = logh1,
 
 
 #domestication
-ggplot(combinedf2, aes(x = logh1,
+ggplot(includeh, aes(x = logh1,
                      y = reorder(domestication, logh1))) +
   geom_quasirandom(aes(colour = clade),
                    groupOnX = FALSE,
@@ -355,7 +348,7 @@ ggplot(combinedf2, aes(x = logh1,
   scale_y_discrete(labels = function(x) sub("-","-\n", x, fixed = TRUE))
 
 #latitude
-ggplot(combinedf2, aes(x = median_lat,
+ggplot(includeh, aes(x = median_lat,
                      y = logh1,
                      colour = clade)) +
   geom_point(size = 2,
@@ -391,7 +384,7 @@ world <- ne_countries(scale = "large", returnclass = "sf")
 
 ggplot(data = world) +
   geom_sf() +
-  geom_point(data = combinedf2, aes(x = x,
+  geom_point(data = includeh, aes(x = x,
                                   y = y,
                                   colour = logh1),
              size = 2,
@@ -419,14 +412,14 @@ ggplot(data = world) +
 
 #phylogenetic tree
 
-tree <- tol_induced_subtree(ott_ids = combinedf2$id, label_format = "name")
+tree <- tol_induced_subtree(ott_ids = includeh$id, label_format = "name")
 
-combinedf2_join <- combinedf2 %>%
+includeh_join <- includeh %>%
   rename(label = genus_species)
-combinedf2_join$label <- str_replace_all(combinedf2_join$label, " ", "_")
+includeh_join$label <- str_replace_all(includeh_join$label, " ", "_")
 
 tree <- as_tibble(tree)
-tree_join <- full_join(tree, combinedf2_join, by = "label")
+tree_join <- full_join(tree, includeh_join, by = "label")
 tree_join <- as.treedata(tree_join)
 
 ggtree(tree_join,
@@ -448,7 +441,7 @@ ggtree(tree_join,
 
 #google trends
 
-ggplot(combinedf2, aes(x = log_sumgtrends,
+ggplot(includeh, aes(x = log_sumgtrends,
                      y = logh1,
                      colour = clade)) +
   geom_point(size = 2,
@@ -479,7 +472,7 @@ ggplot(combinedf2, aes(x = log_sumgtrends,
                                         linetype = "longdash"))
 
 #supp
-ggplot(combinedf2, aes(y = order)) +
+ggplot(includeh, aes(y = order)) +
   geom_bar(aes(fill = redlistCategory),
            position = "fill") +
   labs(x = "Proportion",
@@ -495,7 +488,7 @@ ggplot(combinedf2, aes(y = order)) +
                                "#ea559d", "#cd2d54", "#951433"),
                     na.value = c("#a5a5a5"))
 
-ggplot(combinedf2, aes(x = log10(years_publishing),
+ggplot(includeh, aes(x = log10(years_publishing),
                      y = logh1)) +
   geom_point(aes(size = log10(m+1)),
              alpha = 0.5)

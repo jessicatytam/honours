@@ -1,5 +1,5 @@
 library(tidyverse)
-devtools::install_github("jessicatytam/specieshindex")
+devtools::install_github("jessicatytam/specieshindex", force  = TRUE)
 library(specieshindex)
 
 syn <- read_csv("data/intermediate_data/synonyms.csv")
@@ -17,7 +17,7 @@ syn$synonyms <- shQuote(syn$synonyms, "cmd")
 
 #list to get citation records
 scopus_out1 <- list() #initializing empty list 1
-for (i in 1166:length(sp1$species)) {  
+for (i in 1:length(sp1$species)) {  
   if (!sp1$id[i] %in% syn$id) {
     scopus_out1[[i]] <- FetchSpTAK(genus = str_split(sp1$species[i], pattern = " ")[[1]][1],
                                    species = str_split(sp1$species[i], pattern = " ")[[1]][2],
@@ -46,10 +46,10 @@ for (i in 1:length(sp2$species)) {
   }
 }
 
-saveRDS(scopus_out1, "intermediate_data/scopus_results1.RDS") #run this next
-saveRDS(scopus_out2, "intermediate_data/scopus_results2.RDS")
+saveRDS(scopus_out1, "data/intermediate_data/scopus_results1.RDS") 
+saveRDS(scopus_out2, "data/intermediate_data/scopus_results2.RDS")
 
-#currently getting at error at index 14 and also later on
+#indices
 indices1 <- list()
 for (i in 1:length(scopus_out1)){
   indices1[[i]] <- Allindices(scopus_out1[[i]],
@@ -68,37 +68,4 @@ indices1_df <- bind_rows(indices1)
 indices2_df <- bind_rows(indices2)
 indices_df <- rbind(indices1_df, indices2_df)
 
-write.csv(indices_df, file = "outputs/hindex.csv")
-
-scopus_out1 <- readRDS("intermediate_data/scopus_results1.RDS")
-
-
-
-
-#testing
-
-test <- syn[1:10,]
-
-for (i in 1:10) {
-  test$synonyms <- shQuote(test$synonyms, "cmd")
-}
-
-test_scopus_out <- list() #initializing empty lists
-for (i in 1:nrow(test)) {  
-  if (!sp$id[i] %in% test$id){
-    scopus_out[[i]] <- FetchSpTAK(genus = str_split(sp$species[i], pattern = " ")[[1]][1],
-                                  species = str_split(sp$species[i], pattern = " ")[[1]][2],
-                                  APIkey = "442b9048417ef20cf680a0ae26ee4d86")
-  }
-  else {
-    syns <- syn$synonyms[match(sp$id[i], syn$id)]
-    scopus_out[[i]] <- FetchSpTAK(genus = str_split(sp$species[i], pattern = " ")[[1]][1],
-                                  species = str_split(sp$species[i], pattern = " ")[[1]][2],
-                                  synonyms = syns,
-                                  APIkey = "442b9048417ef20cf680a0ae26ee4d86")
-  }
-}
-
-
-CountSpTAK(genus = "Chlorocebus", species = "aethiops", synonyms = "Ceropithecus aethiops", APIkey = "442b9048417ef20cf680a0ae26ee4d86") #not working
-
+write.csv(indices_df, file = "outputs/data/hindex.csv")
