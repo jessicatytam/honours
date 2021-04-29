@@ -38,6 +38,9 @@ names(combinedf_dup)[names(combinedf_dup) == "species"] <- "genus_species"
 includeh <- left_join(indices_df, combinedf_dup,
                       by = "genus_species")
 
+#some cleaning
+includeh$domestication[includeh$genus_species == "Bos taurus"] <- "Domesticated" #making the cow domesticated
+
 #TRANSFORMATIONS
 
 includeh <- includeh %>%
@@ -55,6 +58,10 @@ unique(includeh$redlistCategory)
 includeh$redlistCategory <- factor(includeh$redlistCategory, levels = c("Least Concern", "Near Threaten", "Vulnerable",
                                                                         "Endangered", "Critically Endangered",
                                                                         "Extinct in the Wild", "Extinct", "Data Deficient"))
+
+#themes
+
+load("R/themes.R")
 
 #add font
 
@@ -114,8 +121,8 @@ ggplot(includeh, aes(x = logmass,
               y = "log1p") +
   scale_x_continuous(breaks = c(0.3, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0),
                      labels = c(0.002, 0.01, 0.1, 1, 10, 100, "1,000", "10,000", "100,000")) +
-  scale_y_continuous(breaks = c(0, 1, 2),
-                     labels = c(0, 9, 99)) +
+  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
@@ -127,21 +134,7 @@ ggplot(includeh, aes(x = logmass,
                 lineend = "round") +
   scale_colour_manual(values = c("#d4ac0d", "#ca6f1e", "#cb4335", "#7d3c98", "#2e86c1")) +
   guides(colour = FALSE) +
-  theme(axis.title = element_text(family = "Roboto",
-                                  face = "bold",
-                                  size = 14),
-        axis.text = element_text(family = "Roboto",
-                                 size = 10),
-        axis.line = element_line(colour = "black"),
-        legend.title = element_blank(),
-        legend.text = element_text(family = "Roboto",
-                                   size = 14),
-        legend.key = element_rect(fill = "white"),
-        legend.position = "top",
-        panel.background = element_rect(fill = "white"),
-        panel.grid.major = element_line(colour = "grey80"),
-        panel.grid.minor = element_line(colour = "grey80",
-                                        linetype = "longdash"))
+  themebyjess_light_point()
 
 #iucn category
 ggplot(includeh, aes(x = logh1,
@@ -152,39 +145,17 @@ ggplot(includeh, aes(x = logh1,
                    alpha = 0.4) +
   geom_boxplot(fill = "grey80",
                size = 0.8,
-               width = 0.4,face = "bold",
-               
+               width = 0.4,
                alpha = 0.2) +
   labs(x = "h-index") +
-  scale_x_continuous(breaks = c(0, 1, 2),
-                     labels = c(0, 9, 99)) +
+  scale_x_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
   scale_y_discrete(limits = rev,
                    labels = label_wrap(16)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
-  theme(axis.title = element_text(family = "Lato",
-                                  face = "bold",
-                                  size = 14),
-        axis.title.y = element_blank(),
-        axis.text.x = element_text(family = "Lato",
-                                   size = 10),
-        axis.text.y = element_text(family = "Lato",
-                                   size = 14,
-                                   colour = "black"),
-        axis.line = element_line(colour = "black"),
-        legend.title = element_blank(),
-        legend.text = element_text(family = "Roboto",
-                                   size = 14),
-        legend.key = element_rect(fill = "white"),
-        legend.position = "top",
-        legend.justification = "center",
-        panel.background = element_rect(fill = "white"),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        panel.grid.major.x = element_line(colour = "grey80"),
-        panel.grid.minor.x = element_line(colour = "grey80",
-                                          linetype = "longdash")) 
+  themebyjess_light_boxplot()
 
 #EW: oryx dammah, elaphurus davidianus
 
@@ -261,7 +232,7 @@ med_use <- includeh_pivot %>%
   ungroup()
 med_use <- med_use %>%
   arrange(logh1)
-med_use <- med_use[c(4:10, 3, 1, 2),]
+med_use <- med_use[c(2, 4:9, 3, 1),]
 
 includeh_pivot$human_use_group <- factor(includeh_pivot$human_use_group, levels = med_use$human_use_group)
 
@@ -276,34 +247,14 @@ ggplot(includeh_pivot, aes(x = logh1,
                width = 0.4,
                alpha = 0.2) +
   labs(x = "h-index") +
-  scale_x_continuous(breaks = c(0, 1, 2),
-                     labels = c(0, 9, 99)) +
+  scale_x_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
   scale_y_discrete(limits = rev,
                    labels = label_wrap(18)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
-  theme(axis.title = element_text(family = "Roboto",
-                                  face = "bold",
-                                  size = 14),
-        axis.title.y = element_blank(),
-        axis.text.x = element_text(family = "Roboto",
-                                   size = 10),
-        axis.text.y = element_text(family = "Roboto",
-                                   size = 14,
-                                   colour = "black"),
-        axis.line = element_line(colour = "black"),
-        legend.title = element_blank(),
-        legend.text = element_text(family = "Roboto",
-                                   size = 14),
-        legend.key = element_rect(fill = "white"),
-        legend.position = "top",
-        panel.background = element_rect(fill = "white"),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        panel.grid.major.x = element_line(colour = "grey80"),
-        panel.grid.minor.x = element_line(colour = "grey80",
-                                          linetype = "longdash"))
+  themebyjess_light_boxplot()
 
 
 #domestication
@@ -314,38 +265,19 @@ ggplot(includeh, aes(x = logh1,
                    size = 2,
                    alpha = 0.4) +
   geom_boxplot(fill = "grey80",
+               face = "bold",
                size = 0.8,
                width = 0.4,
                alpha = 0.2) +
   labs(x = "h-index",
        colour = "Clade") +
-  scale_x_continuous(breaks = c(0, 1, 2),
-                     labels = c(0, 9, 99)) +
+  scale_x_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
+  scale_y_discrete(labels = function(x) sub("-","-\n", x, fixed = TRUE)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
-  theme(axis.title = element_text(family = "Roboto",
-                                  face = "bold",
-                                  size = 14),
-        axis.title.y = element_blank(),
-        axis.text.x = element_text(family = "Roboto",
-                                   size = 10),
-        axis.text.y = element_text(family = "Roboto",
-                                   size = 14,
-                                   colour = "black"),
-        axis.line = element_line(colour = "black"),
-        legend.title = element_blank(),
-        legend.text = element_text(family = "Roboto",
-                                   size = 14),
-        legend.key = element_rect(fill = "white"),
-        legend.position = "top",
-        panel.background = element_rect(fill = "white"),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        panel.grid.major.x = element_line(colour = "grey80"),
-        panel.grid.minor.x = element_line(colour = "grey80",
-                                          linetype = "longdash")) +
-  scale_y_discrete(labels = function(x) sub("-","-\n", x, fixed = TRUE))
+  themebyjess_light_boxplot()
 
 #latitude
 ggplot(includeh, aes(x = median_lat,
@@ -357,26 +289,14 @@ ggplot(includeh, aes(x = median_lat,
   labs(x = "Latitude (median)",
        y = "h-index",
        colour = "Clade") +
-  scale_y_continuous(breaks = c(0, 1, 2),
-                     labels = c(0, 9, 99)) +
-  theme(axis.title = element_text(family = "Roboto",
-                                  face = "bold",
-                                  size = 14),
-        axis.text = element_text(family = "Roboto",
-                                 size = 10),
-        axis.line = element_line(colour = "black"),
-        legend.title = element_blank(),
-        legend.text = element_text(family = "Roboto",
-                                   size = 14),
-        legend.key = element_rect(fill = "white"),
-        legend.position = "top",
-        panel.background = element_rect(fill = "white"),
-        panel.grid.major = element_line(colour = "grey80"),
-        panel.grid.minor = element_line(colour = "grey80",
-                                        linetype = "longdash")) +
+  scale_x_continuous(breaks = c(-40, 0, 40, 80),
+                     labels = c("-40°", 0, "40°", "80°")) +
+  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
-                                                               alpha = 1)))
+                                                               alpha = 1))) +
+  themebyjess_light_point()
 
 #map
 
@@ -393,26 +313,17 @@ ggplot(data = world) +
   labs(x = "Longitude",
        y = "Latitude",
        colour = "h-index") +
-  theme(axis.title = element_text(family = "Roboto",
-                                  face = "bold",
-                                  size = 14),
-        axis.text = element_text(family = "Roboto",
-                                 size = 10),
-        legend.title = element_text(family = "Roboto",
-                                    face = "bold",
-                                    size = 12),
-        legend.text = element_text(family = "Roboto",
-                                   size = 10),
-        panel.background = element_rect(fill = "white"),
-        panel.grid = element_line(colour = "grey80",
-                                  linetype = "dashed")) +
-  scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous")) 
+  scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous"),
+                         labels = c(0, 2, 9, 31, 99, 316)) +
+  themebyjess_light_map()
 
 
 
 #phylogenetic tree
 
-tree <- tol_induced_subtree(ott_ids = includeh$id, label_format = "name")
+all_names <- tnrs_match_names(includeh$genus_species)
+in_tree <- is_in_tree(ott_id(all_names))
+tree <- tol_induced_subtree(ott_id(all_names)[in_tree])
 
 includeh_join <- includeh %>%
   rename(label = genus_species)
@@ -422,7 +333,10 @@ tree <- as_tibble(tree)
 tree_join <- full_join(tree, includeh_join, by = "label")
 tree_join <- as.treedata(tree_join)
 
-ggtree(tree_join,
+saveRDS(tree_join, "outputs/tree_join.rds")
+tree_join <- readRDS("outputs/tree_join.rds")
+
+tree <- ggtree(tree_join,
        layout = "circular") +
   geom_tippoint(aes(colour = clade)) +
   geom_fruit(geom = geom_bar,
@@ -455,21 +369,7 @@ ggplot(includeh, aes(x = log_sumgtrends,
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
-  theme(axis.title = element_text(family = "Roboto",
-                                  face = "bold",
-                                  size = 14),
-        axis.text = element_text(family = "Roboto",
-                                 size = 10),
-        axis.line = element_line(colour = "black"),
-        legend.title = element_blank(),
-        legend.text = element_text(family = "Roboto",
-                                   size = 14),
-        legend.key = element_rect(fill = "white"),
-        legend.position = "top",
-        panel.background = element_rect(fill = "white"),
-        panel.grid.major = element_line(colour = "grey80"),
-        panel.grid.minor = element_line(colour = "grey80",
-                                        linetype = "longdash"))
+  themebyjess_light_point()
 
 #supp
 ggplot(includeh, aes(y = order)) +

@@ -27,7 +27,7 @@ for (i in 1:7522) {
   Sys.sleep(1)
 }
 
-saveRDS(output, "data/intermediate_data/gtrends_results1.RDS") #spp 1-
+saveRDS(output, "data/intermediate_data/gtrends_results1.RDS") #spp 1-1602
 saveRDS(output2, "data/intermediate_data/gtrends_results2.RDS") #spp 
 saveRDS(output3, "data/intermediate_data/gtrends_results3.RDS") #spp 
 saveRDS(output4, "data/intermediate_data/gtrends_results4.RDS") #spp 
