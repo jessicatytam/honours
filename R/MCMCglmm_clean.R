@@ -12,7 +12,7 @@ library(GGally)
 
 
 #dataset
-dat <- read.csv("outputs/data/combinedf2.csv")[-c(1)]
+dat <- read.csv("outputs/data/includeh.csv")[-c(1)]
 dat$genus_species <- str_replace(dat$genus_species, " ", "_")
 
 #MCMCglmm does not like family as a name in the dataset
