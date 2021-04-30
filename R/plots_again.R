@@ -61,7 +61,7 @@ includeh$redlistCategory <- factor(includeh$redlistCategory, levels = c("Least C
 
 #themes
 
-load("R/themes.R")
+source("R/themes.R")
 
 #add font
 
@@ -321,13 +321,16 @@ ggplot(data = world) +
 
 #phylogenetic tree
 
+includeh_join <- includeh %>%
+  rename(label = genus_species)
+#includeh_join$label <- str_replace_all(includeh_join$label, " ", "_")
+
 all_names <- tnrs_match_names(includeh$genus_species)
 in_tree <- is_in_tree(ott_id(all_names))
 tree <- tol_induced_subtree(ott_id(all_names)[in_tree])
 
-includeh_join <- includeh %>%
-  rename(label = genus_species)
-includeh_join$label <- str_replace_all(includeh_join$label, " ", "_")
+taxa <- tnrs_match_names(includeh$genus_species, context = "Animals")
+tr <- tol_induced_subtree(ott_ids = includeh$id)
 
 tree <- as_tibble(tree)
 tree_join <- full_join(tree, includeh_join, by = "label")
@@ -336,7 +339,7 @@ tree_join <- as.treedata(tree_join)
 saveRDS(tree_join, "outputs/tree_join.rds")
 tree_join <- readRDS("outputs/tree_join.rds")
 
-tree <- ggtree(tree_join,
+ggtree(tree_join,
        layout = "circular") +
   geom_tippoint(aes(colour = clade)) +
   geom_fruit(geom = geom_bar,
@@ -353,6 +356,19 @@ tree <- ggtree(tree_join,
         legend.text = element_text(family = "Roboto",
                                    size = 14)) 
 
+tree_2 <- ggtree(tree_join,
+                 layout = "circular") +
+  geom_tippoint(aes(colour = logh1)) +
+  scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous"),
+                         labels = c(0, 2, 9, 31, 99, 316)) +
+  guides(colour = guide_legend(override.aes = list(shape = 16,
+                                                   size = 4))) + #shape of legend icons not changing need to find out why
+  theme(legend.position = "top",
+        legend.title = element_blank(),
+        legend.text = element_text(family = "Roboto",
+                                   size = 14)) 
+  
+  
 #google trends
 
 ggplot(includeh, aes(x = log_sumgtrends,
@@ -369,6 +385,7 @@ ggplot(includeh, aes(x = log_sumgtrends,
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
+  #guides(colour = FALSE) +
   themebyjess_light_point()
 
 #supp

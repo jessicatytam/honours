@@ -18,17 +18,17 @@ gtrends_list <- readRDS("data/intermediate_data/gtrends_list.RDS")
 
 #get the data
 
-output <- list()
-for (i in 1:7522) {
+output2 <- list()
+for (i in 1603:7522) {
   print(paste(i, "getting data for", includeh$genus_species[i]))
   search_term <- includeh$genus_species[i]
-  output[[i]] <- gtrends(keyword = search_term,
+  output2[[i]] <- gtrends(keyword = search_term,
                          time = "all")
   Sys.sleep(1)
 }
 
 saveRDS(output, "data/intermediate_data/gtrends_results1.RDS") #spp 1-1602
-saveRDS(output2, "data/intermediate_data/gtrends_results2.RDS") #spp 
+saveRDS(output2, "data/intermediate_data/gtrends_results2.RDS") #spp 1603-3203
 saveRDS(output3, "data/intermediate_data/gtrends_results3.RDS") #spp 
 saveRDS(output4, "data/intermediate_data/gtrends_results4.RDS") #spp 
 saveRDS(output5, "data/intermediate_data/gtrends_results5.RDS") #spp 
