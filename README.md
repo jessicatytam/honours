@@ -47,10 +47,12 @@
   - [x] Missing data (mice)
   - [x] Google Trends (gtrendsR)
 
-## :art: Making graphs :round\_pushpin:
+## :art: Making graphs
 
   - [x] h vs mass
-  - [x] h vs phylogeny
+  - [ ] h vs phylogeny :round\_pushpin:
+      - something wrong with the new artificial tree, need to find out
+        why
   - [x] h vs location
   - [x] *h*-index map
   - [x] h vs human use

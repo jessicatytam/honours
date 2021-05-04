@@ -2,10 +2,10 @@ library(tidyverse)
 devtools::install_github("jessicatytam/specieshindex", force = TRUE, build_vignettes = FALSE)
 library(specieshindex)
 
-syn <- read_csv("intermediate_data/synonyms.csv")
-includeh <- read_csv("outputs/includeh.csv")
+syn <- read_csv("data/intermediate_data/synonyms.csv")
+includeh <- read_csv("outputs/data/includeh.csv")
 sp1 <- data.frame(includeh[1:3500,])
-sp2 <- data.frame(includeh[3501:6788,])
+sp2 <- data.frame(includeh[3501:7522,])
 
 #add quotation marks to synonyms
 

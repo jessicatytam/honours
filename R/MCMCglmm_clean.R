@@ -19,12 +19,12 @@ dat$animal <- dat$genus_species
 
 #count complete cases
 comp <- apply(dat, 1, function(x){ifelse(!is.na(x["BodyMass.Value"]) & !is.na(x["median_lat"]) & !is.na(x["redlistCategory"]) == TRUE, TRUE, FALSE)})
-table(comp) #3779 complete cases
+table(comp) #3377 complete cases
 
 #get tree
 tree100 <- readRDS("data/intermediate_data/tree100.nex")
-table(tree100$tree_6061$tip.label %in% dat$genus_species) #5061
-table(dat$genus_species %in% tree100$tree_6061$tip.label) #5029
+table(tree100$tree_6061$tip.label %in% dat$genus_species) #5519
+table(dat$genus_species %in% tree100$tree_6061$tip.label) #5498
 
 #trim tree and list so that they match
 tree_sub <- tree100$tree_6061
@@ -35,14 +35,14 @@ for (i in 1:length(tree_sub$tip.label)) {
     tree_match$tip.label[i] <- tree_sub$tip.label[i]
   }
 }
-tree_match <- lapply(tree_match, function(x) x[!is.na(x)]) #remove 1 NA entry
+tree_match <- lapply(tree_match, function(x) x[!is.na(x)]) #remove NA entry
 
-tree_sub <- keep.tip(tree_sub, tree_match$tip.label) #5029
+tree_sub <- keep.tip(tree_sub, tree_match$tip.label) #5498
 
 dat_sub <- dat %>%
-  filter(genus_species %in% tree100$tree_6061$tip.label)
+  filter(genus_species %in% tree100$tree_6061$tip.label) #5498 entries
 
-table(tree_sub$tip.label %in% dat_sub$genus_species) #5029
+table(tree_sub$tip.label %in% dat_sub$genus_species) #5498
 
 #IMPUTATION
 
@@ -95,29 +95,13 @@ comp8 <- complete(imp, 8)
 comp9 <- complete(imp, 9)
 comp10 <- complete(imp, 10)
 
+imp_list <- list(comp1, comp2, comp3, comp4, comp5, comp6, comp7, comp8, comp9, comp10)
+
 #save imputed datasets
-saveRDS(comp1, "data/intermediate_data/MCMCglmm/comp1.rds")
-saveRDS(comp2, "data/intermediate_data/MCMCglmm/comp2.rds")
-saveRDS(comp3, "data/intermediate_data/MCMCglmm/comp3.rds")
-saveRDS(comp4, "data/intermediate_data/MCMCglmm/comp4.rds")
-saveRDS(comp5, "data/intermediate_data/MCMCglmm/comp5.rds")
-saveRDS(comp6, "data/intermediate_data/MCMCglmm/comp6.rds")
-saveRDS(comp7, "data/intermediate_data/MCMCglmm/comp7.rds")
-saveRDS(comp8, "data/intermediate_data/MCMCglmm/comp8.rds")
-saveRDS(comp9, "data/intermediate_data/MCMCglmm/comp9.rds")
-saveRDS(comp10, "data/intermediate_data/MCMCglmm/comp10.rds")
+saveRDS(imp_list, "data/intermediate_data/MCMCglmm/imp_list.rds")
 
 #read imputed datasets
-comp1 <- readRDS("data/intermediate_data/MCMCglmm/comp1.rds")
-comp2 <- readRDS("data/intermediate_data/MCMCglmm/comp2.rds")
-comp3 <- readRDS("data/intermediate_data/MCMCglmm/comp3.rds")
-comp4 <- readRDS("data/intermediate_data/MCMCglmm/comp4.rds")
-comp5 <- readRDS("data/intermediate_data/MCMCglmm/comp5.rds")
-comp6 <- readRDS("data/intermediate_data/MCMCglmm/comp6.rds")
-comp7 <- readRDS("data/intermediate_data/MCMCglmm/comp7.rds")
-comp8 <- readRDS("data/intermediate_data/MCMCglmm/comp8.rds")
-comp9 <- readRDS("data/intermediate_data/MCMCglmm/comp9.rds")
-comp10 <- readRDS("data/intermediate_data/MCMCglmm/comp10.rds")
+imp_list <- readRDS("data/intermediate_data/MCMCglmm/imp_list.rds")
 
 #MCMCGLMM
 
@@ -144,7 +128,7 @@ system.time(mod_op_test <- MCMCglmm(h ~ logmass +
                                     thin = 10*10, 
                                     burnin = 3000*10,
                                     prior = prior1) 
-) #13 minutes
+) #15.5 minutes
 
 #look at the results
 summary(mod_op_test)
@@ -155,3 +139,33 @@ v_dist <- log(1+ 1/mean(dat_sub$h))
 1.599/(1.599 + 0.7595 + v_dist) #0.6390647
 
 
+
+
+#trimming and cleaning ALL trees
+tree100 <- readRDS("data/intermediate_data/tree100.nex")
+
+tree_match <- list()
+
+for (j in 1:length(tree100)) {
+  for (i in 1:tree100[[j]]$tip.label) {
+    if (tree100[[j]]$tip.label[i] %in% dat$genus_species) {
+      keep.tip(tree100[[j]], tree100[[j]]$tip.label[i])
+    }
+  }
+}
+
+for (i in 1:length(tree_sub$tip.label)) {
+  if (tree_sub$tip.label[i] %in% dat$genus_species) {
+    tree_match$tip.label[i] <- tree_sub$tip.label[i]
+  }
+}
+tree_match <- lapply(tree_match, function(x) x[!is.na(x)]) #remove NA entry
+
+tree_sub <- keep.tip(tree_sub, tree_match$tip.label) #5498
+
+dat_sub <- dat %>%
+  filter(genus_species %in% tree100$tree_6061$tip.label) #5498 entries
+
+table(tree_sub$tip.label %in% dat_sub$genus_species) #5498
+
+tree_sub_ultrametric <- force.ultrametric(tree_sub)

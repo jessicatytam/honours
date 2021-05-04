@@ -105,6 +105,10 @@ ggpairs(complete_list, columns = c(8, 43, 18, 44, 45, 46, 49),
 ```
 
 ```{r}
+summary(lm(h ~ logmass, includeh))
+```
+
+```{r}
 summary(lm(h ~ median_lat, includeh))
 ```
 
@@ -118,5 +122,9 @@ summary(aov(h ~ humanuse_bin, includeh))
 
 ```{r}
 summary(aov(h ~ domestication_bin, includeh))
+```
+
+```{r}
+summary(aov(h ~ gtrends_bin, includeh))
 ```
 
