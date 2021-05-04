@@ -69,11 +69,16 @@
   - [x] correlation matrix of complete entries
   - [x] Phylogenetic signals (phytools)
   - MCMCglmm
+      - [ ] impute 10 datasets
       - [ ] Pagel’s λ (calculated from MCMCglmm results)
       - [ ] trim all trees + pick 50 randomly :round\_pushpin:
-      - [x] impute 10 datasets
       - [ ] write nested loop + TESTING
       - [ ] katana
+
+## :jigsaw: Other materials :gem::round\_pushpin:
+
+  - [ ] data summary table for thesis
+  - [ ] supplementary material
 
  
 

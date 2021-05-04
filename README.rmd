@@ -71,11 +71,15 @@ output: github_document
   - [x] correlation matrix of complete entries 
   - [x] Phylogenetic signals (phytools)
   - MCMCglmm 
+    - [ ] impute 10 datasets
     - [ ] Pagel's λ (calculated from MCMCglmm results)
     - [ ] trim all trees + pick 50 randomly :round_pushpin:
-    - [x] impute 10 datasets
     - [ ] write nested loop + TESTING
     - [ ] katana
+    
+## :jigsaw: Other materials :gem::round_pushpin:
+  - [ ] data summary table for thesis
+  - [ ] supplementary material
 
   
 \  

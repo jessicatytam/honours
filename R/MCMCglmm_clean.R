@@ -9,8 +9,6 @@ library(rlist)
 library(Rphylopars)
 library(GGally)
 
-
-
 #dataset
 dat <- read.csv("outputs/data/includeh.csv")[-c(1)]
 dat$genus_species <- str_replace(dat$genus_species, " ", "_")
