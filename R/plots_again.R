@@ -144,6 +144,7 @@ ggplot(includeh, aes(x = logh1,
                    size = 2,
                    alpha = 0.4) +
   geom_boxplot(fill = "grey80",
+               position = position_dodge(width = 0.5),
                size = 0.8,
                width = 0.4,
                alpha = 0.2) +

@@ -1,0 +1,93 @@
+---
+title: "supp_material"
+output: pdf_document
+---
+
+```{r}
+#libraries
+library(tidyverse)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(sf)
+library(letsR)
+#library(geoshpere) #might have to update R
+library(wesanderson)
+library(ggtree)
+library(ggtreeExtra)
+library(treeio)
+library(scales)
+library(ggbeeswarm)
+library(ggridges)
+library(ggnewscale)
+library(gghalves)
+library(ggpol)
+library(plotly)
+library(sysfonts)
+```
+
+```{r}
+#files
+includeh <- read.csv(file = "outputs/data/includeh.csv")[-c(1)] 
+#source("R/themes.R")
+font_add_google("Roboto")
+```
+
+#Plots
+
+```{r}
+ggplot(includeh, aes(x = h)) +
+  labs(x = "h-index",
+       y = "Frequency of species") +
+  geom_bar() +
+  themebyjess_light_point()
+```
+
+```{r}
+ggplot(includeh, aes(x = logh1,
+                     y = order)) +
+  geom_boxplot() +
+  geom_jitter(aes(colour = redlistCategory),
+              size = 2,
+              alpha = 0.4) +
+  labs(x = "h-index") +
+  scale_x_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
+  scale_y_discrete(limits = rev) +
+  scale_colour_manual(values = c("#0d1e7d", "#194cb3", "#6b40e1", "#aa55ea",
+                                 "#ea559d", "#cd2d54", "#951433"),
+                      na.value = c("#a5a5a5")) +
+  themebyjess_light_boxplot()
+  
+```
+
+```{r}
+ggplot(includeh, aes(y = order)) +
+  geom_bar(aes(fill = redlistCategory),
+           position = "fill") +
+  labs(x = "Proportion") +
+  scale_x_continuous(labels = scales::percent) +
+  scale_y_discrete(limits = rev) +
+  scale_fill_manual(values = c("#0d1e7d", "#194cb3", "#6b40e1", "#aa55ea",
+                               "#ea559d", "#cd2d54", "#951433"),
+                    na.value = c("#a5a5a5")) +
+  themebyjess_light_boxplot()
+```
+
+#Statistical tests
+
+```{r}
+summary(lm(h ~ median_lat, includeh))
+```
+
+```{r}
+summary(aov(h ~ iucn_bin, includeh))
+```
+
+```{r}
+summary(aov(h ~ humanuse_bin, includeh))
+```
+
+```{r}
+summary(aov(h ~ domestication_bin, includeh))
+```
+
