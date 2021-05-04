@@ -32,30 +32,7 @@ saveRDS(output, "data/intermediate_data/gtrends_results1.RDS") #spp 1-1602
 saveRDS(output2, "data/intermediate_data/gtrends_results2.RDS") #spp 1603-3203
 saveRDS(output3, "data/intermediate_data/gtrends_results3.RDS") #spp 3204-4847
 saveRDS(output4, "data/intermediate_data/gtrends_results4.RDS") #spp 4848-6450
-saveRDS(output5, "data/intermediate_data/gtrends_results5.RDS") #spp 6451
-
-gtrends_output <- bind_rows(output)
-
-
-output <- c("Martes pennanti")
-fisher <- gtrends(keyword = output,
-                 time = "all")
-
-output <- c("Glis glis")
-dormouse <- gtrends(keyword = output,
-                    time = "all")
-
-
-output <- c("Abditomys latidens")
-mammal <- gtrends(keyword = output,
-        time = "all")
-
-
-
-ggplot(mammal$interest_over_time, aes(x = date,
-                                      y = hits)) +
-  geom_line()
-
+saveRDS(output5, "data/intermediate_data/gtrends_results5.RDS") #spp 6451-7522
 
 #combine them into 1 list + checking
 
@@ -64,20 +41,13 @@ gtrends_results2 <- readRDS(file = "data/intermediate_data/gtrends_results2.RDS"
 gtrends_results3 <- readRDS(file = "data/intermediate_data/gtrends_results3.RDS")
 gtrends_results4 <- readRDS(file = "data/intermediate_data/gtrends_results4.RDS")
 gtrends_results5 <- readRDS(file = "data/intermediate_data/gtrends_results5.RDS")
-gtrends_results6 <- readRDS(file = "data/intermediate_data/gtrends_results6.RDS")
-gtrends_results7 <- readRDS(file = "data/intermediate_data/gtrends_results7.RDS")
-gtrends_results8 <- readRDS(file = "data/intermediate_data/gtrends_results8.RDS")
 
-gtrends_results2 <- gtrends_results2[1612:1725]
-gtrends_results3 <- gtrends_results3[1726:3234]
-gtrends_results4 <- gtrends_results4[3235:4862]
-gtrends_results5 <- gtrends_results5[4863:5346]
-gtrends_results6 <- gtrends_results6[5347:5452]
-gtrends_results7 <- gtrends_results7[5453:6030]
-gtrends_results8 <- gtrends_results8[6031:6788]
+gtrends_results2 <- gtrends_results2[1603:3203]
+gtrends_results3 <- gtrends_results3[3204:4847]
+gtrends_results4 <- gtrends_results4[4848:6450]
+gtrends_results5 <- gtrends_results5[6451:7522]
 
-gtrends_list <- do.call(c, list(gtrends_results1, gtrends_results2, gtrends_results3, gtrends_results4,
-                                gtrends_results5, gtrends_results6, gtrends_results7, gtrends_results8))
+gtrends_list <- do.call(c, list(gtrends_results1, gtrends_results2, gtrends_results3, gtrends_results4, gtrends_results5))
 
 spp <- data.frame()
 for (i in 1:length(gtrends_list)) {
@@ -85,32 +55,7 @@ for (i in 1:length(gtrends_list)) {
   spp[i, 1] <- gtrends_list[[i]]$interest_by_country[1, "keyword"]
 }
 
-gtrends_list <- gtrends_list[-c(6030)]
-
-unique(spp$V1)
-
-for (i in 1:length(includeh$genus_species)) {
-  if (!includeh$genus_species[i] %in% spp$V1) {
-    print(includeh$genus_species[i])
-  }
-} #the lists match now
-
-#get missing spp
-
-missing_spp <- data.frame(c("Pteropus livingstonii", "Pteropus lombocensis", "Pteropus loochoensis", "Soricomys kalinga"))
-missing_spp <- missing_spp %>%
-  rename(spp = c..Pteropus.livingstonii....Pteropus.lombocensis....Pteropus.loochoensis...)
-
-output <- list()
-for (i in 1:length(missing_spp$spp)) {
-  print(paste(i, "getting data for", missing_spp$spp[i]))
-  search_term <- missing_spp$spp[i]
-  output[[i]] <- gtrends(keyword = search_term,
-                          time = "all")
-  Sys.sleep(1)
-}
-
-gtrends_list <- do.call(c, list(gtrends_list, output))
+unique(spp$V1) #checking
 
 #check for null
 
@@ -122,8 +67,8 @@ for (i in 1:length(gtrends_list)) {
 
 #replace <1 with 0.5
 
-replace(gtrends_list[[2551]]$interest_over_time[, "hits"], #test
-        gtrends_list[[2551]]$interest_over_time[, "hits"] == "<1", "0.5")
+replace(gtrends_list[[1]]$interest_over_time[, "hits"], #test
+        gtrends_list[[1]]$interest_over_time[, "hits"] == "<1", "0.5")
 
 for (i in 1:length(gtrends_list)) {
   gtrends_list[[i]]$interest_over_time[, "hits"] <- replace(gtrends_list[[i]]$interest_over_time[, "hits"],
@@ -136,7 +81,7 @@ hits <- data.frame(genus_species = as.character(),
                    sum_gtrends = as.numeric())
 
 data.frame(genus_species = gtrends_list[[1]]$interest_by_country[1, "keyword"],
-           sum_gtrends = 0)
+           sum_gtrends = 0) #test
 
 for (i in 1:length(gtrends_list)) {
   if (is.null(gtrends_list[[i]]$interest_by_country)) {
@@ -151,12 +96,12 @@ for (i in 1:length(gtrends_list)) {
 
 #checking
 
-sum(hits$sum_gtrends==0) #5799 species with 0
+sum(hits$sum_gtrends==0) #6199 species with 0
 
 #combine with includeh
 
 includeh <- left_join(includeh, hits, by = "genus_species")
-table(is.na(includeh$sum_gtrends))
+table(is.na(includeh$sum_gtrends)) #no NA since it is 0
 
 #slope, intercept
 

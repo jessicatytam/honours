@@ -50,6 +50,9 @@ includeh <- includeh %>%
 includeh <- includeh %>%
   mutate(logh1 = log10(h+1), .after = logh)
 
+includeh <- includeh %>%
+  mutate(log_sumgtrends = log10(sum_gtrends+1), .after = sum_gtrends)
+
 #sorting
 
 includeh$clade <- factor(includeh$clade, levels = c("Afrotheria", "Xenarthra", "Euarchontoglires", "Laurasiatheria", "Marsupials & monotremes"))
@@ -376,17 +379,16 @@ ggplot(includeh, aes(x = log_sumgtrends,
                      y = logh1,
                      colour = clade)) +
   geom_point(size = 2,
-             alpha = 0.5) +
+             alpha = 0.4) +
   labs(x = "Google Trends index (sum)",
        y = "h-index") +
   scale_x_continuous(breaks = c(0, 2, 3, 4),
                      labels = c(0, 100, "1,000", "10,000")) +
-  scale_y_continuous(breaks = c(0, 1, 2),
-                     labels = c(0, 9, 99)) +
+  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
-  #guides(colour = FALSE) +
   themebyjess_light_point()
 
 #supp
