@@ -343,7 +343,7 @@ tree_join <- as.treedata(tree_join)
 saveRDS(tree_join, "outputs/tree_join.rds")
 tree_join <- readRDS("outputs/tree_join.rds")
 
-ggtree(tree_join,
+tree_1 <- ggtree(tree_join,
        layout = "circular") +
   geom_tippoint(aes(colour = clade)) +
   geom_fruit(geom = geom_bar,
