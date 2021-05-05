@@ -47,7 +47,7 @@ saveRDS(mod_list, "data/intermediate_data/MCMCglmm/mod_list.rds")
 mod_list <- list()
 for (i in 1:length(imp_list)) {
   model <- lm(h ~ logmass, data = imp_list[[i]])
-  mod_list <- mapply(c, mod_list, model)
+  mod_list <- merge.list(c, mod_list, model)
 }
 
 
