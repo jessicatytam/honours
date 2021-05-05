@@ -144,28 +144,36 @@ v_dist <- log(1+ 1/mean(dat_sub$h))
 #trimming and cleaning ALL trees
 tree100 <- readRDS("data/intermediate_data/tree100.nex")
 
+tree_sub <- tree100$tree_6061
 tree_match <- list()
-
-for (j in 1:length(tree100)) {
-  for (i in 1:tree100[[j]]$tip.label) {
-    if (tree100[[j]]$tip.label[i] %in% dat$genus_species) {
-      keep.tip(tree100[[j]], tree100[[j]]$tip.label[i])
-    }
-  }
-}
-
 for (i in 1:length(tree_sub$tip.label)) {
   if (tree_sub$tip.label[i] %in% dat$genus_species) {
     tree_match$tip.label[i] <- tree_sub$tip.label[i]
   }
 }
+
+length(tree_match$tip.label)
 tree_match <- lapply(tree_match, function(x) x[!is.na(x)]) #remove NA entry
+length(tree_match$tip.label)
 
-tree_sub <- keep.tip(tree_sub, tree_match$tip.label) #5498
+for (j in 1:length(tree100)) { 
+  for (i in 1:length(tree100[[j]]$tip.label)) {
+    if (!tree100[[j]]$tip.label[i] %in% dat$genus_species) {
+      tree100[[j]] <- keep.tip(tree100[[j]], tree_match$tip.label)
+      print(paste("tree", j, "trimmed"))
+    }
+  } 
+}
 
-dat_sub <- dat %>%
-  filter(genus_species %in% tree100$tree_6061$tip.label) #5498 entries
+length(tree100[[78]]$tip.label)
 
-table(tree_sub$tip.label %in% dat_sub$genus_species) #5498
+#make them ultrametric
+for (i in 1:length(tree100)) { 
+  if (!is.ultrametric(tree100[[i]])) {
+    tree100[[i]] <- force.ultrametric(tree100[[i]])
+    print(paste("tree", i, "is ultrametric"))
+  }
+}
 
-tree_sub_ultrametric <- force.ultrametric(tree_sub)
+#save it
+saveRDS(tree100, "data/intermediate_data/trimmed_trees.rds")
