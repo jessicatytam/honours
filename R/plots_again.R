@@ -391,24 +391,5 @@ ggplot(includeh, aes(x = log_sumgtrends,
                                                                alpha = 1))) +
   themebyjess_light_point()
 
-#supp
-ggplot(includeh, aes(y = order)) +
-  geom_bar(aes(fill = redlistCategory),
-           position = "fill") +
-  labs(x = "Proportion",
-       y = "Order",
-       fill = "IUCN Red List Category") +
-  theme(axis.title = element_text(size = 14),
-        axis.text = element_text(size = 10),
-        legend.title = element_text(size = 12),
-        legend.text = element_text(size = 10)) +
-  scale_y_discrete(limits = rev) +
-  scale_x_continuous(labels = scales::percent) +
-  scale_fill_manual(values = c("#0d1e7d", "#194cb3", "#6b40e1", "#aa55ea",
-                               "#ea559d", "#cd2d54", "#951433"),
-                    na.value = c("#a5a5a5"))
 
-ggplot(includeh, aes(x = log10(years_publishing),
-                     y = logh1)) +
-  geom_point(aes(size = log10(m+1)),
-             alpha = 0.5)
+#trying ggstream

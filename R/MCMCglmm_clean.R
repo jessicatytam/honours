@@ -177,3 +177,7 @@ for (i in 1:length(tree100)) {
 
 #save it
 saveRDS(tree100, "data/intermediate_data/trimmed_trees.rds")
+
+#pick 50 random trees
+random_trees <- sample(trimmed_trees, 50, replace = FALSE)
+saveRDS(random_trees, "data/intermediate_data/random_trees.rds")
