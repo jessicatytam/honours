@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#PBS -N mcmcglmm_loop_1
+#PBS -N mcmcglmm_loop_5
 #PBS -l select=1:ncpus=1:mem=50gb
 #PBS -l walltime=48:00:00
 #PBS -M j.tam@student.unsw.edu.au
@@ -17,4 +17,4 @@ module add R/4.0.2-gcc7
 cd /srv/scratch/z5093095/honours
 
 #Run R code
-Rscript R/MCMCglmm_loop_1.R
+Rscript R/MCMCglmm_loop_5.R

@@ -8,17 +8,17 @@ imp_list <- readRDS("data/intermediate_data/MCMCglmm/imp_list.rds")
 random_trees <- readRDS("data/intermediate_data/random_trees.rds")
 
 #imputation list
-imp_1 <- imp_list[1:2]
+imp_5 <- imp_list[9:10]
 
 #non-informative prior
 prior1 <- list(R = list(V = diag(1), nu = 0.002),
                G = list(G1 = list(V = diag(1), nu = 1, alpha.mu = 0, alpha.V = diag(1)*1000)))
 
 #model
-mod_list_1 <- vector(mode = "list", length = 100)
+mod_list_5 <- vector(mode = "list", length = 100)
 for (i in 1:length(random_trees)) {
-  for (j in 1:length(imp_1)) {
-    mod_list_1[[j+(i-1)*length(imp_1)]] <- sprintf("%s is i and %s is j\n", i, j)
+  for (j in 1:length(imp_5)) {
+    mod_list_5[[j+(i-1)*length(imp_5)]] <- sprintf("%s is i and %s is j\n", i, j)
     # mod_list_1[[j+(i-1)*length(imp_1)]] <- MCMCglmm(h ~ logmass +
     #                                                 abs_lat +
     #                                                 humanuse_bin +
@@ -28,7 +28,7 @@ for (i in 1:length(random_trees)) {
     #                                               random = ~ animal,
     #                                               family = "poisson",
     #                                               pedigree = random_trees[[i]],
-    #                                               dat = imp_1[[j]],
+    #                                               dat = imp_5[[j]],
     #                                               nitt = 13000*10,
     #                                               thin = 10*10,
     #                                               burnin = 3000*10,
@@ -37,4 +37,4 @@ for (i in 1:length(random_trees)) {
 }
 
 #save the models
-saveRDS(mod_list_1, "data/intermediate_data/MCMCglmm/mod_list_1.rds")
+saveRDS(mod_list_5, "data/intermediate_data/MCMCglmm/mod_list_5.rds")

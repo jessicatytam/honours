@@ -8,14 +8,14 @@ imp_list <- readRDS("data/intermediate_data/MCMCglmm/imp_list.rds")
 random_trees <- readRDS("data/intermediate_data/random_trees.rds")
 
 #imputation list
-imp_2 <- imp_list[4:6]
+imp_2 <- imp_list[3:4]
 
 #non-informative prior
 prior1 <- list(R = list(V = diag(1), nu = 0.002),
                G = list(G1 = list(V = diag(1), nu = 1, alpha.mu = 0, alpha.V = diag(1)*1000)))
 
 #model
-mod_list_2 <- vector(mode = "list", length = 150)
+mod_list_2 <- vector(mode = "list", length = 100)
 for (i in 1:length(random_trees)) {
   for (j in 1:length(imp_2)) {
     mod_list_2[[j+(i-1)*length(imp_2)]] <- sprintf("%s is i and %s is j\n", i, j)
