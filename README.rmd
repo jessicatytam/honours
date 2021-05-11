@@ -73,13 +73,14 @@ output: github_document
   - [x] Phylogenetic signals (phytools)
   - MCMCglmm 
     - [x] impute 10 datasets
-    - [ ] Pagel's λ (calculated from MCMCglmm results)
     - [x] trim all trees + pick 50 randomly
-    - [ ] write nested loop + TESTING :round_pushpin:
-    - [ ] katana
+    - [x] write nested loop + TESTING 
+    - [x] katana
+    - [ ] extract data from models :round_pushpin:
+    - [ ] Pagel's λ (calculated from MCMCglmm results) :round_pushpin:
     
 ## :jigsaw: Other materials :gem::round_pushpin:
-  - [ ] data summary table for thesis
+  - [ ] data summary table for thesis 
   - [ ] supplementary material
 
   
