@@ -362,12 +362,12 @@ saveRDS(tree_join, "outputs/tree_join.rds")
 ggtree(tree_join,
        layout = "circular") +
   geom_tippoint(aes(colour = clade)) +
-  # geom_fruit(geom = geom_bar,
-  #            mapping = aes(x = h,
-  #                          colour = clade),
-  #            pwidth = 0.5,
-  #            orientation = "y",
-  #            stat = "identity") +
+  geom_fruit(geom = geom_bar,
+             mapping = aes(x = h, #something wrong here ughhhhhhhhh
+                           colour = clade),
+             pwidth = 0.5,
+             orientation = "y", 
+             stat = "identity") +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db")) +
   guides(colour = guide_legend(override.aes = list(shape = 16,
                                                    size = 4))) + #shape of legend icons not changing need to find out why
@@ -376,8 +376,27 @@ ggtree(tree_join,
         legend.text = element_text(family = "Roboto",
                                    size = 14))
 
-ggtree(tree_join, layout = "circular") #this works yay
 
+ggtree(tree_join,
+       layout = "circular") +
+  geom_fruit(geom = geom_bar,
+             mapping = aes(x = h),
+             pwidth = 0.5,
+             orientation = "y", 
+             stat = "identity")
+
+ggtree(tree_join,
+       layout = "circular") +
+  geom_tippoint(aes(colour = clade)) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db")) +
+  guides(colour = guide_legend(override.aes = list(shape = 16,
+                                                   size = 4))) + #shape of legend icons not changing need to find out why
+  theme(legend.position = "top",
+        legend.title = element_blank(),
+        legend.text = element_text(family = "Roboto",
+                                   size = 14))
+
+table(is.na(tree_join[[38]]))
   
 #google trends
 
