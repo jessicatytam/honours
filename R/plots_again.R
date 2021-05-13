@@ -329,32 +329,39 @@ ggplot(data = world) +
 includeh_join <- includeh %>%
   rename(label = genus_species)
 includeh_join$label <- str_replace_all(includeh_join$label, " ", "_")
+#includeh_join$h <- as.numeric(includeh_join$h)
+includeh_join <- includeh_join %>%
+  filter(label %in% tree$tip.label)
+includeh_join <- includeh_join %>%
+  select(label, h, clade)
 
-all_names <- tnrs_match_names(includeh_join$label)
-in_tree <- is_in_tree(ott_id(all_names))
+#all_names <- tnrs_match_names(includeh_join$label)
+#in_tree <- is_in_tree(ott_id(all_names))
 
-in_tree <- as.data.frame(in_tree)
-all_names_clean <- cbind(all_names, in_tree)
+#in_tree <- as.data.frame(in_tree)
+#all_names_clean <- cbind(all_names, in_tree)
 
-table(all_names_clean$in_tree) #checking
+#table(all_names_clean$in_tree) #checking
 
-for (i in 1:length(all_names_clean$in_tree)) {
-  if (isFALSE(all_names_clean$in_tree[i])) {
-    all_names_clean <- all_names_clean[-i,]
-  }
-}
-
-taxa <- tnrs_match_names(all_names_clean$search_string)
-tree <- tol_induced_subtree(ott_ids = taxa$ott_id, label_format = "name")
+# for (i in 1:length(all_names_clean$in_tree)) {
+#   if (isFALSE(all_names_clean$in_tree[i])) {
+#     all_names_clean <- all_names_clean[-i,]
+#   }
+# }
+# 
+# taxa <- tnrs_match_names(all_names_clean$search_string)
+# tree <- tol_induced_subtree(ott_ids = taxa$ott_id, label_format = "name")
 
 saveRDS(tree, "outputs/tree.rds")
 tree <- readRDS("outputs/tree.rds")
+tree_bl <- compute.brlen(tree)
 
 #taxa <- tnrs_match_names(includeh$genus_species, context = "Animals")
 #tr <- tol_induced_subtree(ott_ids = includeh$id)
 
-tree_tibble <- as_tibble(tree)
-tree_join <- left_join(tree_tibble, includeh_join, by = "label")
+tree_tibble <- as_tibble(tree_bl)
+includeh_join_tib <- tibble(includeh_join)
+tree_join <- full_join(tree_tibble, includeh_join_tib)
 tree_join <- as.treedata(tree_join)
 
 saveRDS(tree_join, "outputs/tree_join.rds")
@@ -377,26 +384,28 @@ ggtree(tree_join,
                                    size = 14))
 
 
-ggtree(tree_join,
-       layout = "circular") +
-  geom_fruit(geom = geom_bar,
+p <- ggtree(tree_join,
+       layout = "circular")
+p1 <- p + geom_fruit(data = tree_join,
+                     geom = geom_bar,
              mapping = aes(x = h),
              pwidth = 0.5,
              orientation = "y", 
              stat = "identity")
 
-ggtree(tree_join,
-       layout = "circular") +
-  geom_tippoint(aes(colour = clade)) +
-  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db")) +
-  guides(colour = guide_legend(override.aes = list(shape = 16,
-                                                   size = 4))) + #shape of legend icons not changing need to find out why
-  theme(legend.position = "top",
-        legend.title = element_blank(),
-        legend.text = element_text(family = "Roboto",
-                                   size = 14))
 
-table(is.na(tree_join[[38]]))
+
+
+set.seed(1024)
+tr <- rtree(10)
+dat <- tibble::tibble(label=tr$tip.label, h=abs(rnorm(10)))
+trda <- full_join(tr, dat)
+
+p <- ggtree(trda, layout="circular")
+p1 <- p + geom_fruit(geom=geom_col, mapping = aes(x = h), pwidth = 0.5, orientation = "y")
+p1
+
+
   
 #google trends
 

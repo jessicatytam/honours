@@ -2,6 +2,8 @@ library(dplyr)
 library(purrr)
 library(tidyr)
 library(Rmisc)
+library(coda)
+library(MCMCglmm)
 
 #load data
 #includeh <- read.csv(file = "outputs/data/includeh.csv")[-c(1)] 
