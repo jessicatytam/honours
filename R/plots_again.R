@@ -329,109 +329,50 @@ ggplot(data = world) +
 includeh_join <- includeh %>%
   rename(label = genus_species)
 includeh_join$label <- str_replace_all(includeh_join$label, " ", "_")
-#includeh_join$h <- as.numeric(includeh_join$h)
 
 #all_names <- tnrs_match_names(includeh_join$label)
 in_tree <- is_in_tree(ott_ids = includeh_join$id) #this takes forever
 in_tree_tbl <- tibble(in_tree)
 all_names_clean <- cbind(includeh_join, in_tree)
+table(all_names_clean$in_tree) #checking
 
-all_names_clean <- all_names_clean %>%
-  filter(in_tree == TRUE)
+for (i in 1:length(all_names_clean$in_tree)) {
+  if (isFALSE(all_names_clean$in_tree[i])) {
+    all_names_clean <- all_names_clean[-i,]
+  }
+}
 
-tr <- tol_induced_subtree(ott_ids = all_names_clean$id, label_format = "name")
+taxa <- tnrs_match_names(all_names_clean$search_string)
+tree <- tol_induced_subtree(ott_ids = taxa$ott_id, label_format = "name")
 
-tr_join <- full_join(tr, all_names_clean)
-
-#table(all_names_clean$in_tree) #checking
-
-# for (i in 1:length(all_names_clean$in_tree)) {
-#   if (isFALSE(all_names_clean$in_tree[i])) {
-#     all_names_clean <- all_names_clean[-i,]
-#   }
-# }
-#
-# taxa <- tnrs_match_names(all_names_clean$search_string)
-# tree <- tol_induced_subtree(ott_ids = taxa$ott_id, label_format = "name")
+saveRDS(tree, "outputs/tree.rds")
+tree <- readRDS("outputs/tree.rds")
 
 includeh_join <- includeh_join %>%
   filter(label %in% tree$tip.label)
-spp_list <- as.data.frame(includeh_join$label)
 
-taxa <- tnrs_match_names(spp_list$`includeh_join$label`)
-#fix Mus bufo
-taxa$unique_name[4003] <- "Mus bufo"
-taxa$ott_id[4003] <- 844282
+tree_join <- treeio::full_join(tree, includeh_join)
 
-in_tree <- is_in_tree(ott_id(taxa))
-in_tree_df <- data.frame(in_tree)
-all_names_clean <- cbind(taxa, in_tree_df)
-tr <- tol_induced_subtree(ott_id(taxa)[in_tree])
-
-tree <- tol_induced_subtree(ott_ids = includeh_join$id, label_format = "name")
-
-saveRDS(tree, "outputs/tree.rds")
-saveRDS(tree, "outputs/tr.rds")
-tree <- readRDS("outputs/tree.rds")
-
-#taxa <- tnrs_match_names(includeh$genus_species, context = "Animals")
-#tr <- tol_induced_subtree(ott_ids = includeh$id)
-
-tree_tibble <- as_tibble(tree)
-tree_join <- full_join(tree, includeh_join)
-tree_join <- full_join(tr, includeh_join)
-#fill in NA
-tree_join <- tree_join %>%
-  group_by(id)
-for (i in 1:length(tree_join$label)) {
-  if (is.na(tree_join$h[i])) {
-    tree_join$h[i] <- 
-  }
-}
-tree_join <- as.treedata(tree_join)
-
-saveRDS(tree_join, "outputs/tree_join.rds")
-
-ggtree(tr_join,
+ggtree(tree_join,
        layout = "circular") +
   geom_tippoint(aes(colour = clade)) +
-  geom_fruit(geom = geom_bar,
-             mapping = aes(x = h, #something wrong here ughhhhhhhhh
-                           colour = clade),
-             pwidth = 0.5,
-             orientation = "y", 
-             stat = "identity") +
-  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db")) +
-  guides(colour = guide_legend(override.aes = list(shape = 16,
-                                                   size = 4))) + #shape of legend icons not changing need to find out why
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 4,
+                                                               alpha = 1))) + #shape of legend icons not changing need to find out why
   theme(legend.position = "top",
         legend.title = element_blank(),
         legend.text = element_text(family = "Roboto",
-                                   size = 14))
-
-
-ggtree(tr_join,
-       layout = "circular") 
+                                   size = 14)) +
+  new_scale_colour() +
   geom_fruit(geom = geom_bar,
-             mapping = aes(x = h),
-             pwidth = 0.5,
+             mapping = aes(x = h, 
+                           colour = clade),
+             pwidth = 0.4,
              orientation = "y", 
-             stat = "identity")
+             stat = "identity") +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db")) +
+  guides(colour = FALSE)
 
-
-
-
-set.seed(1024)
-tr <- rtree(10)
-dat <- tibble::tibble(label=tr$tip.label, h=abs(rnorm(10)))
-trda <- full_join(tr, dat)
-
-p <- ggtree(trda, layout="circular")
-p1 <- p + geom_fruit(geom=geom_col, mapping = aes(x = h), pwidth = 0.5, orientation = "y")
-p1
-
-
-  
 #google trends
 
 ggplot(includeh, aes(x = log_sumgtrends,
