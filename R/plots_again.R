@@ -330,16 +330,18 @@ includeh_join <- includeh %>%
   rename(label = genus_species)
 includeh_join$label <- str_replace_all(includeh_join$label, " ", "_")
 #includeh_join$h <- as.numeric(includeh_join$h)
-includeh_join <- includeh_join %>%
-  filter(label %in% tree$tip.label)
-includeh_join <- includeh_join %>%
-  select(label, h, clade)
 
 #all_names <- tnrs_match_names(includeh_join$label)
-#in_tree <- is_in_tree(ott_id(all_names))
+in_tree <- is_in_tree(ott_ids = includeh_join$id) #this takes forever
+in_tree_tbl <- tibble(in_tree)
+all_names_clean <- cbind(includeh_join, in_tree)
 
-#in_tree <- as.data.frame(in_tree)
-#all_names_clean <- cbind(all_names, in_tree)
+all_names_clean <- all_names_clean %>%
+  filter(in_tree == TRUE)
+
+tr <- tol_induced_subtree(ott_ids = all_names_clean$id, label_format = "name")
+
+tr_join <- full_join(tr, all_names_clean)
 
 #table(all_names_clean$in_tree) #checking
 
@@ -348,25 +350,49 @@ includeh_join <- includeh_join %>%
 #     all_names_clean <- all_names_clean[-i,]
 #   }
 # }
-# 
+#
 # taxa <- tnrs_match_names(all_names_clean$search_string)
 # tree <- tol_induced_subtree(ott_ids = taxa$ott_id, label_format = "name")
 
+includeh_join <- includeh_join %>%
+  filter(label %in% tree$tip.label)
+spp_list <- as.data.frame(includeh_join$label)
+
+taxa <- tnrs_match_names(spp_list$`includeh_join$label`)
+#fix Mus bufo
+taxa$unique_name[4003] <- "Mus bufo"
+taxa$ott_id[4003] <- 844282
+
+in_tree <- is_in_tree(ott_id(taxa))
+in_tree_df <- data.frame(in_tree)
+all_names_clean <- cbind(taxa, in_tree_df)
+tr <- tol_induced_subtree(ott_id(taxa)[in_tree])
+
+tree <- tol_induced_subtree(ott_ids = includeh_join$id, label_format = "name")
+
 saveRDS(tree, "outputs/tree.rds")
+saveRDS(tree, "outputs/tr.rds")
 tree <- readRDS("outputs/tree.rds")
-tree_bl <- compute.brlen(tree)
 
 #taxa <- tnrs_match_names(includeh$genus_species, context = "Animals")
 #tr <- tol_induced_subtree(ott_ids = includeh$id)
 
-tree_tibble <- as_tibble(tree_bl)
-includeh_join_tib <- tibble(includeh_join)
-tree_join <- full_join(tree_tibble, includeh_join_tib)
+tree_tibble <- as_tibble(tree)
+tree_join <- full_join(tree, includeh_join)
+tree_join <- full_join(tr, includeh_join)
+#fill in NA
+tree_join <- tree_join %>%
+  group_by(id)
+for (i in 1:length(tree_join$label)) {
+  if (is.na(tree_join$h[i])) {
+    tree_join$h[i] <- 
+  }
+}
 tree_join <- as.treedata(tree_join)
 
 saveRDS(tree_join, "outputs/tree_join.rds")
 
-ggtree(tree_join,
+ggtree(tr_join,
        layout = "circular") +
   geom_tippoint(aes(colour = clade)) +
   geom_fruit(geom = geom_bar,
@@ -384,10 +410,9 @@ ggtree(tree_join,
                                    size = 14))
 
 
-p <- ggtree(tree_join,
-       layout = "circular")
-p1 <- p + geom_fruit(data = tree_join,
-                     geom = geom_bar,
+ggtree(tr_join,
+       layout = "circular") 
+  geom_fruit(geom = geom_bar,
              mapping = aes(x = h),
              pwidth = 0.5,
              orientation = "y", 
