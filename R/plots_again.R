@@ -112,10 +112,10 @@ ggplot(includeh, aes(x = h,
   geom_bar() 
 
 #mass
-ggplot(includeh, aes(x = logmass,
+mass_plot <- ggplot(includeh, aes(x = logmass,
                      y = logh1,
                      colour = clade)) +
-  geom_point(size = 2,
+  geom_point(size = 3,
              alpha = 0.4) +
   labs(x = "Body mass (kg)",
        y = "h-index") +
@@ -133,19 +133,21 @@ ggplot(includeh, aes(x = logmass,
   new_scale_colour() +
   geom_quantile(aes(colour = clade),
                 quantiles = 0.5,
-                size = 2,
+                size = 2.5,
                 alpha = 0.8,
                 lineend = "round") +
   scale_colour_manual(values = c("#d4ac0d", "#ca6f1e", "#cb4335", "#7d3c98", "#2e86c1")) +
   guides(colour = FALSE) +
   themebyjess_light_point()
 
+ggplot2::ggsave("outputs/logh_vs_logmass.png", mass_plot, width = 16, height = 9, units = "in", dpi = 300)
+
 #iucn category
-ggplot(includeh, aes(x = logh1,
+iucn_plot <- ggplot(includeh, aes(x = logh1,
                      y = redlistCategory)) +
   geom_quasirandom(aes(colour = clade),
                    groupOnX = FALSE,
-                   size = 2,
+                   size = 3,
                    alpha = 0.4) +
   geom_boxplot(fill = "grey80",
                position = position_dodge(width = 0.5),
@@ -161,6 +163,8 @@ ggplot(includeh, aes(x = logh1,
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
   themebyjess_light_boxplot()
+
+ggplot2::ggsave("outputs/logh_vs_iucn.png", iucn_plot, width = 16, height = 9, units = "in", dpi = 300)
 
 #EW: oryx dammah, elaphurus davidianus
 
@@ -237,15 +241,15 @@ med_use <- includeh_pivot %>%
   ungroup()
 med_use <- med_use %>%
   arrange(logh1)
-med_use <- med_use[c(2, 4:9, 3, 1),]
+med_use <- med_use[c(2, 4:9, 3, 1),] #run this next
 
 includeh_pivot$human_use_group <- factor(includeh_pivot$human_use_group, levels = med_use$human_use_group)
 
-ggplot(includeh_pivot, aes(x = logh1,
+humanuse_plot <- ggplot(includeh_pivot, aes(x = logh1,
                            y = human_use_group)) +
   geom_quasirandom(aes(colour = clade),
                    groupOnX = FALSE,
-                   size = 2,
+                   size = 3,
                    alpha = 0.4) +
   geom_boxplot(fill = "grey80",
                size = 0.8,
@@ -261,16 +265,16 @@ ggplot(includeh_pivot, aes(x = logh1,
                                                                alpha = 1))) +
   themebyjess_light_boxplot()
 
+ggplot2::ggsave("outputs/logh_vs_humanuse.png", humanuse_plot, width = 16, height = 9, units = "in", dpi = 300)
 
 #domestication
-ggplot(includeh, aes(x = logh1,
+domestication_plot <- ggplot(includeh, aes(x = logh1,
                      y = reorder(domestication, logh1))) +
   geom_quasirandom(aes(colour = clade),
                    groupOnX = FALSE,
-                   size = 2,
+                   size = 3,
                    alpha = 0.4) +
   geom_boxplot(fill = "grey80",
-               face = "bold",
                size = 0.8,
                width = 0.4,
                alpha = 0.2) +
@@ -284,13 +288,16 @@ ggplot(includeh, aes(x = logh1,
                                                                alpha = 1))) +
   themebyjess_light_boxplot()
 
+ggplot2::ggsave("outputs/logh_vs_domestication.png", domestication_plot, width = 16, height = 9, units = "in", dpi = 300)
+
 #latitude
-ggplot(includeh, aes(x = median_lat,
+lat_plot <- ggplot(includeh, aes(x = median_lat,
                      y = logh1,
                      colour = clade)) +
-  geom_point(size = 2,
+  geom_point(size = 3,
              alpha = 0.4) +
-  geom_smooth(colour = "black") +
+  geom_smooth(colour = "black",
+              size = 1.2) +
   labs(x = "Latitude (median)",
        y = "h-index",
        colour = "Clade") +
@@ -303,16 +310,18 @@ ggplot(includeh, aes(x = median_lat,
                                                                alpha = 1))) +
   themebyjess_light_point()
 
+ggplot2::ggsave("outputs/logh_vs_lat.png", lat_plot, width = 16, height = 9, units = "in", dpi = 300)
+
 #map
 
 world <- ne_countries(scale = "large", returnclass = "sf")
 
-ggplot(data = world) +
+map_plot <- ggplot(data = world) +
   geom_sf() +
   geom_point(data = includeh, aes(x = x,
                                   y = y,
                                   colour = logh1),
-             size = 2,
+             size = 3,
              alpha = 0.4) +
   coord_sf(expand = FALSE) +
   labs(x = "Longitude",
@@ -322,7 +331,7 @@ ggplot(data = world) +
                          labels = c(0, 2, 9, 31, 99, 316)) +
   themebyjess_light_map()
 
-
+ggplot2::ggsave("outputs/logh_map.png", map_plot, width = 16, height = 9, units = "in", dpi = 300)
 
 #phylogenetic tree
 
@@ -342,18 +351,19 @@ for (i in 1:length(all_names_clean$in_tree)) {
   }
 }
 
-taxa <- tnrs_match_names(all_names_clean$search_string)
-tree <- tol_induced_subtree(ott_ids = taxa$ott_id, label_format = "name")
-
 saveRDS(tree, "outputs/tree.rds")
 tree <- readRDS("outputs/tree.rds")
 
+table(includeh_join$label %in% tree$tip.label) #checking
 includeh_join <- includeh_join %>%
   filter(label %in% tree$tip.label)
+table(includeh_join$label %in% tree$tip.label) #checking
 
-tree_join <- treeio::full_join(tree, includeh_join)
+tree3 <- tol_induced_subtree(ott_ids = includeh_join$id, label_format = "name")
 
-ggtree(tree_join,
+tree_join <- treeio::full_join(tree3, includeh_join)
+
+tree_plot <- ggtree(tree_join,
        layout = "circular") +
   geom_tippoint(aes(colour = clade)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
@@ -362,7 +372,7 @@ ggtree(tree_join,
   theme(legend.position = "top",
         legend.title = element_blank(),
         legend.text = element_text(family = "Roboto",
-                                   size = 14)) +
+                                   size = 20)) +
   new_scale_colour() +
   geom_fruit(geom = geom_bar,
              mapping = aes(x = h, 
@@ -373,12 +383,14 @@ ggtree(tree_join,
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db")) +
   guides(colour = FALSE)
 
+ggplot2::ggsave("outputs/h_tree.png", tree_plot, width = 16, height = 9, units = "in", dpi = 300)
+
 #google trends
 
-ggplot(includeh, aes(x = log_sumgtrends,
+gtrends_plot <- ggplot(includeh, aes(x = log_sumgtrends,
                      y = logh1,
                      colour = clade)) +
-  geom_point(size = 2,
+  geom_point(size = 3,
              alpha = 0.4) +
   labs(x = "Google Trends index (sum)",
        y = "h-index") +
@@ -391,5 +403,7 @@ ggplot(includeh, aes(x = log_sumgtrends,
                                                                alpha = 1))) +
   themebyjess_light_point()
 
+ggplot2::ggsave("outputs/logh_vs_logsumgtrends.png", gtrends_plot, width = 16, height = 9, units = "in", dpi = 300)
 
 #trying ggstream
+
