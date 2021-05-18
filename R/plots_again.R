@@ -29,6 +29,7 @@ library(ggstream)
 combinedf_dup <- read.csv(file = "outputs/data/combinedf_dup.csv", header = T)[-c(1)]
 indices_df <- read.csv(file = "outputs/data/hindex.csv", header = T)[-c(1)]
 includeh <- read.csv(file = "outputs/data/includeh.csv")[-c(1)] 
+tree100 <- tree100 <- readRDS("data/intermediate_data/tree100.nex")
 
 write.csv(includeh, file = "outputs/data/includeh.csv")
 
@@ -41,6 +42,7 @@ includeh <- left_join(indices_df, combinedf_dup,
 
 #some cleaning
 includeh$domestication[includeh$genus_species == "Bos taurus"] <- "Domesticated" #making the cow domesticated
+includeh <- includeh[-c(2886),] #remove homo sapiens
 
 #TRANSFORMATIONS
 
@@ -241,7 +243,7 @@ med_use <- includeh_pivot %>%
   ungroup()
 med_use <- med_use %>%
   arrange(logh1)
-med_use <- med_use[c(2, 4:9, 3, 1),] #run this next
+med_use <- med_use[c(2, 4:9, 3, 1),] 
 
 includeh_pivot$human_use_group <- factor(includeh_pivot$human_use_group, levels = med_use$human_use_group)
 
@@ -335,6 +337,23 @@ ggplot2::ggsave("outputs/logh_map.png", map_plot, width = 16, height = 9, units 
 
 #phylogenetic tree
 
+saveRDS(tree, "outputs/tree.rds")
+tree <- readRDS("outputs/tree.rds")
+
+table(includeh_join$label %in% tree$tip.label) #checking
+includeh_join <- includeh_join %>%
+  filter(label %in% tree$tip.label)
+table(includeh_join$label %in% tree$tip.label) #checking
+
+tree3 <- tol_induced_subtree(ott_ids = includeh_join$id, label_format = "name")
+
+tree_join_3 <- treeio::full_join(tree3, includeh_join)
+
+length(tree3$tip.label) #7148
+length(includeh_join$label) #7148
+
+
+
 includeh_join <- includeh %>%
   rename(label = genus_species)
 includeh_join$label <- str_replace_all(includeh_join$label, " ", "_")
@@ -351,19 +370,20 @@ for (i in 1:length(all_names_clean$in_tree)) {
   }
 }
 
-saveRDS(tree, "outputs/tree.rds")
-tree <- readRDS("outputs/tree.rds")
+tree_again <- tol_induced_subtree(ott_ids = all_names_clean$id, label_format = "name")
+tree_tips <- tree_again$tip.label
 
-table(includeh_join$label %in% tree$tip.label) #checking
+table(includeh_join$label %in% tree_again$tip.label) #checking
 includeh_join <- includeh_join %>%
-  filter(label %in% tree$tip.label)
-table(includeh_join$label %in% tree$tip.label) #checking
+  filter(label %in% tree_again$tip.label)
+table(includeh_join$label %in% tree_again$tip.label) #checking
 
-tree3 <- tol_induced_subtree(ott_ids = includeh_join$id, label_format = "name")
+length(tree_again$tip.label) #7445
+length(includeh_join$label) #7
 
-tree_join <- treeio::full_join(tree3, includeh_join)
+tree_join <- treeio::full_join(tree_again, includeh_join)
 
-tree_plot <- ggtree(tree_join,
+tree_plot <- ggtree(tree_join_3,
        layout = "circular") +
   geom_tippoint(aes(colour = clade)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
@@ -384,6 +404,71 @@ tree_plot <- ggtree(tree_join,
   guides(colour = FALSE)
 
 ggplot2::ggsave("outputs/h_tree.png", tree_plot, width = 16, height = 9, units = "in", dpi = 300)
+
+
+
+
+
+plot_check <- ggtree(tree_join, layout = "circular") +
+  geom_point(aes(y = h)) +
+  geom_fruit(geom = geom_bar,
+             mapping = aes(x = h, 
+                           colour = label),
+             pwidth = 0.4,
+             orientation = "y", 
+             stat = "identity") +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"))
+ggplotly(plot_check)
+
+ggtree(tree_again, layout = "circular") +
+  geom_fruit(data = all_names_clean,
+             geom = geom_bar,
+             mapping = aes(x = h, 
+                           colour = clade),
+             pwidth = 0.4,
+             orientation = "y", 
+             stat = "identity")
+
+## tree from vertlife 
+
+for (i in 1:length(tree100$tree_9684$tip.label)) { #run this 3 times
+  if (!tree100$tree_9684$tip.label[i] %in% includeh_join$label) {
+    tree100$tree_9684 <- drop.tip(tree100$tree_9684, tree100$tree_9684$tip.label[i])
+  }
+} 
+
+length(tree100$tree_9684$tip.label) #5518
+
+table(includeh_join$label %in% tree100$tree_9684$tip.label) #checking
+includeh_join <- includeh_join %>%
+  filter(label %in% tree100$tree_9684$tip.label)
+table(includeh_join$label %in% tree100$tree_9684$tip.label) #checking
+
+length(includeh_join$label) #5497
+
+tree100_combine <- treeio::full_join(tree100$tree_9684, includeh_join)
+
+tree_plot2 <- ggtree(tree100_combine,
+                    layout = "circular") +
+  geom_tippoint(aes(colour = clade)) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 4,
+                                                               alpha = 1))) + #shape of legend icons not changing need to find out why
+  theme(legend.position = "top",
+        legend.title = element_blank(),
+        legend.text = element_text(family = "Roboto",
+                                   size = 20)) +
+  new_scale_colour() +
+  geom_fruit(geom = geom_bar,
+             mapping = aes(x = h, 
+                           colour = clade),
+             pwidth = 0.4,
+             orientation = "y", 
+             stat = "identity") +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db")) +
+  guides(colour = FALSE)
+
+ggplot2::ggsave("outputs/h_tree2.png", tree_plot, width = 16, height = 9, units = "in", dpi = 300)
 
 #google trends
 
