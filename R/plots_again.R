@@ -23,6 +23,7 @@ library(ggpol)
 library(plotly)
 library(sysfonts)
 library(ggstream)
+library(reshape2)
 
 #loading df
 
@@ -30,6 +31,8 @@ combinedf_dup <- read.csv(file = "outputs/data/combinedf_dup.csv", header = T)[-
 indices_df <- read.csv(file = "outputs/data/hindex.csv", header = T)[-c(1)]
 includeh <- read.csv(file = "outputs/data/includeh.csv")[-c(1)] 
 tree100 <- tree100 <- readRDS("data/intermediate_data/tree100.nex")
+scopus_results1 <- readRDS("data/intermediate_data/scopus_results1.RDS")
+scopus_results2 <- readRDS("data/intermediate_data/scopus_results2.RDS")
 
 write.csv(includeh, file = "outputs/data/includeh.csv")
 
@@ -492,3 +495,156 @@ ggplot2::ggsave("outputs/logh_vs_logsumgtrends.png", gtrends_plot, width = 16, h
 
 #trying ggstream
 
+scopus_results1 <- scopus_results1[-2886] #remove homo sapiens
+
+for (i in 1:length(scopus_results1)) { #add year variable
+  if (scopus_results1[[i]]$citations > 0) {
+    scopus_results1[[i]]$year <- as.numeric(substr(scopus_results1[[i]]$cover_date, 1, 4))
+  }
+}
+
+for (i in 1:length(scopus_results2)) { #add year variable
+  if (scopus_results2[[i]]$citations > 0) {
+    scopus_results2[[i]]$year <- as.numeric(substr(scopus_results2[[i]]$cover_date, 1, 4))
+  }
+}
+
+scopus1_df <- melt(scopus_results1)
+scopus2_df <- melt(scopus_results2)
+
+scopus1_df <- scopus1_df %>%
+  select(variable, value, L1) 
+scopus2_df <- scopus2_df %>%
+  select(variable, value, L1) 
+
+scopus2_df$L1 <- scopus2_df$L1+3999
+
+scopus_df <- rbind(scopus1_df, scopus2_df)
+
+scopus_df_year <- scopus_df %>%
+  filter(variable == "year")
+
+unique(scopus_df_year$L1) #3182
+
+scopus_df_summ <- scopus_df_year %>%
+  group_by(L1, value) %>%
+  summarise(n())
+
+scopus_df_summ <- scopus_df_summ %>%
+  rename(sp = L1,
+         year = value,
+         count = `n()`)
+
+for (i in 1:length(includeh$genus_species)) {
+  includeh$sp[i] <- i
+}
+
+scopus_df_summ$sp <- as.character(scopus_df_summ$sp)
+
+scopus_df_summ <- left_join(scopus_df_summ, includeh)
+
+scopus_order <- scopus_df_summ %>%
+  group_by(clade, order, year) %>%
+  summarise(n())
+
+scopus_order <- scopus_order %>%
+  rename(count = `n()`)
+
+#some sorting
+
+med_mass <- includeh %>%
+  group_by(order) %>%
+  summarise_at(vars(BodyMass.Value), median, na.rm = T) %>%
+  ungroup()
+med_mass <- med_mass %>%
+  arrange(by_group = BodyMass.Value)
+
+for (i in 1:length(med_mass$order)) {
+  if (med_mass$order[i] == "Pilosa"|
+      med_mass$order[i] == "Cingulata") {
+    med_mass$clade[i] <- "Xenarthra"
+  } else if (med_mass$order[i] == "Macroscelidea"|
+             med_mass$order[i] == "Afrosoricida"|
+             med_mass$order[i] == "Proboscidea"|
+             med_mass$order[i] == "Sirenia"|
+             med_mass$order[i] == "Hyracoidea") {
+    med_mass$clade[i] <- "Afrotheria"
+  } else if (med_mass$order[i] == "Chiroptera"|
+             med_mass$order[i] == "Perissodactyla"|
+             med_mass$order[i] == "Artiodactyla"|
+             med_mass$order[i] == "Cetacea"|
+             med_mass$order[i] == "Pholidota"|
+             med_mass$order[i] == "Carnivora"|
+             med_mass$order[i] == "Eulipotyphla"|
+             med_mass$order[i] == "Soricomorpha"|
+             med_mass$order[i] == "Erinaceomorpha") {
+    med_mass$clade[i] <- "Laurasiatheria"
+  } else if (med_mass$order[i] == "Primates"|
+             med_mass$order[i] == "Scandentia"|
+             med_mass$order[i] == "Lagomorpha"|
+             med_mass$order[i] == "Rodentia"|
+             med_mass$order[i] == "Dermoptera") {
+    med_mass$clade[i] <- "Euarchontoglires"
+  } else if (med_mass$order[i] == "Diprotodontia"|
+             med_mass$order[i] == "Dasyuromorphia"|
+             med_mass$order[i] == "Microbiotheria"|
+             med_mass$order[i] == "Peramelemorphia"|
+             med_mass$order[i] == "Notoryctemorphia"|
+             med_mass$order[i] == "Monotremata"|
+             med_mass$order[i] == "Paucituberculata"|
+             med_mass$order[i] == "Didelphimorphia") {
+    med_mass$clade[i] <- "Marsupials & monotremes"
+  }
+}
+
+med_mass <- med_mass %>%
+  arrange(clade, BodyMass.Value)
+
+med_mass$clade <- factor(med_mass$clade, levels = c("Afrotheria", "Xenarthra", "Euarchontoglires", "Laurasiatheria", "Marsupials & monotremes"))
+
+#scopus_order$clade <- factor(scopus_order$clade, levels = c("Afrotheria", "Xenarthra", "Euarchontoglires", "Laurasiatheria", "Marsupials & monotremes"))
+scopus_order$order <- factor(scopus_order$order, levels = med_mass$order)
+
+scopus_order %>%
+  filter(year > 1949) %>%
+  ggplot(aes(x = year,
+             y = count,
+             fill = order)) +
+  geom_stream(type = "ridge") +
+  labs(x = "Year",
+       y = "Number of publications") +
+  scale_fill_manual(values = c("#F1C40F", "#EFB812", "#EEAD16",
+                               "#ECA119", "#EA951C", "#E88A1F",
+                               "#E67E22", "#E67626", "#E76D2B",
+                               "#E7652F", "#E75D33", "#E75438",
+                               "#E74C3C", "#D84B4F", "#CA4962",
+                               "#BB4875", "#AC4788", "#9D459A",
+                               "#8E44AD", "#7F52B5", "#7060BC",
+                               "#616EC4", "#527CCC", "#438AD3",
+                               "#3498db", "#44A0DE", "#53A8E0",
+                               "#63B0E3"),
+                      guide = guide_legend(override.aes = list(size = 4,
+                                                               alpha = 1))) +
+  guides(fill = guide_legend(ncol = 1)) +
+  theme(axis.title = element_text(family = "Lato",
+                                  face = "bold",
+                                  size = 20,
+                                  colour = "black"),
+        axis.text = element_text(family = "Lato",
+                                 size = 12,
+                                 colour = "grey30"),
+        axis.line = element_line(size = 1.05,
+                                 colour = "grey20"),
+        legend.background = element_rect(fill = "white"),
+        legend.title = element_blank(),
+        legend.text = element_text(family = "Roboto",
+                                   size = 18,
+                                   colour = "black"),
+        legend.key = element_rect(fill = "white"),
+        legend.position = "right",
+        legend.justification = "centre",
+        plot.background = element_rect(fill = "white"),
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major = element_line(colour = "grey90"),
+        panel.grid.minor = element_line(colour = "grey90",
+                                        linetype = "longdash"))
