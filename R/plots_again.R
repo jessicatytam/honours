@@ -605,7 +605,7 @@ med_mass$clade <- factor(med_mass$clade, levels = c("Afrotheria", "Xenarthra", "
 #scopus_order$clade <- factor(scopus_order$clade, levels = c("Afrotheria", "Xenarthra", "Euarchontoglires", "Laurasiatheria", "Marsupials & monotremes"))
 scopus_order$order <- factor(scopus_order$order, levels = med_mass$order)
 
-scopus_order %>%
+pub_ridge_plot <- scopus_order %>%
   filter(year > 1949) %>%
   ggplot(aes(x = year,
              y = count,
@@ -626,25 +626,54 @@ scopus_order %>%
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1))) +
   guides(fill = guide_legend(ncol = 1)) +
-  theme(axis.title = element_text(family = "Lato",
-                                  face = "bold",
-                                  size = 20,
-                                  colour = "black"),
-        axis.text = element_text(family = "Lato",
-                                 size = 12,
-                                 colour = "grey30"),
-        axis.line = element_line(size = 1.05,
-                                 colour = "grey20"),
-        legend.background = element_rect(fill = "white"),
-        legend.title = element_blank(),
-        legend.text = element_text(family = "Roboto",
-                                   size = 18,
-                                   colour = "black"),
-        legend.key = element_rect(fill = "white"),
-        legend.position = "right",
-        legend.justification = "centre",
-        plot.background = element_rect(fill = "white"),
-        panel.background = element_rect(fill = "white"),
-        panel.grid.major = element_line(colour = "grey90"),
-        panel.grid.minor = element_line(colour = "grey90",
-                                        linetype = "longdash"))
+  themebyjess_light_stream()
+
+pub_mirror_plot <- scopus_order %>%
+  filter(year > 1949) %>%
+  ggplot(aes(x = year,
+             y = count,
+             fill = order)) +
+  geom_stream(type = "mirror") +
+  labs(x = "Year",
+       y = "Number of publications") +
+  scale_fill_manual(values = c("#F1C40F", "#EFB812", "#EEAD16",
+                               "#ECA119", "#EA951C", "#E88A1F",
+                               "#E67E22", "#E67626", "#E76D2B",
+                               "#E7652F", "#E75D33", "#E75438",
+                               "#E74C3C", "#D84B4F", "#CA4962",
+                               "#BB4875", "#AC4788", "#9D459A",
+                               "#8E44AD", "#7F52B5", "#7060BC",
+                               "#616EC4", "#527CCC", "#438AD3",
+                               "#3498db", "#44A0DE", "#53A8E0",
+                               "#63B0E3"),
+                    guide = guide_legend(override.aes = list(size = 4,
+                                                             alpha = 1))) +
+  guides(fill = guide_legend(ncol = 1)) +
+  themebyjess_light_stream()
+
+ggplot2::ggsave("outputs/pub_mirror.png", pub_mirror_plot, width = 16, height = 9, units = "in", dpi = 300)
+
+pub_proportion_plot <- scopus_order %>%
+  filter(year > 1949) %>%
+  ggplot(aes(x = year,
+             y = count,
+             fill = order)) +
+  geom_stream(type = "proportion") +
+  labs(x = "Year",
+       y = "Proportion of publications") +
+  scale_fill_manual(values = c("#F1C40F", "#EFB812", "#EEAD16",
+                               "#ECA119", "#EA951C", "#E88A1F",
+                               "#E67E22", "#E67626", "#E76D2B",
+                               "#E7652F", "#E75D33", "#E75438",
+                               "#E74C3C", "#D84B4F", "#CA4962",
+                               "#BB4875", "#AC4788", "#9D459A",
+                               "#8E44AD", "#7F52B5", "#7060BC",
+                               "#616EC4", "#527CCC", "#438AD3",
+                               "#3498db", "#44A0DE", "#53A8E0",
+                               "#63B0E3"),
+                    guide = guide_legend(override.aes = list(size = 4,
+                                                             alpha = 1))) +
+  guides(fill = guide_legend(ncol = 1)) +
+  themebyjess_light_stream()
+
+ggplot2::ggsave("outputs/pub_proportion.png", pub_proportion_plot, width = 16, height = 9, units = "in", dpi = 300)

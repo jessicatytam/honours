@@ -84,6 +84,31 @@ themebyjess_light_map <- function() {
                                         linetype = "longdash"))
 }
 
+themebyjess_light_stream <- function() {
+  theme(axis.title = element_text(family = "Lato",
+                                  face = "bold",
+                                  size = 20,
+                                  colour = "black"),
+        axis.text = element_text(family = "Lato",
+                                 size = 12,
+                                 colour = "grey30"),
+        axis.line = element_line(size = 1.05,
+                                 colour = "grey20"),
+        legend.background = element_rect(fill = "white"),
+        legend.title = element_blank(),
+        legend.text = element_text(family = "Roboto",
+                                   size = 18,
+                                   colour = "black"),
+        legend.key = element_rect(fill = "white"),
+        legend.position = "right",
+        legend.justification = "centre",
+        plot.background = element_rect(fill = "white"),
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major = element_line(colour = "grey90"),
+        panel.grid.minor = element_line(colour = "grey90",
+                                        linetype = "longdash"))
+}
+
 themebyjess_dark_point <- function() {
   theme(axis.title = element_text(family = "Lato",
                                   face = "bold",
