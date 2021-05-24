@@ -24,6 +24,7 @@ library(plotly)
 library(sysfonts)
 library(ggstream)
 library(reshape2)
+library(ggrepel)
 
 #loading df
 
@@ -605,14 +606,24 @@ med_mass$clade <- factor(med_mass$clade, levels = c("Afrotheria", "Xenarthra", "
 #scopus_order$clade <- factor(scopus_order$clade, levels = c("Afrotheria", "Xenarthra", "Euarchontoglires", "Laurasiatheria", "Marsupials & monotremes"))
 scopus_order$order <- factor(scopus_order$order, levels = med_mass$order)
 
-pub_ridge_plot <- scopus_order %>%
-  filter(year > 1949) %>%
-  ggplot(aes(x = year,
+orders <- scopus_order %>%
+  filter(year == 2020)
+
+scopus_order_1950 <- scopus_order %>%
+  filter(year > 1949)
+
+#pub_ridge_plot <- 
+ggplot(data = scopus_order_1950,
+       aes(x = year,
              y = count,
              fill = order)) +
   geom_stream(type = "ridge") +
   labs(x = "Year",
        y = "Number of publications") +
+  geom_text_repel(data = orders,
+                  aes(label = order),
+                  max.overlaps = Inf,
+                  box.padding = 0.7) +
   scale_fill_manual(values = c("#F1C40F", "#EFB812", "#EEAD16",
                                "#ECA119", "#EA951C", "#E88A1F",
                                "#E67E22", "#E67626", "#E76D2B",
@@ -622,11 +633,11 @@ pub_ridge_plot <- scopus_order %>%
                                "#8E44AD", "#7F52B5", "#7060BC",
                                "#616EC4", "#527CCC", "#438AD3",
                                "#3498db", "#44A0DE", "#53A8E0",
-                               "#63B0E3"),
-                      guide = guide_legend(override.aes = list(size = 4,
-                                                               alpha = 1))) +
+                               "#63B0E3")) +
   guides(fill = guide_legend(ncol = 1)) +
   themebyjess_light_stream()
+
+ggplot2::ggsave("outputs/pub_ridge.png", pub_ridge_plot, width = 16, height = 9, units = "in", dpi = 300)
 
 pub_mirror_plot <- scopus_order %>%
   filter(year > 1949) %>%
@@ -677,3 +688,78 @@ pub_proportion_plot <- scopus_order %>%
   themebyjess_light_stream()
 
 ggplot2::ggsave("outputs/pub_proportion.png", pub_proportion_plot, width = 16, height = 9, units = "in", dpi = 300)
+
+#summary plot
+newdata <- includeh %>%
+  select(genus_species, clade, h, logh1, 
+         logmass, median_lat, humanuse_bin, iucn_bin, domestication_bin, log_sumgtrends) 
+newdata <- newdata %>% pivot_longer(cols = c(5:10),
+                         names_to = "var",
+                         values_to = "val")
+
+newdata$var <- factor(newdata$var, levels = c("logmass", "median_lat", "log_sumgtrends", "iucn_bin", "humanuse_bin", "domestication_bin"))
+
+ggplot(newdata %>%
+         drop_na(val), aes(y = logh1)) +
+  geom_point(data = subset(newdata, var == "logmass"), #mass
+             aes(x = val,
+                 colour = clade),
+             size = 3,
+             alpha = 0.4) +
+  geom_point(data = subset(newdata, var == "median_lat"), #latitude
+             aes(x = val,
+                 colour = clade),
+             size = 3,
+             alpha = 0.4) +
+  geom_smooth(data = subset(newdata, var == "median_lat"),
+              aes(x = val,
+                  colour = clade),
+              colour = "black",
+              size = 1.2) +
+  geom_point(data = subset(newdata, var == "log_sumgtrends"), #google trends
+             aes(x = val,
+                 colour = clade),
+             size = 3,
+             alpha = 0.4) +
+  geom_quasirandom(data = subset(newdata, var == "iucn_bin"), #iucn
+                   aes(x = val,
+                       colour = clade),
+                   size = 3,
+                   alpha = 0.4) +
+  geom_boxplot(data = subset(newdata, var == "iucn_bin"),
+               fill = "grey80",
+               size = 0.8,
+               width = 0.4,
+               alpha = 0.2) +
+  geom_quasirandom(data = subset(newdata, var == "humanuse_bin"), #human use
+                   aes(x = val,
+                       colour = clade),
+                   size = 3,
+                   alpha = 0.4) +
+  geom_boxplot(data = subset(newdata, var == "humanuse_bin"),
+               aes(x = val,
+                   colour = val),
+               fill = "grey80",
+               size = 0.8,
+               width = 0.4,
+               alpha = 0.2,
+               na.rm = TRUE) +
+  geom_quasirandom(data = subset(newdata, var == "domestication_bin"), #domestication
+                   aes(x = val,
+                       colour = clade),
+                   size = 3,
+                   alpha = 0.4) +
+  geom_boxplot(data = subset(newdata, var == "domestication_bin"),
+               aes(x = val,
+                   colour = val),
+               fill = "grey80",
+               size = 0.8,
+               width = 0.4,
+               alpha = 0.2) +
+  labs(y = "h-index") +
+  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
+  facet_wrap(~var,
+             scales = "free") +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db")) +
+  themebyjess_light_point()

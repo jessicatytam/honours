@@ -100,7 +100,7 @@ themebyjess_light_stream <- function() {
                                    size = 18,
                                    colour = "black"),
         legend.key = element_rect(fill = "white"),
-        legend.position = "right",
+        legend.position = "none",
         legend.justification = "centre",
         plot.background = element_rect(fill = "white"),
         panel.background = element_rect(fill = "white"),
