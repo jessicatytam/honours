@@ -25,6 +25,7 @@ library(sysfonts)
 library(ggstream)
 library(reshape2)
 library(ggrepel)
+library(patchwork)
 
 #loading df
 
@@ -699,12 +700,15 @@ newdata <- newdata %>% pivot_longer(cols = c(5:10),
 
 newdata$var <- factor(newdata$var, levels = c("logmass", "median_lat", "log_sumgtrends", "iucn_bin", "humanuse_bin", "domestication_bin"))
 
-newdata %>%
-  filter(var == "domestication_bin") %>%
-  recode(val, 1 == "Domesticated", 2 == "Partially-domesticated", 3 == "Wild")
+replace_val <- function(data, res, x, output) {
+  for (i in 1:nrow(data)) {
+    if (data$var[i]==res & newdata$val[i]==x) {
+      data$val[i] <- output
+    }
+  }
+}
 
-newdata[newdata$var=="domestication_bin" & newdata$val==1,]
-newdata[newdata$var=="domestication_bin",]
+replace_val(newdata, "domestication_bin", 3, "Wild")
 
 labs <- c("Body mass", "Latitude", "Google Trends", "IUCN Red List status", "Human use", "Domestication")
 levels(newdata$var) <- labs
@@ -757,3 +761,5 @@ ggplot(newdata %>%
   themebyjess_light_facet()
 
 ggplot2::ggsave("outputs/facet_plot.png", facet_plot, width = 16, height = 9, units = "in", dpi = 300)
+
+#patchwork
