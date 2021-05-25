@@ -699,67 +699,61 @@ newdata <- newdata %>% pivot_longer(cols = c(5:10),
 
 newdata$var <- factor(newdata$var, levels = c("logmass", "median_lat", "log_sumgtrends", "iucn_bin", "humanuse_bin", "domestication_bin"))
 
+newdata %>%
+  filter(var == "domestication_bin") %>%
+  recode(val, 1 == "Domesticated", 2 == "Partially-domesticated", 3 == "Wild")
+
+newdata[newdata$var=="domestication_bin" & newdata$val==1,]
+newdata[newdata$var=="domestication_bin",]
+
+labs <- c("Body mass", "Latitude", "Google Trends", "IUCN Red List status", "Human use", "Domestication")
+levels(newdata$var) <- labs
+
 ggplot(newdata %>%
          drop_na(val), aes(y = logh1)) +
-  geom_point(data = subset(newdata, var == "logmass"), #mass
+  geom_point(data = subset(newdata, var == "Body mass"), #mass
              aes(x = val,
                  colour = clade),
              size = 3,
              alpha = 0.4) +
-  geom_point(data = subset(newdata, var == "median_lat"), #latitude
+  geom_point(data = subset(newdata, var == "Latitude"), #latitude
              aes(x = val,
                  colour = clade),
              size = 3,
              alpha = 0.4) +
-  geom_smooth(data = subset(newdata, var == "median_lat"),
+  geom_smooth(data = subset(newdata, var == "Latitude"),
               aes(x = val,
                   colour = clade),
               colour = "black",
               size = 1.2) +
-  geom_point(data = subset(newdata, var == "log_sumgtrends"), #google trends
+  geom_point(data = subset(newdata, var == "Google Trends"), #google trends
              aes(x = val,
                  colour = clade),
              size = 3,
              alpha = 0.4) +
-  geom_quasirandom(data = subset(newdata, var == "iucn_bin"), #iucn
+  geom_quasirandom(data = subset(newdata, var == "IUCN Red List status"), #iucn
                    aes(x = val,
                        colour = clade),
                    size = 3,
                    alpha = 0.4) +
-  geom_boxplot(data = subset(newdata, var == "iucn_bin"),
-               fill = "grey80",
-               size = 0.8,
-               width = 0.4,
-               alpha = 0.2) +
-  geom_quasirandom(data = subset(newdata, var == "humanuse_bin"), #human use
+  geom_quasirandom(data = subset(newdata, var == "Human use"), #human use
                    aes(x = val,
                        colour = clade),
                    size = 3,
                    alpha = 0.4) +
-  geom_boxplot(data = subset(newdata, var == "humanuse_bin"),
-               aes(x = val,
-                   colour = val),
-               fill = "grey80",
-               size = 0.8,
-               width = 0.4,
-               alpha = 0.2,
-               na.rm = TRUE) +
-  geom_quasirandom(data = subset(newdata, var == "domestication_bin"), #domestication
+  geom_quasirandom(data = subset(newdata, var == "Domestication"), #domestication
                    aes(x = val,
                        colour = clade),
                    size = 3,
                    alpha = 0.4) +
-  geom_boxplot(data = subset(newdata, var == "domestication_bin"),
-               aes(x = val,
-                   colour = val),
-               fill = "grey80",
-               size = 0.8,
-               width = 0.4,
-               alpha = 0.2) +
   labs(y = "h-index") +
   scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
                      labels = c(0, 2, 9, 31, 99, 316)) +
   facet_wrap(~var,
              scales = "free") +
-  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db")) +
-  themebyjess_light_point()
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 6,
+                                                               alpha = 1))) +
+  themebyjess_light_facet()
+
+ggplot2::ggsave("outputs/facet_plot.png", facet_plot, width = 16, height = 9, units = "in", dpi = 300)

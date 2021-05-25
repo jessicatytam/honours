@@ -1,4 +1,6 @@
 library(ggplot2)
+library(sysfonts)
+font_add_google("Roboto")
 
 themebyjess_light_point <- function() {
   theme(axis.title = element_text(family = "Lato",
@@ -107,6 +109,36 @@ themebyjess_light_stream <- function() {
         panel.grid.major = element_line(colour = "grey90"),
         panel.grid.minor = element_line(colour = "grey90",
                                         linetype = "longdash"))
+}
+
+themebyjess_light_facet <- function() {
+  theme(axis.title = element_text(family = "Lato",
+                                  face = "bold",
+                                  size = 20,
+                                  colour = "black"),
+        axis.title.x = element_blank(),
+        axis.text.y = element_text(family = "Lato",
+                                   size = 12,
+                                   colour = "grey30"),
+        axis.line = element_line(size = 1.05,
+                                 colour = "grey20"),
+        legend.background = element_rect(fill = "white"),
+        legend.title = element_blank(),
+        legend.text = element_text(family = "Roboto",
+                                   size = 20,
+                                   colour = "black"),
+        legend.key = element_rect(fill = "white"),
+        legend.position = "top",
+        legend.justification = "centre",
+        plot.background = element_rect(fill = "white"),
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major = element_line(colour = "grey90"),
+        panel.grid.minor = element_line(colour = "grey90",
+                                        linetype = "longdash"),
+        strip.background = element_rect(fill = "black"),
+        strip.text = element_text(family = "Lato",
+                                  size = 16,
+                                  colour = "white"))
 }
 
 themebyjess_dark_point <- function() {
