@@ -25,7 +25,7 @@ library(sysfonts)
 library(ggstream)
 library(reshape2)
 library(ggrepel)
-library(patchwork)
+library(ggpubr)
 
 #loading df
 
@@ -762,4 +762,132 @@ ggplot(newdata %>%
 
 ggplot2::ggsave("outputs/facet_plot.png", facet_plot, width = 16, height = 9, units = "in", dpi = 300)
 
-#patchwork
+#grid arrange
+
+mass_combine <- ggplot(includeh, aes(x = logmass,
+                                  y = logh1,
+                                  colour = clade)) +
+  geom_point(size = 3,
+             alpha = 0.3) +
+  labs(x = "Body mass (kg)",
+       y = "h-index") +
+  ylim(c(0, 500)) +
+  coord_trans(x = "log1p",
+              y = "log1p") +
+  scale_x_continuous(breaks = c(0.3, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0),
+                     labels = c(0.002, 0.01, 0.1, 1, 10, 100, "1,000", "100,000")) +
+  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 5,
+                                                               alpha = 1))) +
+  new_scale_colour() +
+  geom_quantile(aes(colour = clade),
+                quantiles = 0.5,
+                size = 2.5,
+                alpha = 0.8,
+                lineend = "round") +
+  scale_colour_manual(values = c("#d4ac0d", "#ca6f1e", "#cb4335", "#7d3c98", "#2e86c1")) +
+  guides(colour = FALSE) +
+  themebyjess_light_point()
+
+lat_combine <- ggplot(includeh, aes(x = median_lat,
+                                 y = logh1,
+                                 colour = clade)) +
+  geom_point(size = 3,
+             alpha = 0.3) +
+  geom_smooth(colour = "black",
+              size = 1.2) +
+  labs(x = "Latitude (median)",
+       y = "h-index") +
+  ylim(c(0, 500)) +
+  scale_x_continuous(breaks = c(-40, 0, 40, 80),
+                     labels = c("-40°", 0, "40°", "80°")) +
+  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 5,
+                                                               alpha = 1))) +
+  themebyjess_light_point()
+
+gtrends_combine <- ggplot(includeh, aes(x = log_sumgtrends,
+                                     y = logh1,
+                                     colour = clade)) +
+  geom_point(size = 3,
+             alpha = 0.3) +
+  labs(x = "Google Trends index (sum)",
+       y = "h-index") +
+  ylim(c(0, 500)) +
+  scale_x_continuous(breaks = c(0, 2, 3, 4),
+                     labels = c(0, 100, "1,000", "10,000")) +
+  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 5,
+                                                               alpha = 1))) +
+  themebyjess_light_point()
+
+iucn_combine <- ggplot(includeh, aes(x = iucn_bin,
+                       y = logh1)) +
+  geom_quasirandom(aes(colour = clade),
+                   size = 3,
+                   alpha = 0.3) +
+  labs(x = "IUCN Red List status",
+       y = "h-index") +
+  ylim(c(0, 500)) +
+  scale_x_continuous(breaks = c(1, 2, 3, 4, 5),
+                     labels = c("LC", "VU", "EN", "CE", "EW")) +
+  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                       labels = c(0, 2, 9, 31, 99, 316)) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 5,
+                                                               alpha = 1))) +
+  themebyjess_light_quasirandom()
+
+humanuse_combine <- ggplot(includeh, aes(x = humanuse_bin,
+                                     y = logh1)) +
+  geom_quasirandom(aes(colour = clade),
+                   size = 3,
+                   alpha = 0.3) +
+  labs(x = "Human use",
+       y = "h-index") +
+  ylim(c(0, 500)) +
+  scale_x_continuous(breaks = c(0, 1),
+                     labels = c("No documented use", "Use documented")) +
+  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 5,
+                                                               alpha = 1))) +
+  themebyjess_light_quasirandom()
+
+domestication_combine <- ggplot(includeh, aes(x = domestication_bin,
+                                         y = logh1)) +
+  geom_quasirandom(aes(colour = clade),
+                   size = 3,
+                   alpha = 0.3) +
+  labs(x = "Domestication",
+       y = "h-index") +
+  ylim(c(0, 500)) +
+  scale_x_continuous(breaks = c(1, 2, 3),
+                     labels = c("Domesticated", "Partially-domesticated", "Wild")) +
+  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 5,
+                                                               alpha = 1))) +
+  themebyjess_light_quasirandom()
+
+
+grid_plot <- ggarrange(mass_combine + rremove("ylab"), lat_combine + rremove("ylab"), gtrends_combine + rremove("ylab"), 
+          iucn_combine + rremove("ylab"), humanuse_combine + rremove("ylab"), domestication_combine + rremove("ylab"),
+          common.legend = TRUE,
+          nrow = 2, ncol = 3)
+
+grid_plot_an <- annotate_figure(grid_plot, left = text_grob("h-index",
+                                            rot = 90,
+                                            family = "Lato",
+                                            face = "bold",
+                                            size = 22))
+
+ggplot2::ggsave("outputs/grid_plot.png", grid_plot_an, width = 20, height = 11, units = "in", dpi = 300)
