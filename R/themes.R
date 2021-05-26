@@ -58,6 +58,37 @@ themebyjess_light_boxplot <- function() {
         panel.grid.minor.y = element_blank())
 }
 
+themebyjess_light_col <- function() {
+  theme(axis.title.x = element_text(family = "Lato",
+                                    face = "bold",
+                                    size = 20,
+                                    colour = "black"),
+        axis.title.y = element_blank(),
+        axis.text.x = element_text(family = "Lato",
+                                   size = 12,
+                                   colour = "grey30"),
+        axis.text.y = element_text(family = "Lato",
+                                   size = 12,
+                                   colour = "black"),
+        axis.line = element_line(size = 1.05,
+                                 colour = "grey20"),
+        legend.background = element_rect(fill = "white"),
+        legend.title = element_blank(),
+        legend.text = element_text(family = "Roboto",
+                                   size = 20,
+                                   colour = "black"),
+        legend.key = element_rect(fill = "white"),
+        legend.position = "top",
+        legend.justification = "centre",
+        plot.background = element_rect(fill = "white"),
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major.x = element_line(colour = "grey90"),
+        panel.grid.minor.x = element_line(colour = "grey90",
+                                          linetype = "longdash"),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank())
+}
+
 themebyjess_light_quasirandom <- function() {
   theme(axis.title = element_text(family = "Lato",
                                     face = "bold",

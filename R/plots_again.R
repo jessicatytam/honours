@@ -100,23 +100,14 @@ ggplot(includeh, aes(x = logh1,
   scale_y_discrete(limits = rev)
 
 #h-index
-ggplot(includeh, aes(x = reorder(genus_species, logh1),
-                     y = logh1)) +
-  geom_point(aes(colour = order),
-             alpha = 0.5) +
-  labs(x = "Species",
-       y = "h-index",
-       colour = "Order") +
-  theme(legend.position = "bottom",
-        axis.text.x = element_blank()) 
-
-ggplot(includeh, aes(x = logh1,
-                     fill = order)) +
-  geom_bar() 
-
-ggplot(includeh, aes(x = h,
-                     fill = order)) +
-  geom_bar() 
+ggplot(includeh %>% filter(h>0),
+       aes(x = reorder(genus_species, -h),
+           y = h)) +
+  geom_col() +
+  labs(y = "h-index") +
+  scale_colour_manual(values = c("#c0392b")) +
+  scale_fill_manual(values = c("#ec7063")) +
+  theme(legend.position = "none")
 
 #mass
 mass_plot <- ggplot(includeh, aes(x = logmass,
@@ -891,3 +882,4 @@ grid_plot_an <- annotate_figure(grid_plot, left = text_grob("h-index",
                                             size = 22))
 
 ggplot2::ggsave("outputs/grid_plot.png", grid_plot_an, width = 20, height = 11, units = "in", dpi = 300)
+
