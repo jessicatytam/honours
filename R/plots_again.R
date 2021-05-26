@@ -100,14 +100,60 @@ ggplot(includeh, aes(x = logh1,
   scale_y_discrete(limits = rev)
 
 #h-index
-ggplot(includeh %>% filter(h>0),
-       aes(x = reorder(genus_species, -h),
-           y = h)) +
-  geom_col() +
-  labs(y = "h-index") +
-  scale_colour_manual(values = c("#c0392b")) +
-  scale_fill_manual(values = c("#ec7063")) +
-  theme(legend.position = "none")
+h100 <- ggplot(includeh %>% filter(h>99),
+       aes(x = h,
+           y = reorder(genus_species, h))) +
+  geom_segment(aes(x = 0,
+                   xend = h,
+                   y = reorder(genus_species, h),
+                   yend = reorder(genus_species, h)),
+               size = 1,
+               colour = "grey70") +
+  geom_point(size = 5,
+             alpha = 0.8,
+             colour = "#e74c3c",
+             fill = "#e67e22",
+             shape = 21,
+             stroke = 2) +
+  labs(x = "h-index") +
+  themebyjess_light_col()
+
+ggplot2::ggsave("outputs/h100.png", h100, width = 16, height = 9, units = "in", dpi = 300)
+
+allh <- ggplot(includeh,
+       aes(x = h,
+           y = reorder(genus_species, h))) +
+  geom_point(size = 1,
+             alpha = 0.8,
+             colour = "#e74c3c",
+             fill = "#e67e22",
+             shape = 21) +
+  labs(x = "h-index") + 
+  scale_y_discrete(expand = c(0.005, 0.005)) +
+  theme(axis.title = element_blank(),
+        axis.text.x = element_text(family = "Lato",
+                                   size = 12,
+                                   colour = "grey30"),
+        axis.text.y = element_blank(),
+        axis.line = element_line(size = 1.05,
+                                 colour = "grey20"),
+        legend.background = element_rect(fill = "white"),
+        legend.title = element_blank(),
+        legend.text = element_text(family = "Roboto",
+                                   size = 20,
+                                   colour = "black"),
+        legend.key = element_rect(fill = "white"),
+        legend.position = "top",
+        legend.justification = "centre",
+        plot.background = element_rect(fill = "white"),
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major.x = element_line(colour = "grey90"),
+        panel.grid.minor.x = element_line(colour = "grey90",
+                                          linetype = "longdash"),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank())
+
+ggplot2::ggsave("outputs/allh.png", allh, width = 9, height = 16, units = "in", dpi = 300)
 
 #mass
 mass_plot <- ggplot(includeh, aes(x = logmass,
