@@ -109,12 +109,12 @@ h100 <- ggplot(includeh %>% filter(h>99),
                    yend = reorder(genus_species, h)),
                size = 1,
                colour = "grey70") +
-  geom_point(size = 5,
+  geom_point(size = 4,
              alpha = 0.8,
              colour = "#e74c3c",
              fill = "#e67e22",
              shape = 21,
-             stroke = 2) +
+             stroke = 1.5) +
   labs(x = "h-index") +
   themebyjess_light_col()
 
@@ -805,7 +805,7 @@ mass_combine <- ggplot(includeh, aes(x = logmass,
                                   colour = clade)) +
   geom_point(size = 3,
              alpha = 0.3) +
-  labs(x = "Body mass (kg)",
+  labs(x = "(a) Body mass (kg)",
        y = "h-index") +
   ylim(c(0, 500)) +
   coord_trans(x = "log1p",
@@ -834,7 +834,7 @@ lat_combine <- ggplot(includeh, aes(x = median_lat,
              alpha = 0.3) +
   geom_smooth(colour = "black",
               size = 1.2) +
-  labs(x = "Latitude (median)",
+  labs(x = "(b) Latitude",
        y = "h-index") +
   ylim(c(0, 500)) +
   scale_x_continuous(breaks = c(-40, 0, 40, 80),
@@ -851,7 +851,7 @@ gtrends_combine <- ggplot(includeh, aes(x = log_sumgtrends,
                                      colour = clade)) +
   geom_point(size = 3,
              alpha = 0.3) +
-  labs(x = "Google Trends index (sum)",
+  labs(x = "(c) Google Trends index",
        y = "h-index") +
   ylim(c(0, 500)) +
   scale_x_continuous(breaks = c(0, 2, 3, 4),
@@ -868,7 +868,7 @@ iucn_combine <- ggplot(includeh, aes(x = iucn_bin,
   geom_quasirandom(aes(colour = clade),
                    size = 3,
                    alpha = 0.3) +
-  labs(x = "IUCN Red List status",
+  labs(x = "(d) IUCN Red List status",
        y = "h-index") +
   ylim(c(0, 500)) +
   scale_x_continuous(breaks = c(1, 2, 3, 4, 5),
@@ -885,7 +885,7 @@ humanuse_combine <- ggplot(includeh, aes(x = humanuse_bin,
   geom_quasirandom(aes(colour = clade),
                    size = 3,
                    alpha = 0.3) +
-  labs(x = "Human use",
+  labs(x = "(e) Human use",
        y = "h-index") +
   ylim(c(0, 500)) +
   scale_x_continuous(breaks = c(0, 1),
@@ -902,7 +902,7 @@ domestication_combine <- ggplot(includeh, aes(x = domestication_bin,
   geom_quasirandom(aes(colour = clade),
                    size = 3,
                    alpha = 0.3) +
-  labs(x = "Domestication",
+  labs(x = "(f) Domestication",
        y = "h-index") +
   ylim(c(0, 500)) +
   scale_x_continuous(breaks = c(1, 2, 3),
