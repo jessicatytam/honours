@@ -112,11 +112,11 @@ themebyjess_light_quasirandom <- function() {
         legend.justification = "centre",
         plot.background = element_rect(fill = "white"),
         panel.background = element_rect(fill = "white"),
-        panel.grid.major.x = element_line(colour = "grey90"),
-        panel.grid.minor.x = element_line(colour = "grey90",
-                                          linetype = "longdash"),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank())
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_line(colour = "grey90"),
+        panel.grid.minor.y = element_line(colour = "grey90",
+                                          linetype = "longdash"))
 }
 
 themebyjess_light_map <- function() {
@@ -148,10 +148,19 @@ themebyjess_light_map <- function() {
 }
 
 themebyjess_light_stream <- function() {
-  theme(axis.title = element_text(family = "Lato",
-                                  face = "bold",
-                                  size = 20,
-                                  colour = "black"),
+  theme(title = element_text(family = "Lato",
+                             face = "bold",
+                             size = 16,
+                             colour = "black"),
+        axis.title.x = element_text(family = "Lato",
+                                    face = "bold",
+                                    size = 20,
+                                    colour = "black"),
+        axis.title.y = element_text(family = "Lato",
+                                    face = "bold",
+                                    size = 20,
+                                    colour = "black",
+                                    margin = margin(r = 12)),
         axis.text = element_text(family = "Lato",
                                  size = 12,
                                  colour = "grey30"),

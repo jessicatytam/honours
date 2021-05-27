@@ -655,7 +655,8 @@ pub_ridge_plot <- ggplot(data = scopus_order_1950,
              y = count,
              fill = order)) +
   geom_stream(type = "ridge") +
-  labs(x = "Year",
+  labs(title = "  (a)",
+       x = "Year",
        y = "Number of publications") +
   scale_fill_manual(values = c("#F1C40F", "#EFB812", "#EEAD16",
                                "#ECA119", "#EA951C", "#E88A1F",
@@ -705,7 +706,8 @@ pub_proportion_plot <- scopus_order %>%
              y = count,
              fill = order)) +
   geom_stream(type = "proportion") +
-  labs(x = "Year",
+  labs(title = "  (b)",
+       x = "Year",
        y = "Proportion of publications") +
   scale_y_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1),
                      labels = c("0%", "25%", "50%", "75%", "100%")) +
@@ -726,7 +728,14 @@ pub_proportion_plot <- scopus_order %>%
 
 ggplot2::ggsave("outputs/pub_proportion.png", pub_proportion_plot, width = 16, height = 9, units = "in", dpi = 300)
 
-#summary plot
+pub_plot_combine <- ggarrange(pub_ridge_plot, pub_proportion_plot,
+                              common.legend = TRUE,
+                              legend = "right",
+                              ncol = 1)
+
+ggplot2::ggsave("outputs/pub_plot_combine.png", pub_plot_combine, width = 16, height = 9, units = "in", dpi = 300)
+
+#facet plot
 newdata <- includeh %>%
   select(genus_species, clade, h, logh1, 
          logmass, median_lat, humanuse_bin, iucn_bin, domestication_bin, log_sumgtrends) 
@@ -804,12 +813,11 @@ mass_combine <- ggplot(includeh, aes(x = logmass,
                                   y = logh1,
                                   colour = clade)) +
   geom_point(size = 3,
-             alpha = 0.3) +
+             alpha = 0.2) +
   labs(x = "(a) Body mass (kg)",
        y = "h-index") +
   ylim(c(0, 500)) +
-  coord_trans(x = "log1p",
-              y = "log1p") +
+  coord_trans(x = "log1p") +
   scale_x_continuous(breaks = c(0.3, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0),
                      labels = c(0.002, 0.01, 0.1, 1, 10, 100, "1,000", "100,000")) +
   scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
@@ -831,7 +839,7 @@ lat_combine <- ggplot(includeh, aes(x = median_lat,
                                  y = logh1,
                                  colour = clade)) +
   geom_point(size = 3,
-             alpha = 0.3) +
+             alpha = 0.2) +
   geom_smooth(colour = "black",
               size = 1.2) +
   labs(x = "(b) Latitude",
@@ -850,7 +858,7 @@ gtrends_combine <- ggplot(includeh, aes(x = log_sumgtrends,
                                      y = logh1,
                                      colour = clade)) +
   geom_point(size = 3,
-             alpha = 0.3) +
+             alpha = 0.2) +
   labs(x = "(c) Google Trends index",
        y = "h-index") +
   ylim(c(0, 500)) +
@@ -867,7 +875,7 @@ iucn_combine <- ggplot(includeh, aes(x = iucn_bin,
                        y = logh1)) +
   geom_quasirandom(aes(colour = clade),
                    size = 3,
-                   alpha = 0.3) +
+                   alpha = 0.2) +
   labs(x = "(d) IUCN Red List status",
        y = "h-index") +
   ylim(c(0, 500)) +
@@ -884,7 +892,7 @@ humanuse_combine <- ggplot(includeh, aes(x = humanuse_bin,
                                      y = logh1)) +
   geom_quasirandom(aes(colour = clade),
                    size = 3,
-                   alpha = 0.3) +
+                   alpha = 0.2) +
   labs(x = "(e) Human use",
        y = "h-index") +
   ylim(c(0, 500)) +
@@ -901,7 +909,7 @@ domestication_combine <- ggplot(includeh, aes(x = domestication_bin,
                                          y = logh1)) +
   geom_quasirandom(aes(colour = clade),
                    size = 3,
-                   alpha = 0.3) +
+                   alpha = 0.2) +
   labs(x = "(f) Domestication",
        y = "h-index") +
   ylim(c(0, 500)) +
