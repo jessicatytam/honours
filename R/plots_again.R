@@ -650,18 +650,13 @@ orders <- scopus_order %>%
 scopus_order_1950 <- scopus_order %>%
   filter(year > 1949)
 
-#pub_ridge_plot <- 
-ggplot(data = scopus_order_1950,
+pub_ridge_plot <- ggplot(data = scopus_order_1950,
        aes(x = year,
              y = count,
              fill = order)) +
   geom_stream(type = "ridge") +
   labs(x = "Year",
        y = "Number of publications") +
-  geom_text_repel(data = orders,
-                  aes(label = order),
-                  max.overlaps = Inf,
-                  box.padding = 0.7) +
   scale_fill_manual(values = c("#F1C40F", "#EFB812", "#EEAD16",
                                "#ECA119", "#EA951C", "#E88A1F",
                                "#E67E22", "#E67626", "#E76D2B",
@@ -671,8 +666,10 @@ ggplot(data = scopus_order_1950,
                                "#8E44AD", "#7F52B5", "#7060BC",
                                "#616EC4", "#527CCC", "#438AD3",
                                "#3498db", "#44A0DE", "#53A8E0",
-                               "#63B0E3")) +
-  guides(fill = guide_legend(ncol = 1)) +
+                               "#63B0E3"),
+                    guide = guide_legend(override.aes = list(size = 6,
+                                                             alpha = 1),
+                                         ncol = 1)) +
   themebyjess_light_stream()
 
 ggplot2::ggsave("outputs/pub_ridge.png", pub_ridge_plot, width = 16, height = 9, units = "in", dpi = 300)
@@ -696,8 +693,8 @@ pub_mirror_plot <- scopus_order %>%
                                "#3498db", "#44A0DE", "#53A8E0",
                                "#63B0E3"),
                     guide = guide_legend(override.aes = list(size = 4,
-                                                             alpha = 1))) +
-  guides(fill = guide_legend(ncol = 1)) +
+                                                             alpha = 1),
+                                         ncol = 1)) +
   themebyjess_light_stream()
 
 ggplot2::ggsave("outputs/pub_mirror.png", pub_mirror_plot, width = 16, height = 9, units = "in", dpi = 300)
@@ -710,6 +707,8 @@ pub_proportion_plot <- scopus_order %>%
   geom_stream(type = "proportion") +
   labs(x = "Year",
        y = "Proportion of publications") +
+  scale_y_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1),
+                     labels = c("0%", "25%", "50%", "75%", "100%")) +
   scale_fill_manual(values = c("#F1C40F", "#EFB812", "#EEAD16",
                                "#ECA119", "#EA951C", "#E88A1F",
                                "#E67E22", "#E67626", "#E76D2B",
@@ -721,8 +720,8 @@ pub_proportion_plot <- scopus_order %>%
                                "#3498db", "#44A0DE", "#53A8E0",
                                "#63B0E3"),
                     guide = guide_legend(override.aes = list(size = 4,
-                                                             alpha = 1))) +
-  guides(fill = guide_legend(ncol = 1)) +
+                                                             alpha = 1),
+                                         ncol = 1)) +
   themebyjess_light_stream()
 
 ggplot2::ggsave("outputs/pub_proportion.png", pub_proportion_plot, width = 16, height = 9, units = "in", dpi = 300)
@@ -823,7 +822,7 @@ mass_combine <- ggplot(includeh, aes(x = logmass,
                 quantiles = 0.5,
                 size = 2.5,
                 alpha = 0.8,
-                lineend = "round") +
+                 lineend = "round") +
   scale_colour_manual(values = c("#d4ac0d", "#ca6f1e", "#cb4335", "#7d3c98", "#2e86c1")) +
   guides(colour = FALSE) +
   themebyjess_light_point()
