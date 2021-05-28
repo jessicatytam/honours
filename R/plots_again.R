@@ -122,6 +122,7 @@ h100 <- ggplot(includeh %>% filter(h>99),
   themebyjess_light_col()
 
 ggplot2::ggsave("outputs/h100.png", h100, width = 16, height = 9, units = "in", dpi = 300)
+ggplot2::ggsave("outputs/h100_text.png", h100, width = 16, height = 13, units = "in", dpi = 300)
 
 allh <- ggplot(includeh,
        aes(x = h,
@@ -146,6 +147,8 @@ allh <- ggplot(includeh,
         legend.position = "top",
         legend.justification = "centre",
         plot.background = element_rect(fill = "white"),
+        panel.border = element_rect(colour = "black",
+                                    fill = NA),
         panel.background = element_rect(fill = "white"),
         panel.grid.major.x = element_line(colour = "grey90"),
         panel.grid.minor.x = element_line(colour = "grey90",
@@ -192,7 +195,7 @@ doughnut <- ggplot(orders_sum,
                                "#8CE3B2")) +
   theme(plot.title = element_text(family = "Lato",
                                   face = "bold",
-                                  size = 40,
+                                  size = 36,
                                   colour = "black",
                                   hjust = 0.5),
         axis.text = element_blank(),
