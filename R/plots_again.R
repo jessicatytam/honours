@@ -64,7 +64,7 @@ includeh <- includeh %>%
 #sorting
 
 includeh$clade <- factor(includeh$clade, levels = c("Afrotheria", "Xenarthra", "Euarchontoglires", "Laurasiatheria", "Marsupials & monotremes"))
-
+includeh$order <- factor(includeh$order, levels = med_mass$order)
 unique(includeh$redlistCategory)
 includeh$redlistCategory <- factor(includeh$redlistCategory, levels = c("Least Concern", "Near Threaten", "Vulnerable",
                                                                         "Endangered", "Critically Endangered",
@@ -102,20 +102,23 @@ ggplot(includeh, aes(x = logh1,
 #h-index
 h100 <- ggplot(includeh %>% filter(h>99),
        aes(x = h,
-           y = reorder(genus_species, h))) +
+           y = reorder(genus_species, h),
+           fill = order)) +
   geom_segment(aes(x = 0,
                    xend = h,
                    y = reorder(genus_species, h),
                    yend = reorder(genus_species, h)),
                size = 1,
                colour = "grey70") +
-  geom_point(size = 4,
+  geom_point(size = 4.5,
              alpha = 0.8,
-             colour = "#e74c3c",
-             fill = "#e67e22",
              shape = 21,
              stroke = 1.5) +
   labs(x = "h-index") +
+  scale_fill_manual(values = c("#f1c40f", "#E98935", "#e74c3c", "#8e44ad", "#3498db", "#2ECC71"),
+                      guide = guide_legend(override.aes = list(size = 4,
+                                                               alpha = 1),
+                                           nrow = 1)) +
   themebyjess_light_col()
 
 ggplot2::ggsave("outputs/h100.png", h100, width = 16, height = 9, units = "in", dpi = 300)
@@ -124,10 +127,7 @@ allh <- ggplot(includeh,
        aes(x = h,
            y = reorder(genus_species, h))) +
   geom_point(size = 1,
-             alpha = 0.8,
-             colour = "#e74c3c",
-             fill = "#e67e22",
-             shape = 21) +
+             alpha = 0.2) +
   labs(x = "h-index") + 
   scale_y_discrete(expand = c(0.005, 0.005)) +
   theme(axis.title = element_blank(),
@@ -154,6 +154,53 @@ allh <- ggplot(includeh,
         panel.grid.minor.y = element_blank())
 
 ggplot2::ggsave("outputs/allh.png", allh, width = 9, height = 16, units = "in", dpi = 300)
+
+ggplot(includeh %>%
+         filter(h == 0),
+       aes(y = reorder(order, desc(order)))) +
+  geom_bar() +
+  themebyjess_light_col()
+
+orders_sum <- includeh %>% 
+  group_by(order) %>% 
+  summarise(n = n())
+# Compute percentages
+orders_sum$fraction = orders_sum$n / sum(orders_sum$n)
+# Compute the cumulative percentages (top of each rectangle)
+orders_sum$ymax = cumsum(orders_sum$fraction)
+# Compute the bottom of each rectangle
+orders_sum$ymin = c(0, head(orders_sum$ymax, n = -1))
+
+doughnut <- ggplot(orders_sum,
+       aes(xmax = 4,
+           xmin = 3,
+           ymax = ymax,
+           ymin = ymin,
+           fill = order)) +
+  geom_rect() +
+  coord_polar(theta = "y") +
+  xlim(c(2, 4)) +
+  labs(title = "Species diversity") +
+  scale_fill_manual(values = c("#FAEBB3",
+                               "#F7E28D", "#F6DB6E", "#F4D34E", "#F3CC2F",
+                               "#f1c40f", "#EFB519", "#EDA722", "#EB982C",
+                               "#E98935", "#E97A37", "#E86B39", "#E85B3A",
+                               "#e74c3c", "#D14A58", "#BB4875", "#A44691",
+                               "#8e44ad", "#7859B9", "#616EC4", "#4B83D0",
+                               "#3498db", "#33A5C1", "#31B2A6", "#30BF8C",
+                               "#2ECC71", "#4AD384", "#65DA97", "#81E0AA",
+                               "#8CE3B2")) +
+  theme(plot.title = element_text(family = "Lato",
+                                  face = "bold",
+                                  size = 40,
+                                  colour = "black",
+                                  hjust = 0.5),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        panel.background = element_blank(),
+        legend.position = "none")
+
+ggplot2::ggsave("outputs/doughnut.png", doughnut, width = 8, height = 8, units = "in", dpi = 300)
 
 #mass
 mass_plot <- ggplot(includeh, aes(x = logmass,
@@ -636,12 +683,11 @@ for (i in 1:length(med_mass$order)) {
   }
 }
 
+med_mass$clade <- factor(med_mass$clade, levels = c("Afrotheria", "Xenarthra", "Euarchontoglires", "Laurasiatheria", "Marsupials & monotremes"))
+
 med_mass <- med_mass %>%
   arrange(clade, BodyMass.Value)
 
-med_mass$clade <- factor(med_mass$clade, levels = c("Afrotheria", "Xenarthra", "Euarchontoglires", "Laurasiatheria", "Marsupials & monotremes"))
-
-#scopus_order$clade <- factor(scopus_order$clade, levels = c("Afrotheria", "Xenarthra", "Euarchontoglires", "Laurasiatheria", "Marsupials & monotremes"))
 scopus_order$order <- factor(scopus_order$order, levels = med_mass$order)
 
 orders <- scopus_order %>%
@@ -658,16 +704,15 @@ pub_ridge_plot <- ggplot(data = scopus_order_1950,
   labs(title = "  (a)",
        x = "Year",
        y = "Number of publications") +
-  scale_fill_manual(values = c("#F1C40F", "#EFB812", "#EEAD16",
-                               "#ECA119", "#EA951C", "#E88A1F",
-                               "#E67E22", "#E67626", "#E76D2B",
-                               "#E7652F", "#E75D33", "#E75438",
-                               "#E74C3C", "#D84B4F", "#CA4962",
-                               "#BB4875", "#AC4788", "#9D459A",
-                               "#8E44AD", "#7F52B5", "#7060BC",
-                               "#616EC4", "#527CCC", "#438AD3",
-                               "#3498db", "#44A0DE", "#53A8E0",
-                               "#63B0E3"),
+  scale_fill_manual(values = c("#FAEBB3",
+                               "#F7E28D", "#F6DB6E", "#F4D34E", "#F3CC2F",
+                               "#f1c40f", "#EFB519", "#EDA722", "#EB982C",
+                               "#E98935", "#E97A37", "#E86B39", "#E85B3A",
+                               "#e74c3c", "#D14A58", "#BB4875", "#A44691",
+                               "#8e44ad", "#7859B9", "#616EC4", "#4B83D0",
+                               "#3498db", "#33A5C1", "#31B2A6", "#30BF8C",
+                               "#2ECC71", "#4ED487", "#6EDC9D", "#8DE3B2",
+                               "#8CE3B2"),
                     guide = guide_legend(override.aes = list(size = 6,
                                                              alpha = 1),
                                          ncol = 1)) +
@@ -683,16 +728,15 @@ pub_mirror_plot <- scopus_order %>%
   geom_stream(type = "mirror") +
   labs(x = "Year",
        y = "Number of publications") +
-  scale_fill_manual(values = c("#F1C40F", "#EFB812", "#EEAD16",
-                               "#ECA119", "#EA951C", "#E88A1F",
-                               "#E67E22", "#E67626", "#E76D2B",
-                               "#E7652F", "#E75D33", "#E75438",
-                               "#E74C3C", "#D84B4F", "#CA4962",
-                               "#BB4875", "#AC4788", "#9D459A",
-                               "#8E44AD", "#7F52B5", "#7060BC",
-                               "#616EC4", "#527CCC", "#438AD3",
-                               "#3498db", "#44A0DE", "#53A8E0",
-                               "#63B0E3"),
+  scale_fill_manual(values = c("#FAEBB3",
+                               "#F7E28D", "#F6DB6E", "#F4D34E", "#F3CC2F",
+                               "#f1c40f", "#EFB519", "#EDA722", "#EB982C",
+                               "#E98935", "#E97A37", "#E86B39", "#E85B3A",
+                               "#e74c3c", "#D14A58", "#BB4875", "#A44691",
+                               "#8e44ad", "#7859B9", "#616EC4", "#4B83D0",
+                               "#3498db", "#33A5C1", "#31B2A6", "#30BF8C",
+                               "#2ECC71", "#4ED487", "#6EDC9D", "#8DE3B2",
+                               "#8CE3B2"),
                     guide = guide_legend(override.aes = list(size = 4,
                                                              alpha = 1),
                                          ncol = 1)) +
@@ -711,16 +755,15 @@ pub_proportion_plot <- scopus_order %>%
        y = "Proportion of publications") +
   scale_y_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1),
                      labels = c("0%", "25%", "50%", "75%", "100%")) +
-  scale_fill_manual(values = c("#F1C40F", "#EFB812", "#EEAD16",
-                               "#ECA119", "#EA951C", "#E88A1F",
-                               "#E67E22", "#E67626", "#E76D2B",
-                               "#E7652F", "#E75D33", "#E75438",
-                               "#E74C3C", "#D84B4F", "#CA4962",
-                               "#BB4875", "#AC4788", "#9D459A",
-                               "#8E44AD", "#7F52B5", "#7060BC",
-                               "#616EC4", "#527CCC", "#438AD3",
-                               "#3498db", "#44A0DE", "#53A8E0",
-                               "#63B0E3"),
+  scale_fill_manual(values = c("#FAEBB3",
+                               "#F7E28D", "#F6DB6E", "#F4D34E", "#F3CC2F",
+                               "#f1c40f", "#EFB519", "#EDA722", "#EB982C",
+                               "#E98935", "#E97A37", "#E86B39", "#E85B3A",
+                               "#e74c3c", "#D14A58", "#BB4875", "#A44691",
+                               "#8e44ad", "#7859B9", "#616EC4", "#4B83D0",
+                               "#3498db", "#33A5C1", "#31B2A6", "#30BF8C",
+                               "#2ECC71", "#4AD384", "#65DA97", "#81E0AA",
+                               "#8CE3B2"),
                     guide = guide_legend(override.aes = list(size = 4,
                                                              alpha = 1),
                                          ncol = 1)) +
@@ -734,6 +777,7 @@ pub_plot_combine <- ggarrange(pub_ridge_plot, pub_proportion_plot,
                               ncol = 1)
 
 ggplot2::ggsave("outputs/pub_plot_combine.png", pub_plot_combine, width = 16, height = 9, units = "in", dpi = 300)
+ggplot2::ggsave("outputs/pub_plot_combine_text.png", pub_plot_combine, width = 16, height = 13, units = "in", dpi = 300)
 
 #facet plot
 newdata <- includeh %>%
