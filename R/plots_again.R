@@ -74,10 +74,6 @@ includeh$redlistCategory <- factor(includeh$redlistCategory, levels = c("Least C
 
 source("R/themes.R")
 
-#add font
-
-font_add_google("Roboto")
-
 #h by order
 ggplot(includeh, aes(x = logh1,
                      y = order)) +
@@ -114,7 +110,7 @@ h100 <- ggplot(includeh %>% filter(h>99),
              alpha = 0.8,
              shape = 21,
              stroke = 1.5) +
-  labs(x = "h-index") +
+  labs(x = expression(bold(paste("species ", italic(h), "-index")))) +
   scale_fill_manual(values = c("#f1c40f", "#E98935", "#e74c3c", "#8e44ad", "#3498db", "#2ECC71"),
                       guide = guide_legend(override.aes = list(size = 4,
                                                                alpha = 1),
@@ -702,8 +698,9 @@ scopus_order_1950 <- scopus_order %>%
 
 pub_ridge_plot <- ggplot(data = scopus_order_1950,
        aes(x = year,
-             y = count,
-             fill = order)) +
+           y = count,
+           fill = order,
+           label = order)) +
   geom_stream(type = "ridge") +
   labs(title = "  (a)",
        x = "Year",
@@ -976,10 +973,9 @@ grid_plot <- ggarrange(mass_combine + rremove("ylab"), lat_combine + rremove("yl
           common.legend = TRUE,
           nrow = 2, ncol = 3)
 
-grid_plot_an <- annotate_figure(grid_plot, left = text_grob("h-index",
+grid_plot_an <- annotate_figure(grid_plot, left = text_grob(expression(bold(paste("species ", italic(h), "-index"))),
                                             rot = 90,
                                             family = "Lato",
-                                            face = "bold",
                                             size = 22))
 
 ggplot2::ggsave("outputs/grid_plot.png", grid_plot_an, width = 20, height = 11, units = "in", dpi = 300)
