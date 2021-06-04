@@ -160,7 +160,7 @@ themebyjess_light_stream <- function() {
                                     face = "bold",
                                     size = 20,
                                     colour = "black",
-                                    margin = margin(r = 12)),
+                                    margin = margin(r = 6)),
         axis.text = element_text(family = "Lato",
                                  size = 12,
                                  colour = "grey30"),

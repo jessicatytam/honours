@@ -583,42 +583,29 @@ ggplot2::ggsave("outputs/logh_vs_logsumgtrends.png", gtrends_plot, width = 16, h
 
 scopus_results1 <- scopus_results1[-2886] #remove homo sapiens
 
-for (i in 1:length(scopus_results1)) { #add year variable
-  if (scopus_results1[[i]]$citations > 0) {
-    scopus_results1[[i]]$year <- as.numeric(substr(scopus_results1[[i]]$cover_date, 1, 4))
-  }
-}
+scopus1_melt <- melt(scopus_results1)
+scopus2_melt <- melt(scopus_results2)
 
-for (i in 1:length(scopus_results2)) { #add year variable
-  if (scopus_results2[[i]]$citations > 0) {
-    scopus_results2[[i]]$year <- as.numeric(substr(scopus_results2[[i]]$cover_date, 1, 4))
-  }
-}
-
-scopus1_df <- melt(scopus_results1)
-scopus2_df <- melt(scopus_results2)
-
-scopus1_df <- scopus1_df %>%
-  select(variable, value, L1) 
-scopus2_df <- scopus2_df %>%
-  select(variable, value, L1) 
+scopus1_df <- scopus1_melt %>%
+  select(cover_date, L1) 
+scopus2_df <- scopus2_melt %>%
+  select(cover_date, L1) 
 
 scopus2_df$L1 <- scopus2_df$L1+3999
 
 scopus_df <- rbind(scopus1_df, scopus2_df)
 
 scopus_df_year <- scopus_df %>%
-  filter(variable == "year")
+  mutate(year = as.numeric(substr(scopus_df$cover_date, 1, 4)))
 
-unique(scopus_df_year$L1) #3182
+unique(scopus_df_year$L1) #7521
 
 scopus_df_summ <- scopus_df_year %>%
-  group_by(L1, value) %>%
+  group_by(L1, year) %>%
   summarise(n())
 
 scopus_df_summ <- scopus_df_summ %>%
   rename(sp = L1,
-         year = value,
          count = `n()`)
 
 for (i in 1:length(includeh$genus_species)) {
@@ -633,7 +620,7 @@ scopus_order <- scopus_df_summ %>%
   group_by(clade, order, year) %>%
   summarise(n())
 
-scopus_order <- scopus_order %>%
+scopus_order <- scopus_order %>% 
   rename(count = `n()`)
 
 #some sorting
@@ -653,7 +640,8 @@ for (i in 1:length(med_mass$order)) {
              med_mass$order[i] == "Afrosoricida"|
              med_mass$order[i] == "Proboscidea"|
              med_mass$order[i] == "Sirenia"|
-             med_mass$order[i] == "Hyracoidea") {
+             med_mass$order[i] == "Hyracoidea"|
+             med_mass$order[i] == "Tubulidentata") {
     med_mass$clade[i] <- "Afrotheria"
   } else if (med_mass$order[i] == "Chiroptera"|
              med_mass$order[i] == "Perissodactyla"|
@@ -696,7 +684,10 @@ orders <- scopus_order %>%
 scopus_order_1950 <- scopus_order %>%
   filter(year > 1949)
 
-pub_ridge_plot <- ggplot(data = scopus_order_1950,
+scopus_order_1940 <- scopus_order %>%
+  filter(year > 1939)
+
+pub_ridge_plot <- ggplot(data = scopus_order_1940,
        aes(x = year,
            y = count,
            fill = order,
@@ -746,7 +737,7 @@ pub_mirror_plot <- scopus_order %>%
 ggplot2::ggsave("outputs/pub_mirror.png", pub_mirror_plot, width = 16, height = 9, units = "in", dpi = 300)
 
 pub_proportion_plot <- scopus_order %>%
-  filter(year > 1949) %>%
+  filter(year > 1939) %>%
   ggplot(aes(x = year,
              y = count,
              fill = order)) +
