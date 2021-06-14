@@ -14,7 +14,8 @@ library(MCMCglmm)
 # mod_list_3 <- readRDS("data/intermediate_data/MCMCglmm/mod_list_3.rds")
 # mod_list_4 <- readRDS("data/intermediate_data/MCMCglmm/mod_list_4.rds")
 # mod_list_5 <- readRDS("data/intermediate_data/MCMCglmm/mod_list_5.rds")
-mod_list_all <- readRDS("data/intermediate_data/MCMCglmm/mod_list_all.rds")
+# mod_list_all <- readRDS("data/intermediate_data/MCMCglmm/mod_list_all.rds")
+mod_results_100 <- readRDS("data/intermediate_data/MCMCglmm/mod_results_100.rds")
 
 #combine models
 # mod_list_all <- do.call(c, list(mod_list_1, mod_list_2, mod_list_3, mod_list_4, mod_list_5))
@@ -32,6 +33,9 @@ mod_result <- function(model) {
   df
 }
 mod_results_flat <- map_df(mod_list_all, mod_result)
+
+saveRDS(mod_results_flat, "data/intermediate_data/MCMCglmm/mod_results_100.rds")
+
 # test <- function(x){x + 1}
 # map_dbl(1:10, test)
 
@@ -67,23 +71,3 @@ v_dist <- log(1+ 1/mean(dat_sub$h)) #0.1054779
 
 #getting the mean
 
-
-
-
-#testing
-
-for (i in 1:length(mod_results)) {
-  print(mod_results[[i]][[1]])
-}
-
-test <- data.frame()
-
-for (i in 1:length(mod_results)) {
-  test$animal_post.mean <- mod_results[[i]][[1]]
-}
-
-for (i in 1:length(mod_results)) {
-  test[i] <- mod_results[[i]][[1]]
-}
-
-test <- mod_results[[1:500]][[1]]
