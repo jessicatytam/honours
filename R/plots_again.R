@@ -879,7 +879,7 @@ lat_combine <- ggplot(includeh, aes(x = median_lat,
               size = 1.2) +
   geom_rug(sides = "t",
            col = rgb(0.5, 0, 0,
-                     alpha = 0.08)) +
+                     alpha = 0.05)) +
   labs(x = "(b) Latitude") +
   ylim(c(0, 500)) +
   scale_x_continuous(breaks = c(-40, 0, 40, 80),
@@ -993,4 +993,5 @@ grid_plot_an <- annotate_figure(grid_plot, left = text_grob(expression(bold(past
                                             size = 22))
 
 ggplot2::ggsave("outputs/grid_plot.png", grid_plot_an, width = 20, height = 11, units = "in", dpi = 300)
+
 
