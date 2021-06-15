@@ -877,6 +877,9 @@ lat_combine <- ggplot(includeh, aes(x = median_lat,
              alpha = 0.2) +
   geom_smooth(colour = "black",
               size = 1.2) +
+  geom_rug(sides = "t",
+           col = rgb(0.5, 0, 0,
+                     alpha = 0.08)) +
   labs(x = "(b) Latitude") +
   ylim(c(0, 500)) +
   scale_x_continuous(breaks = c(-40, 0, 40, 80),
@@ -887,6 +890,16 @@ lat_combine <- ggplot(includeh, aes(x = median_lat,
                       guide = guide_legend(override.aes = list(size = 5,
                                                                alpha = 1))) +
   themebyjess_light_point()
+
+lat_combine_margin <- ggMarginal(lat_combine, 
+           margins = "x",
+           groupColour = TRUE,
+           groupFill = TRUE)
+
+ggMarginal(lat_combine, 
+           margins = "x",
+           type = "histogram",
+           xparams = list(binwidth = 1))
 
 gtrends_combine <- ggplot(includeh, aes(x = log_sumgtrends,
                                      y = logh1,
