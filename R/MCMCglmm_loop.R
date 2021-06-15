@@ -39,3 +39,21 @@ for (i in 1:length(random_trees)) {
 
 #save the models
 saveRDS(mod_list, "data/intermediate_data/MCMCglmm/mod_list.rds")
+
+
+# test
+# adding quadratic effect
+model <- MCMCglmm(h ~ logmass +
+           abs_lat +
+           humanuse_bin +
+           domestication_bin +
+           poly(iucn_bin,2) +
+           log_sumgtrends,
+         random = ~ animal,
+         family = "poisson",
+         pedigree = random_trees[[1]],
+         dat = random_df[[1]],
+         nitt = 13000,
+         thin = 10,
+         burnin = 3000,
+         prior = prior1)
