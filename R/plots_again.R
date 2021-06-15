@@ -850,8 +850,7 @@ mass_combine <- ggplot(includeh, aes(x = logmass,
                                   colour = clade)) +
   geom_point(size = 3,
              alpha = 0.2) +
-  labs(x = "(a) Body mass (kg)",
-       y = "h-index") +
+  labs(x = "(a) Body mass (kg)") +
   ylim(c(0, 500)) +
   coord_trans(x = "log1p") +
   scale_x_continuous(breaks = c(0.3, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0),
@@ -878,8 +877,7 @@ lat_combine <- ggplot(includeh, aes(x = median_lat,
              alpha = 0.2) +
   geom_smooth(colour = "black",
               size = 1.2) +
-  labs(x = "(b) Latitude",
-       y = "h-index") +
+  labs(x = "(b) Latitude") +
   ylim(c(0, 500)) +
   scale_x_continuous(breaks = c(-40, 0, 40, 80),
                      labels = c("-40°", 0, "40°", "80°")) +
@@ -895,8 +893,7 @@ gtrends_combine <- ggplot(includeh, aes(x = log_sumgtrends,
                                      colour = clade)) +
   geom_point(size = 3,
              alpha = 0.2) +
-  labs(x = "(c) Google Trends index",
-       y = "h-index") +
+  labs(x = "(c) Google Trends index") +
   ylim(c(0, 500)) +
   scale_x_continuous(breaks = c(0, 2, 3, 4),
                      labels = c(0, 100, "1,000", "10,000")) +
@@ -907,15 +904,20 @@ gtrends_combine <- ggplot(includeh, aes(x = log_sumgtrends,
                                                                alpha = 1))) +
   themebyjess_light_point()
 
-iucn_combine <- ggplot(includeh, aes(x = iucn_bin,
-                       y = logh1)) +
+iucn_combine <- ggplot(includeh %>% 
+                         drop_na(iucn_bin), aes(x = factor(iucn_bin),
+                                     y = logh1)) +
   geom_quasirandom(aes(colour = clade),
                    size = 3,
                    alpha = 0.2) +
-  labs(x = "(d) IUCN Red List status",
-       y = "h-index") +
+  geom_boxplot(fill = "grey80",
+               size = 0.8,
+               width = 0.4,
+               alpha = 0.2,
+               outlier.shape = NA) +
+  labs(x = "(d) IUCN Red List status") +
   ylim(c(0, 500)) +
-  scale_x_continuous(breaks = c(1, 2, 3, 4, 5),
+  scale_x_discrete(breaks = c(1, 2, 3, 4, 5),
                      labels = c("LC", "VU", "EN", "CE", "EW")) +
   scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
                        labels = c(0, 2, 9, 31, 99, 316)) +
@@ -924,15 +926,19 @@ iucn_combine <- ggplot(includeh, aes(x = iucn_bin,
                                                                alpha = 1))) +
   themebyjess_light_quasirandom()
 
-humanuse_combine <- ggplot(includeh, aes(x = humanuse_bin,
+humanuse_combine <- ggplot(includeh, aes(x = factor(humanuse_bin),
                                      y = logh1)) +
   geom_quasirandom(aes(colour = clade),
                    size = 3,
                    alpha = 0.2) +
-  labs(x = "(e) Human use",
-       y = "h-index") +
+  geom_boxplot(fill = "grey80",
+               size = 0.8,
+               width = 0.4,
+               alpha = 0.2,
+               outlier.shape = NA) +
+  labs(x = "(e) Human use") +
   ylim(c(0, 500)) +
-  scale_x_continuous(breaks = c(0, 1),
+  scale_x_discrete(breaks = c(0, 1),
                      labels = c("No documented use", "Use documented")) +
   scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
                      labels = c(0, 2, 9, 31, 99, 316)) +
@@ -941,15 +947,19 @@ humanuse_combine <- ggplot(includeh, aes(x = humanuse_bin,
                                                                alpha = 1))) +
   themebyjess_light_quasirandom()
 
-domestication_combine <- ggplot(includeh, aes(x = domestication_bin,
+domestication_combine <- ggplot(includeh, aes(x = factor(domestication_bin),
                                          y = logh1)) +
   geom_quasirandom(aes(colour = clade),
                    size = 3,
                    alpha = 0.2) +
-  labs(x = "(f) Domestication",
-       y = "h-index") +
+  geom_boxplot(fill = "grey80",
+               size = 0.8,
+               width = 0.4,
+               alpha = 0.2,
+               outlier.shape = NA) +
+  labs(x = "(f) Domestication") +
   ylim(c(0, 500)) +
-  scale_x_continuous(breaks = c(1, 2, 3),
+  scale_x_discrete(breaks = c(1, 2, 3),
                      labels = c("Domesticated", "Partially-domesticated", "Wild")) +
   scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
                      labels = c(0, 2, 9, 31, 99, 316)) +
