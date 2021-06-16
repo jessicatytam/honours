@@ -1,0 +1,20 @@
+#!/bin/bash
+
+#PBS -N MCMCglmm_loop2_5
+#PBS -l select=1:ncpus=1:mem=50gb
+#PBS -l walltime=48:00:00
+#PBS -M j.tam@student.unsw.edu.au
+#PBS -m ae
+
+#Create Katana workspace
+module purge
+
+#Loading R and GNU compiler for Stan code (if needed)
+module add gcc/7.5.0 
+module add R/4.0.2-gcc7
+
+#Navigate to working direction
+cd /srv/scratch/z5093095/MCMCglmm2
+
+#Run R code
+Rscript R/MCMCglmm_loop2_5.R

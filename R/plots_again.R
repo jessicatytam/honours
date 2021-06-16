@@ -417,12 +417,30 @@ map_plot <- ggplot(data = world) +
   coord_sf(expand = FALSE) +
   labs(x = "Longitude",
        y = "Latitude",
-       colour = "h-index") +
+       colour = expression(bold(paste("species ", italic(h), "-index")))) +
   scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous"),
                          labels = c(0, 2, 9, 31, 99, 316)) +
   themebyjess_light_map()
 
 ggplot2::ggsave("outputs/logh_map.png", map_plot, width = 16, height = 9, units = "in", dpi = 300)
+
+iucnmap_plot <- ggplot(data = world) +
+  geom_sf() +
+  geom_point(data = includeh %>% 
+               drop_na(iucn_bin), aes(x = x,
+                                  y = y,
+                                  colour = factor(iucn_bin)),
+             size = 3,
+             alpha = 0.4) + 
+  coord_sf(expand = FALSE) +
+  labs(x = "Longitude",
+       y = "Latitude",
+       colour = "IUCN Red List status") +
+  scale_colour_manual(values = c("#6B97DB", "#876CD9", "#A340D7", "#B83480", "#CC2828"),
+                      labels = c("Least Concern", "Vulnerable", "Endangered", "Critically Endangered", "Extinct in the Wild")) +
+  themebyjess_light_map()
+
+ggplot2::ggsave("outputs/iucn_map.png", iucnmap_plot, width = 16, height = 9, units = "in", dpi = 300)
 
 #phylogenetic tree
 
