@@ -407,23 +407,6 @@ ggplot2::ggsave("outputs/logh_vs_lat.png", lat_plot, width = 16, height = 9, uni
 
 world <- ne_countries(scale = "large", returnclass = "sf")
 
-map_plot <- ggplot(data = world) +
-  geom_sf() +
-  geom_point(data = includeh, aes(x = x,
-                                  y = y,
-                                  colour = logh1),
-             size = 3,
-             alpha = 0.4) +
-  coord_sf(expand = FALSE) +
-  labs(x = "Longitude",
-       y = "Latitude",
-       colour = expression(bold(paste("species ", italic(h), "-index")))) +
-  scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous"),
-                         labels = c(0, 2, 9, 31, 99, 316)) +
-  themebyjess_light_map()
-
-ggplot2::ggsave("outputs/logh_map.png", map_plot, width = 16, height = 9, units = "in", dpi = 300)
-
 iucnmap_plot <- ggplot(data = world) +
   geom_sf() +
   geom_point(data = includeh %>% 
@@ -433,7 +416,8 @@ iucnmap_plot <- ggplot(data = world) +
              size = 3,
              alpha = 0.4) + 
   coord_sf(expand = FALSE) +
-  labs(x = "Longitude",
+  labs(title = "  (a)",
+       x = "Longitude",
        y = "Latitude",
        colour = "IUCN Red List status") +
   scale_colour_manual(values = c("#6B97DB", "#876CD9", "#A340D7", "#B83480", "#CC2828"),
@@ -441,6 +425,36 @@ iucnmap_plot <- ggplot(data = world) +
   themebyjess_light_map()
 
 ggplot2::ggsave("outputs/iucn_map.png", iucnmap_plot, width = 16, height = 9, units = "in", dpi = 300)
+
+map_plot <- ggplot(data = world) +
+  geom_sf() +
+  geom_point(data = includeh, aes(x = x,
+                                  y = y,
+                                  colour = logh1),
+             size = 3,
+             alpha = 0.4) +
+  coord_sf(expand = FALSE) +
+  labs(title = "  (b)",
+       x = "Longitude",
+       y = "Latitude",
+       colour = expression(bold(paste("species ", italic(h), "-index")))) +
+  scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous"),
+                         labels = c(0, 2, 9, 31, 99, 316)) +
+  themebyjess_light_map()
+
+ggplot2::ggsave("outputs/logh_map.png", map_plot, width = 16, height = 9, units = "in", dpi = 300)
+
+
+maps <- ggarrange(iucnmap_plot + rremove("xlab") + rremove("ylab"), map_plot + rremove("xlab") + rremove("ylab"),
+                  nrow = 2)
+
+maps_an <- annotate_figure(maps,
+                           left = "Latitude",
+                           right = "Longitude",
+                           rot = 90,
+                           family = "Lato",
+                           size = 22)
+
 
 #phylogenetic tree
 

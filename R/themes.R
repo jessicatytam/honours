@@ -120,7 +120,11 @@ themebyjess_light_quasirandom <- function() {
 }
 
 themebyjess_light_map <- function() {
-  theme(axis.title = element_text(family = "Lato",
+  theme(title = element_text(family = "Lato",
+                             face = "bold",
+                             size = 16,
+                             colour = "black"),
+        axis.title = element_text(family = "Lato",
                                   face = "bold",
                                   size = 20,
                                   colour = "black"),
