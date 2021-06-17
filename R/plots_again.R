@@ -446,14 +446,22 @@ ggplot2::ggsave("outputs/logh_map.png", map_plot, width = 16, height = 9, units 
 
 
 maps <- ggarrange(iucnmap_plot + rremove("xlab") + rremove("ylab"), map_plot + rremove("xlab") + rremove("ylab"),
-                  nrow = 2)
+                  nrow = 2,
+                  heights = c(1, 1),
+                  align = c("v"))
 
 maps_an <- annotate_figure(maps,
-                           left = "Latitude",
-                           right = "Longitude",
-                           rot = 90,
-                           family = "Lato",
-                           size = 22)
+                           left = text_grob("Latitude",
+                                            rot = 90,
+                                            family = "Lato",
+                                            size = 22,
+                                            face = "bold"),
+                           bottom = text_grob("Longitude",
+                                              family = "Lato",
+                                              size = 22,
+                                              face = "bold"))
+
+ggplot2::ggsave("outputs/maps_plot.png", maps_an, width = 16, height = 13, units = "in", dpi = 300)
 
 
 #phylogenetic tree
