@@ -413,18 +413,22 @@ iucnmap_plot <- ggplot(data = world) +
                drop_na(iucn_bin), aes(x = x,
                                   y = y,
                                   colour = factor(iucn_bin),
-                                  size = logh1*2,
-                                  alpha = logh1*2)) + 
+                                  size = logh1*3,
+                                  alpha = logh1*3)) + 
   coord_sf(expand = FALSE) +
   labs(title = "  (a)",
        x = "Longitude",
        y = "Latitude",
-       colour = "IUCN Red List status") +
+       colour = "IUCN Red List status",
+       size = expression(bold(paste("species ", italic(h), "-index"))),
+       alpha = expression(bold(paste("species ", italic(h), "-index")))) +
   scale_colour_manual(values = c("#6B97DB", "#876CD9", "#A340D7", "#B83480", "#CC2828"),
-                      labels = c("Least Concern", "Vulnerable", "Endangered", "Critically Endangered", "Extinct in the Wild")) +
+                      labels = c("Least Concern", "Vulnerable", "Endangered", "Critically Endangered", "Extinct in the Wild"),
+                      guide = guide_legend(override.aes = list(size = 4,
+                                                               alpha = 1))) +
   themebyjess_light_map()
 
-ggplot2::ggsave("outputs/iucn_map.png", iucnmap_plot, width = 16, height = 9, units = "in", dpi = 300)
+ggplot2::ggsave("outputs/iucn_map2.png", iucnmap_plot, width = 16, height = 9, units = "in", dpi = 300)
 
 map_plot <- ggplot(data = world) +
   geom_sf() +
