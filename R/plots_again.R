@@ -412,9 +412,9 @@ iucnmap_plot <- ggplot(data = world) +
   geom_point(data = includeh %>% 
                drop_na(iucn_bin), aes(x = x,
                                   y = y,
-                                  colour = factor(iucn_bin)),
-             size = 3,
-             alpha = 0.4) + 
+                                  colour = factor(iucn_bin),
+                                  size = logh1*2,
+                                  alpha = logh1*2)) + 
   coord_sf(expand = FALSE) +
   labs(title = "  (a)",
        x = "Longitude",
@@ -719,7 +719,8 @@ med_mass <- med_mass %>%
 scopus_order$order <- factor(scopus_order$order, levels = med_mass$order)
 
 orders <- scopus_order %>%
-  filter(year == 2020)
+  filter(year > 2010,
+         order == c("Primates", "Eulipotyphia", "Carnivora", "Cetacea"))
 
 scopus_order_1950 <- scopus_order %>%
   filter(year > 1949)
@@ -728,11 +729,12 @@ scopus_order_1940 <- scopus_order %>%
   filter(year > 1939)
 
 pub_ridge_plot <- ggplot(data = scopus_order_1940,
-       aes(x = year,
-           y = count,
-           fill = order,
-           label = order)) +
+                         aes(x = year,
+                             y = count,
+                             fill = order)) +
   geom_stream(type = "ridge") +
+  geom_stream_label(type = "ridge",
+                    aes(label = order)) +
   labs(title = "  (a)",
        x = "Year",
        y = "Number of publications") +
@@ -747,8 +749,8 @@ pub_ridge_plot <- ggplot(data = scopus_order_1940,
                                "#8CE3B2"),
                     guide = guide_legend(override.aes = list(size = 6,
                                                              alpha = 1),
-                                         ncol = 1)) +
-  themebyjess_light_stream()
+                                         ncol = 1)) #+
+themebyjess_light_stream()
 
 ggplot2::ggsave("outputs/pub_ridge.png", pub_ridge_plot, width = 16, height = 9, units = "in", dpi = 300)
 
@@ -782,7 +784,7 @@ pub_proportion_plot <- scopus_order %>%
              y = count,
              fill = order)) +
   geom_stream(type = "proportion") +
-  geom_label_repel(aes(label = order)) +
+  geom_stream_label(aes(label = order)) +
   labs(title = "  (b)",
        x = "Year",
        y = "Proportion of publications") +
