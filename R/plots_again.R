@@ -782,6 +782,7 @@ pub_proportion_plot <- scopus_order %>%
              y = count,
              fill = order)) +
   geom_stream(type = "proportion") +
+  geom_label_repel(aes(label = order)) +
   labs(title = "  (b)",
        x = "Year",
        y = "Proportion of publications") +
@@ -800,6 +801,8 @@ pub_proportion_plot <- scopus_order %>%
                                                              alpha = 1),
                                          ncol = 1)) +
   themebyjess_light_stream()
+
+ggplotly(pub_proportion_plot)
 
 ggplot2::ggsave("outputs/pub_proportion.png", pub_proportion_plot, width = 16, height = 9, units = "in", dpi = 300)
 
