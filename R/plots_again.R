@@ -723,8 +723,7 @@ med_mass <- med_mass %>%
 scopus_order$order <- factor(scopus_order$order, levels = med_mass$order)
 
 orders <- scopus_order %>%
-  filter(year > 2010,
-         order == c("Primates", "Eulipotyphia", "Carnivora", "Cetacea"))
+  filter(year > 2009)
 
 scopus_order_1950 <- scopus_order %>%
   filter(year > 1949)
@@ -736,7 +735,8 @@ pub_ridge_plot <- ggplot(data = scopus_order_1940,
                          aes(x = year,
                              y = count,
                              fill = order)) +
-  geom_stream(type = "ridge") +
+  geom_stream(type = "ridge",
+              n_grid = 10000) +
   geom_stream_label(type = "ridge",
                     aes(label = order)) +
   labs(title = "  (a)",
