@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#PBS -N MCMCglmm_loop2_1
+#PBS -N MCMCglmm_loop2_7
 #PBS -l select=1:ncpus=1:mem=20gb
 #PBS -l walltime=24:00:00
 #PBS -M j.tam@student.unsw.edu.au
@@ -17,4 +17,4 @@ module add R/4.0.2-gcc7
 cd /srv/scratch/z5093095/MCMCglmm2
 
 #Run R code
-Rscript R/MCMCglmm_loop2_1.R
+Rscript R/MCMCglmm_loop2_7.R

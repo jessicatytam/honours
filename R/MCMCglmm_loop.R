@@ -8,8 +8,8 @@ imp_list <- readRDS("data/intermediate_data/MCMCglmm/imp_list.rds")
 trimmed_trees <- readRDS("data/intermediate_data/trimmed_trees.rds")
 
 #pick random trees
-random_trees <- sample(trimmed_trees, 2, replace = FALSE)
-random_df <- sample(imp_list, 2, replace = FALSE)
+random_trees <- sample(trimmed_trees, 1, replace = FALSE)
+random_df <- sample(imp_list, 1, replace = FALSE)
 
 #non-informative prior
 prior1 <- list(R = list(V = diag(1), nu = 0.002),
@@ -24,7 +24,7 @@ for (i in 1:length(random_trees)) {
                                                         abs_lat +
                                                         humanuse_bin +
                                                         domestication_bin +
-                                                        iucn_bin +
+                                                        poly(iucn_bin, 2) +
                                                         log_sumgtrends,
                                                       random = ~ animal,
                                                       family = "poisson",

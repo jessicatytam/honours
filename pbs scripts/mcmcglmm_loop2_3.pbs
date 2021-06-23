@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #PBS -N MCMCglmm_loop2_3
-#PBS -l select=1:ncpus=1:mem=50gb
-#PBS -l walltime=48:00:00
+#PBS -l select=1:ncpus=1:mem=20gb
+#PBS -l walltime=24:00:00
 #PBS -M j.tam@student.unsw.edu.au
 #PBS -m ae
 

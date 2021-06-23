@@ -8,7 +8,7 @@ imp_list <- readRDS("data/intermediate_data/MCMCglmm/imp_list.rds")
 random_trees <- readRDS("data/intermediate_data/random_trees.rds")
 
 #imputation list
-imp_2 <- imp_list[3:4]
+imp_2 <- imp_list[2]
 
 #non-informative prior
 prior1 <- list(R = list(V = diag(1), nu = 0.002),
