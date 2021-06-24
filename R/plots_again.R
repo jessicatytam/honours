@@ -411,13 +411,12 @@ iucnmap_plot <- ggplot(data = world) +
   geom_sf() +
   geom_point(data = includeh %>% 
                drop_na(iucn_bin), aes(x = x,
-                                  y = y,
-                                  colour = factor(iucn_bin),
-                                  size = logh1*3,
-                                  alpha = logh1*3)) + 
+                                      y = y,
+                                      colour = factor(iucn_bin),
+                                      size = logh1*3,
+                                      alpha = logh1*3)) + 
   coord_sf(expand = FALSE) +
-  labs(title = "  (a)",
-       x = "Longitude",
+  labs(x = "Longitude",
        y = "Latitude",
        colour = "IUCN Red List status",
        size = expression(bold(paste("species ", italic(h), "-index"))),
@@ -429,6 +428,30 @@ iucnmap_plot <- ggplot(data = world) +
   themebyjess_light_map()
 
 ggplot2::ggsave("outputs/iucn_map2.png", iucnmap_plot, width = 16, height = 9, units = "in", dpi = 300)
+
+iucnmap2_plot <- ggplot(data = world) +
+  geom_sf() +
+  geom_point(data = includeh %>% 
+               drop_na(iucn_bin), aes(x = x,
+                                  y = y,
+                                  colour = logh1,
+                                  size = iucn_bin,
+                                  alpha = iucn_bin)) + 
+  coord_sf(expand = FALSE) +
+  labs(x = "Longitude",
+       y = "Latitude",
+       colour = expression(bold(paste("species ", italic(h), "-index"))),
+       size = "IUCN Red List status",
+       alpha = "IUCN Red List status") +
+  scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous"),
+                         labels = c(0, 2, 9, 31, 99, 316)) +
+  scale_size(range = c(3, 7),
+             labels = c("Least Concern", "Vulnerable", "Endangered", "Critically Endangered", "Extinct in the Wild")) +
+  scale_alpha(range = c(0.2, 0.6),
+              labels = c("Least Concern", "Vulnerable", "Endangered", "Critically Endangered", "Extinct in the Wild")) +
+  themebyjess_light_map()
+
+ggplot2::ggsave("outputs/iucn_map3.png", iucnmap2_plot, width = 16, height = 9, units = "in", dpi = 300)
 
 map_plot <- ggplot(data = world) +
   geom_sf() +
