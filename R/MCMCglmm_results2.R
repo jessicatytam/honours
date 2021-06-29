@@ -1,14 +1,15 @@
 library(dplyr)
 library(purrr)
 library(tidyr)
+library(stringr)
 library(Rmisc)
 library(coda)
 library(MCMCglmm)
 
 #load data
-#includeh <- read.csv(file = "outputs/data/includeh.csv")[-c(1)] 
-#includeh$genus_species <- str_replace(includeh$genus_species, " ", "_")
-#tree100 <- tree100 <- readRDS("data/intermediate_data/tree100.nex")
+includeh <- read.csv(file = "outputs/data/includeh.csv")[-c(1)] 
+includeh$genus_species <- str_replace(includeh$genus_species, " ", "_")
+tree100 <- tree100 <- readRDS("data/intermediate_data/tree100.nex")
 mod_list_1 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_1.rds")
 mod_list_2 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_2.rds")
 mod_list_3 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_3.rds")
@@ -65,13 +66,13 @@ mod_95ci <- function(model) {
 map_df(mod_results_flat, mod_95ci)
 
 
-#pagel's lambda; animal_post.mean/(animal_post.mean + units_post.mean + v_dist) 
+#phylo; animal_post.mean/(animal_post.mean + units_post.mean + v_dist) 
 dat_sub <- includeh %>%
   filter(genus_species %in% tree100$tree_6061$tip.label)
 
-v_dist <- log(1+ 1/mean(dat_sub$h)) #0.1054779
+v_dist <- log(1+ 1/mean(dat_sub$h)) #0.105849914894506
 
-
+mean(mod_results_flat$animal)/(mean(mod_results_flat$animal) + mean(mod_results_flat$units) + v_dist) #0.6358852
 
 #getting the mean
 

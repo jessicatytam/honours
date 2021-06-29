@@ -89,8 +89,8 @@ v_dist <- log(1+ 1/mean(dat$h))
 
 # phylogenetic signal
 
-5.097/(5.097 + 0.6279 + v_dist)
-
+mean(mod_results_flat$animal)/(mean(mod_results_flat$animal) + mean(mod_results_flat$units) + v_dist)
+#animal post.mean / (animal post.mean + units post.mean + v_dist)
 
 ### it is fine but takes a lot longer
 # probably try ZIP
