@@ -153,9 +153,9 @@ cov_tree <- vcv2(tree, corr = FALSE)
 
 mod1 <- glm(h ~ logmass + 
               abs(median_lat) + 
-              #I(scale(median_lat)^2) + 
+              I(scale(median_lat)^2) + 
               scale(iucn_bin) + 
-             # I(scale(iucn_bin)^2)  + # original hypothesis has this
+              I(scale(iucn_bin)^2)  + # original hypothesis has this
               humanuse_bin + 
               domestication_bin + 
               log_sumgtrends, 
@@ -163,6 +163,17 @@ mod1 <- glm(h ~ logmass +
             data = includeh)
 summary(mod1)
 vif(mod1)
+
+mod2 <- glm(h ~ logmass +
+              abs(median_lat) +
+              humanuse_bin +
+              domestication_bin +
+              I(iucn_bin^2) +
+              log_sumgtrends, 
+            family = "quasipoisson", 
+            data = includeh)
+summary(mod2)
+vif(mod2)
 
 # pglmm
 

@@ -81,6 +81,7 @@ system.time(mod_op <- MCMCglmm(h ~ logmass +
 # 510.795   3.242 516.163 
 
 summary(mod_op)
+vif(mod_op)
 plot(mod_op) # this looks good
 
 saveRDS(mod_op, file = here("Rdata", "mod_op.rds"))
