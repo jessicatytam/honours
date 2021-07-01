@@ -24,23 +24,26 @@ library(ggpol)
 library(plotly)
 library(sysfonts)
 library(GGally)
+library(car)
 ```
 
 ```{r}
 #files
-includeh <- read.csv(file = "outputs/data/includeh.csv")[-c(1)] 
+includeh <- read.csv(file = "outputs/data/includeh.csv")[-c(1)]
 #source("R/themes.R")
-font_add_google("Roboto")
+source("R/themes.R")
 ```
 
 #Plots
 
 ```{r}
-ggplot(includeh, aes(x = h)) +
-  labs(x = "h-index",
+h_dist <- ggplot(includeh, aes(x = h)) +
+  labs(x = expression(bold(paste("species ", italic(h), "-index"))),
        y = "Frequency of species") +
   geom_bar() +
   themebyjess_light_point()
+
+ggplot2::ggsave("outputs/h_dist.png", h_dist, width = 16, height = 9, units = "in", dpi = 300)
 ```
 
 ```{r}

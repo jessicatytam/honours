@@ -74,6 +74,16 @@ includeh$redlistCategory <- factor(includeh$redlistCategory, levels = c("Least C
 
 source("R/themes.R")
 
+#h distribution
+
+h_dist <- ggplot(includeh, aes(x = h)) +
+  labs(x = expression(bold(paste("species ", italic(h), "-index"))),
+       y = "Frequency of species") +
+  geom_bar() +
+  themebyjess_light_point()
+
+ggplot2::ggsave("outputs/h_dist.png", h_dist, width = 16, height = 9, units = "in", dpi = 300)
+
 #h by order
 ggplot(includeh, aes(x = logh1,
                      y = order)) +
@@ -244,8 +254,9 @@ iucn_plot <- ggplot(includeh, aes(x = logh1,
                position = position_dodge(width = 0.5),
                size = 0.8,
                width = 0.4,
-               alpha = 0.2) +
-  labs(x = "h-index") +
+               alpha = 0.2,
+               outlier.shape = NA) +
+  labs(x = expression(bold(paste("species ", italic(h), "-index")))) +
   scale_x_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
                      labels = c(0, 2, 9, 31, 99, 316)) +
   scale_y_discrete(limits = rev,
@@ -345,8 +356,9 @@ humanuse_plot <- ggplot(includeh_pivot, aes(x = logh1,
   geom_boxplot(fill = "grey80",
                size = 0.8,
                width = 0.4,
-               alpha = 0.2) +
-  labs(x = "h-index") +
+               alpha = 0.2,
+               outlier.shape = NA) +
+  labs(x = expression(bold(paste("species ", italic(h), "-index")))) +
   scale_x_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
                      labels = c(0, 2, 9, 31, 99, 316)) +
   scale_y_discrete(limits = rev,
