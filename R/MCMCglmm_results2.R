@@ -10,16 +10,16 @@ library(MCMCglmm)
 includeh <- read.csv(file = "outputs/data/includeh.csv")[-c(1)] 
 includeh$genus_species <- str_replace(includeh$genus_species, " ", "_")
 tree100 <- tree100 <- readRDS("data/intermediate_data/tree100.nex")
-mod_list_1 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_1.rds")
-mod_list_2 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_2.rds")
-mod_list_3 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_3.rds")
-mod_list_4 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_4.rds")
-mod_list_5 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_5.rds")
-mod_list_6 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_6.rds")
-mod_list_7 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_7.rds")
-mod_list_8 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_8.rds")
-mod_list_9 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_9.rds")
-mod_list_10 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_10.rds")
+# mod_list_1 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_1.rds")
+# mod_list_2 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_2.rds")
+# mod_list_3 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_3.rds")
+# mod_list_4 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_4.rds")
+# mod_list_5 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_5.rds")
+# mod_list_6 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_6.rds")
+# mod_list_7 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_7.rds")
+# mod_list_8 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_8.rds")
+# mod_list_9 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_9.rds")
+# mod_list_10 <- readRDS("data/intermediate_data/MCMCglmm/mod_list2_10.rds")
 
 #combine models
 mod_list_all <- do.call(c, list(mod_list_1, mod_list_2, mod_list_3, mod_list_4, mod_list_5, mod_list_6, mod_list_7, mod_list_8, mod_list_9, mod_list_10))
@@ -38,7 +38,8 @@ mod_result <- function(model) {
 }
 mod_results_flat <- map_df(mod_list_all, mod_result)
 
-saveRDS(mod_results_flat, "data/intermediate_data/MCMCglmm/mod_results_100.rds")
+saveRDS(mod_results_flat, "data/intermediate_data/MCMCglmm/mod_results_100_2.rds")
+mod_results_flat <- readRDS("data/intermediate_data/MCMCglmm/mod_results_100_2.rds")
 
 # test <- function(x){x + 1}
 # map_dbl(1:10, test)
@@ -66,13 +67,13 @@ mod_95ci <- function(model) {
 map_df(mod_results_flat, mod_95ci)
 
 
-#phylo; animal_post.mean/(animal_post.mean + units_post.mean + v_dist) 
+#phylo; animal_post.mean/(animal_post.mean + units_post.mean + v_dist)? 
+includeh <- read.csv(file = "outputs/data/includeh.csv")[-c(1)] 
+tree100 <- tree100 <- readRDS("data/intermediate_data/tree100.nex")
 dat_sub <- includeh %>%
   filter(genus_species %in% tree100$tree_6061$tip.label)
 
 v_dist <- log(1+ 1/mean(dat_sub$h)) #0.105849914894506
 
 mean(mod_results_flat$animal)/(mean(mod_results_flat$animal) + mean(mod_results_flat$units) + v_dist) #0.6358852
-
-#getting the mean
 
