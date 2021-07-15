@@ -39,7 +39,7 @@ mod_result <- function(model) {
 mod_results_flat <- map_df(mod_list_all, mod_result)
 
 saveRDS(mod_results_flat, "data/intermediate_data/MCMCglmm/mod_results_100_2.rds")
-mod_results_flat <- readRDS("data/intermediate_data/MCMCglmm/mod_results_100_2.rds")
+mod_results_flat_2 <- readRDS("data/intermediate_data/MCMCglmm/mod_results_100_2.rds")
 
 # test <- function(x){x + 1}
 # map_dbl(1:10, test)
@@ -69,11 +69,16 @@ map_df(mod_results_flat, mod_95ci)
 
 #phylo; animal_post.mean/(animal_post.mean + units_post.mean + v_dist)? 
 includeh <- read.csv(file = "outputs/data/includeh.csv")[-c(1)] 
+includeh$genus_species <- str_replace(includeh$genus_species, " ", "_")
 tree100 <- tree100 <- readRDS("data/intermediate_data/tree100.nex")
 dat_sub <- includeh %>%
   filter(genus_species %in% tree100$tree_6061$tip.label)
 
-v_dist <- log(1+ 1/mean(dat_sub$h)) #0.105849914894506
+v_dist <- log(1 + 1/mean(dat_sub$h)) #0.105849914894506
+v_dist_2 <- log(1 + 1/dat_sub$h)
 
-mean(mod_results_flat$animal)/(mean(mod_results_flat$animal) + mean(mod_results_flat$units) + v_dist) #0.6358852
+mean(mod_results_flat_2$animal)/(mean(mod_results_flat_2$animal) + mean(mod_results_flat_2$units) + v_dist) #0.6358852
 
+#95CI
+
+quantile(mean(mod_results_flat_2$animal)/(mean(mod_results_flat_2$animal) + mean(mod_results_flat_2$units) + v_dist_2), c(0.025, 0.975)) #0.0000000, 0.6589171 
