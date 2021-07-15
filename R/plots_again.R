@@ -766,6 +766,47 @@ scopus_order_1950 <- scopus_order %>%
 scopus_order_1940 <- scopus_order %>%
   filter(year > 1939)
 
+#check percentages
+
+scopus_order_1960 <- scopus_order %>% 
+  filter(year == 1960)
+scopus_order_1970 <- scopus_order %>% 
+  filter(year == 1970)
+scopus_order_1980 <- scopus_order %>% 
+  filter(year == 1980)
+scopus_order_1990 <- scopus_order %>% 
+  filter(year == 1990)
+scopus_order_2000 <- scopus_order %>% 
+  filter(year == 2000)
+scopus_order_2010 <- scopus_order %>% 
+  filter(year == 2010)
+
+sum_1940 <- aggregate(scopus_order_1940$count, by = list(Category = scopus_order_1940$order), FUN = sum)
+sum_1960 <- aggregate(scopus_order_1960$count, by = list(Category = scopus_order_1960$order), FUN = sum)
+sum_1960 <- sum_1960 %>% 
+  rename("1960" = "x")
+sum_1970 <- aggregate(scopus_order_1970$count, by = list(Category = scopus_order_1970$order), FUN = sum)
+sum_1970 <- sum_1970 %>% 
+  rename("1970" = "x")
+sum_1980 <- aggregate(scopus_order_1980$count, by = list(Category = scopus_order_1980$order), FUN = sum)
+sum_1980 <- sum_1980 %>% 
+  rename("1980" = "x")
+sum_1990 <- aggregate(scopus_order_1990$count, by = list(Category = scopus_order_1990$order), FUN = sum)
+sum_1990 <- sum_1990 %>% 
+  rename("1990" = "x")
+sum_2000 <- aggregate(scopus_order_2000$count, by = list(Category = scopus_order_2000$order), FUN = sum)
+sum_2000 <- sum_2000 %>% 
+  rename("2000" = "x")
+sum_2010 <- aggregate(scopus_order_2010$count, by = list(Category = scopus_order_2010$order), FUN = sum)
+sum_2010 <- sum_2010 %>% 
+  rename("2010" = "x")
+
+sum_all <- join_all(list(sum_1960, sum_1970, sum_1980, sum_1990, sum_2000, sum_2010))
+sum_all %>% 
+  mutate("1960%" = 1960/sum(1960))
+
+#plots
+
 pub_ridge_plot <- ggplot(data = scopus_order_1940,
                          aes(x = year,
                              y = count,
