@@ -777,7 +777,7 @@ scopus_order_yr <- scopus_order %>% group_by(year) %>% summarise(sum = sum(count
 scopus_order_yrperc <- left_join(scopus_order, scopus_order_yr)
 scopus_order_yrperc <- scopus_order_yrperc %>% 
   mutate(perc = count/sum*100)
-saveRDS(scopus_order_yrperc, file = "outputs/data/scopus_order_yrperc.csv")
+write.csv(scopus_order_yrperc, file = "outputs/data/scopus_order_yrperc.csv")
 
 scopus_order_1960 <- scopus_order %>% 
   filter(year == 1960)
