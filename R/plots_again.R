@@ -1037,29 +1037,6 @@ ggMarginal(lat_combine,
            type = "histogram",
            xparams = list(binwidth = 1))
 
-
-iucn_combine <- ggplot(includeh %>% 
-                         drop_na(iucn_bin), aes(x = factor(iucn_bin),
-                                     y = logh1)) +
-  geom_quasirandom(aes(colour = clade),
-                   size = 3,
-                   alpha = 0.2) +
-  geom_boxplot(fill = "grey80",
-               size = 0.8,
-               width = 0.4,
-               alpha = 0.2,
-               outlier.shape = NA) +
-  labs(x = "(c) IUCN Red List status") +
-  ylim(c(0, 500)) +
-  scale_x_discrete(breaks = c(1, 2, 3, 4, 5),
-                     labels = c("LC", "VU", "EN", "CE", "EW")) +
-  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
-                       labels = c(0, 2, 9, 31, 99, 316)) +
-  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
-                      guide = guide_legend(override.aes = list(size = 5,
-                                                               alpha = 1))) +
-  themebyjess_light_quasirandom()
-
 humanuse_combine <- ggplot(includeh, aes(x = factor(humanuse_bin),
                                      y = logh1)) +
   geom_quasirandom(aes(colour = clade),
@@ -1070,7 +1047,7 @@ humanuse_combine <- ggplot(includeh, aes(x = factor(humanuse_bin),
                width = 0.4,
                alpha = 0.2,
                outlier.shape = NA) +
-  labs(x = "(d) Human use") +
+  labs(x = "(c) Human use") +
   ylim(c(0, 500)) +
   scale_x_discrete(breaks = c(0, 1),
                      labels = c("No documented use", "Use documented")) +
@@ -1091,10 +1068,32 @@ domestication_combine <- ggplot(includeh, aes(x = factor(domestication_bin),
                width = 0.4,
                alpha = 0.2,
                outlier.shape = NA) +
-  labs(x = "(e) Domestication") +
+  labs(x = "(d) Domestication") +
   ylim(c(0, 500)) +
   scale_x_discrete(breaks = c(1, 2, 3),
                      labels = c("Domesticated", "Partially-domesticated", "Wild")) +
+  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 5,
+                                                               alpha = 1))) +
+  themebyjess_light_quasirandom()
+
+iucn_combine <- ggplot(includeh %>% 
+                         drop_na(iucn_bin), aes(x = factor(iucn_bin),
+                                                y = logh1)) +
+  geom_quasirandom(aes(colour = clade),
+                   size = 3,
+                   alpha = 0.2) +
+  geom_boxplot(fill = "grey80",
+               size = 0.8,
+               width = 0.4,
+               alpha = 0.2,
+               outlier.shape = NA) +
+  labs(x = "(e) IUCN Red List status") +
+  ylim(c(0, 500)) +
+  scale_x_discrete(breaks = c(1, 2, 3, 4, 5),
+                   labels = c("LC", "VU", "EN", "CE", "EW")) +
   scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
                      labels = c(0, 2, 9, 31, 99, 316)) +
   scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
@@ -1118,8 +1117,8 @@ gtrends_combine <- ggplot(includeh, aes(x = log_sumgtrends,
                                                                alpha = 1))) +
   themebyjess_light_point()
 
-grid_plot <- ggarrange(mass_combine + rremove("ylab"), lat_combine + rremove("ylab"), iucn_combine + rremove("ylab"),
-                       humanuse_combine + rremove("ylab"), domestication_combine + rremove("ylab"), gtrends_combine + rremove("ylab"),
+grid_plot <- ggarrange(mass_combine + rremove("ylab"), lat_combine + rremove("ylab"), humanuse_combine + rremove("ylab"),
+                       domestication_combine + rremove("ylab"), iucn_combine + rremove("ylab"), gtrends_combine + rremove("ylab"),
           common.legend = TRUE,
           nrow = 2, ncol = 3)
 
