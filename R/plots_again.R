@@ -1037,21 +1037,6 @@ ggMarginal(lat_combine,
            type = "histogram",
            xparams = list(binwidth = 1))
 
-gtrends_combine <- ggplot(includeh, aes(x = log_sumgtrends,
-                                     y = logh1,
-                                     colour = clade)) +
-  geom_point(size = 3,
-             alpha = 0.2) +
-  labs(x = "(c) Google Trends index") +
-  ylim(c(0, 500)) +
-  scale_x_continuous(breaks = c(0, 2, 3, 4),
-                     labels = c(0, 100, "1,000", "10,000")) +
-  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
-                     labels = c(0, 2, 9, 31, 99, 316)) +
-  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
-                      guide = guide_legend(override.aes = list(size = 5,
-                                                               alpha = 1))) +
-  themebyjess_light_point()
 
 iucn_combine <- ggplot(includeh %>% 
                          drop_na(iucn_bin), aes(x = factor(iucn_bin),
@@ -1064,7 +1049,7 @@ iucn_combine <- ggplot(includeh %>%
                width = 0.4,
                alpha = 0.2,
                outlier.shape = NA) +
-  labs(x = "(d) IUCN Red List status") +
+  labs(x = "(c) IUCN Red List status") +
   ylim(c(0, 500)) +
   scale_x_discrete(breaks = c(1, 2, 3, 4, 5),
                      labels = c("LC", "VU", "EN", "CE", "EW")) +
@@ -1085,7 +1070,7 @@ humanuse_combine <- ggplot(includeh, aes(x = factor(humanuse_bin),
                width = 0.4,
                alpha = 0.2,
                outlier.shape = NA) +
-  labs(x = "(e) Human use") +
+  labs(x = "(d) Human use") +
   ylim(c(0, 500)) +
   scale_x_discrete(breaks = c(0, 1),
                      labels = c("No documented use", "Use documented")) +
@@ -1106,7 +1091,7 @@ domestication_combine <- ggplot(includeh, aes(x = factor(domestication_bin),
                width = 0.4,
                alpha = 0.2,
                outlier.shape = NA) +
-  labs(x = "(f) Domestication") +
+  labs(x = "(e) Domestication") +
   ylim(c(0, 500)) +
   scale_x_discrete(breaks = c(1, 2, 3),
                      labels = c("Domesticated", "Partially-domesticated", "Wild")) +
@@ -1117,9 +1102,24 @@ domestication_combine <- ggplot(includeh, aes(x = factor(domestication_bin),
                                                                alpha = 1))) +
   themebyjess_light_quasirandom()
 
+gtrends_combine <- ggplot(includeh, aes(x = log_sumgtrends,
+                                     y = logh1,
+                                     colour = clade)) +
+  geom_point(size = 3,
+             alpha = 0.2) +
+  labs(x = "(f) Google Trends index") +
+  ylim(c(0, 500)) +
+  scale_x_continuous(breaks = c(0, 2, 3, 4),
+                     labels = c(0, 100, "1,000", "10,000")) +
+  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
+  scale_colour_manual(values = c("#f1c40f", "#e67e22", "#e74c3c", "#8e44ad", "#3498db"),
+                      guide = guide_legend(override.aes = list(size = 5,
+                                                               alpha = 1))) +
+  themebyjess_light_point()
 
-grid_plot <- ggarrange(mass_combine + rremove("ylab"), lat_combine + rremove("ylab"), gtrends_combine + rremove("ylab"), 
-          iucn_combine + rremove("ylab"), humanuse_combine + rremove("ylab"), domestication_combine + rremove("ylab"),
+grid_plot <- ggarrange(mass_combine + rremove("ylab"), lat_combine + rremove("ylab"), iucn_combine + rremove("ylab"),
+                       humanuse_combine + rremove("ylab"), domestication_combine + rremove("ylab"), gtrends_combine + rremove("ylab"),
           common.legend = TRUE,
           nrow = 2, ncol = 3)
 
