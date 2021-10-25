@@ -82,3 +82,4 @@ mean(mod_results_flat_2$animal)/(mean(mod_results_flat_2$animal) + mean(mod_resu
 #95CI
 
 quantile(mean(mod_results_flat_2$animal)/(mean(mod_results_flat_2$animal) + mean(mod_results_flat_2$units) + v_dist_2), c(0.025, 0.975)) #0.0000000, 0.6589171 
+hist(mean(mod_results_flat_2$animal)/(mean(mod_results_flat_2$animal) + mean(mod_results_flat_2$units) + v_dist_2)) 
