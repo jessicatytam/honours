@@ -68,18 +68,38 @@ map_df(mod_results_flat, mod_95ci)
 
 
 #phylo; animal_post.mean/(animal_post.mean + units_post.mean + v_dist)? 
+
 includeh <- read.csv(file = "outputs/data/includeh.csv")[-c(1)] 
 includeh$genus_species <- str_replace(includeh$genus_species, " ", "_")
 tree100 <- tree100 <- readRDS("data/intermediate_data/tree100.nex")
 dat_sub <- includeh %>%
   filter(genus_species %in% tree100$tree_6061$tip.label)
 
-v_dist <- log(1 + 1/mean(dat_sub$h)) #0.105849914894506
+v_dist <- log(1 + 1/mean(dat_sub$h)) #0.105849914894506; taking the mean of everything
 v_dist_2 <- log(1 + 1/dat_sub$h)
 
 mean(mod_results_flat_2$animal)/(mean(mod_results_flat_2$animal) + mean(mod_results_flat_2$units) + v_dist) #0.6358852
 
 #95CI
 
-quantile(mean(mod_results_flat_2$animal)/(mean(mod_results_flat_2$animal) + mean(mod_results_flat_2$units) + v_dist_2), c(0.025, 0.975)) #0.0000000, 0.6589171 
-hist(mean(mod_results_flat_2$animal)/(mean(mod_results_flat_2$animal) + mean(mod_results_flat_2$units) + v_dist_2)) 
+post <- mean(mod_results_flat_2$animal)/(mean(mod_results_flat_2$animal) + mean(mod_results_flat_2$units) + v_dist_2)
+
+quantile(post, c(0.025, 0.975)) #0.0000000, 0.6589171 
+hist(post) 
+
+#exclude the 0s
+
+dat_exclude <- cbind(dat_sub, post)
+dat_exclude <- dat_exclude$h[dat_exclude$post>0]
+
+v_dist_exclude <- log(1 + 1/mean(dat_exclude)) #0.08509853; taking the mean of everything excluding the 0s
+
+mean(mod_results_flat_2$animal)/(mean(mod_results_flat_2$animal) + mean(mod_results_flat_2$units) + v_dist_exclude) #0.6412005
+
+post_exclude <- post[post>0]
+quantile(post_exclude, c(0.025, 0.975)) #0.5150497, 0.6593380
+hist(post_exclude)
+
+length(post_exclude)/length(post) #0.7955248
+(length(post)-length(post_exclude))/length(post) #0.2044752
+5497-4373 #1124

@@ -1,6 +1,7 @@
 library(dplyr)
 library(purrr)
 library(tidyr)
+library(stringr)
 library(Rmisc)
 library(coda)
 library(MCMCglmm)
@@ -35,7 +36,7 @@ mod_result <- function(model) {
 mod_results_flat <- map_df(mod_list_all, mod_result)
 
 saveRDS(mod_results_flat, "data/intermediate_data/MCMCglmm/mod_results_100.rds")
-mod_results_flat <- readRDS("data/intermediate_data/MCMCglmm/mod_results_100.rds")
+mod_results_flat_1 <- readRDS("data/intermediate_data/MCMCglmm/mod_results_100.rds")
 
 # test <- function(x){x + 1}
 # map_dbl(1:10, test)
@@ -72,9 +73,26 @@ dat_sub <- includeh %>%
 v_dist <- log(1 + 1/mean(dat_sub$h)) #0.1054779
 v_dist_2 <- log(1 + 1/dat_sub$h)
 
-mean(mod_results_flat$animal)/(mean(mod_results_flat$animal) + mean(mod_results_flat$units) + v_dist) #0.6361577
+mean(mod_results_flat_1$animal)/(mean(mod_results_flat_1$animal) + mean(mod_results_flat_1$units) + v_dist) #0.6361577
 
 #95CI
 
-quantile(mean(mod_results_flat$animal)/(mean(mod_results_flat$animal) + mean(mod_results_flat$units) + v_dist_2), c(0.025, 0.975)) #0.0000000, 0.6591695 
+post <- mean(mod_results_flat_1$animal)/(mean(mod_results_flat_1$animal) + mean(mod_results_flat_1$units) + v_dist_2)
 
+quantile(post, c(0.025, 0.975)) #0.0000000, 0.6591695 
+hist(post)
+
+#exclude the 0s
+
+dat_exclude <- cbind(dat_sub, post)
+dat_exclude <- dat_exclude$h[dat_exclude$post>0]
+
+v_dist_exclude <- log(1 + 1/mean(dat_exclude)) #0.08509853; taking the mean of everything excluding the 0s
+
+mean(mod_results_flat_1$animal)/(mean(mod_results_flat_1$animal) + mean(mod_results_flat_1$units) + v_dist_exclude) #0.6414685
+
+post_exclude <- post[post>0]
+quantile(post_exclude, c(0.025, 0.975)) #0.5153933, 0.6595900
+hist(post_exclude)
+
+length(post_exclude)/length(post) #0.7955248
