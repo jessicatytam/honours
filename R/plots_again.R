@@ -106,10 +106,10 @@ ggplot(includeh, aes(x = logh1,
   scale_y_discrete(limits = rev)
 
 #m-index
-ggplot(includeh %>% filter(m>1),
-               aes(x = m,
-                   y = reorder(genus_species, m),
-                   fill = order)) +
+m1 <- ggplot(includeh %>% filter(m>1),
+             aes(x = m,
+                 y = reorder(genus_species, m),
+                 fill = order)) +
   geom_segment(aes(x = 0,
                    xend = m,
                    y = reorder(genus_species, m),
@@ -127,7 +127,7 @@ ggplot(includeh %>% filter(m>1),
   #                                        nrow = 1)) +
   themebyjess_light_col()
 
-ggplot2::ggsave("outputs/h100.png", h100, width = 16, height = 9, units = "in", dpi = 300)
+ggplot2::ggsave("outputs/m1.png", m1, width = 16, height = 13, units = "in", dpi = 300)
 
 #h-index
 h100 <- ggplot(includeh %>% filter(h>99),
@@ -442,6 +442,64 @@ ggplot2::ggsave("outputs/logh_vs_lat.png", lat_plot, width = 16, height = 9, uni
 #map
 
 world <- ne_countries(scale = "large", returnclass = "sf")
+
+map_lc <- ggplot(data = world) + #LC
+  geom_sf() +
+  geom_point(data = includeh %>% 
+               filter(redlistCategory=="Least Concern") %>% 
+               drop_na(iucn_bin), aes(x = x,
+                                      y = y,
+                                      colour = logh1),
+             size = 3,
+             alpha = 0.5) + 
+  coord_sf(expand = FALSE) +
+  labs(title = "(a) Distribution of non-threatened species",
+       x = "Longitude",
+       y = "Latitude",
+       colour = expression(bold(paste("species ", italic(h), "-index")))) +
+  scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous"),
+                         labels = c(0, 2, 9, 31, 99, 316)) +
+  themebyjess_light_map()
+
+ggplot2::ggsave("outputs/map_lc.png", map_lc, width = 16, height = 9, units = "in", dpi = 300)
+
+map_endangered <- ggplot(data = world) + #endangered
+  geom_sf() +
+  geom_point(data = includeh %>% 
+               filter(redlistCategory==list("Vulnerable", "Endangered", "Critically Endangered", "Extinct in the Wild")) %>% 
+               drop_na(iucn_bin), aes(x = x,
+                                      y = y,
+                                      colour = logh1),
+             size = 3,
+             alpha = 0.5) + 
+  coord_sf(expand = FALSE) +
+  labs(title = "(b) Distribution of threatened species",
+       x = "Longitude",
+       y = "Latitude",
+       colour = expression(bold(paste("species ", italic(h), "-index")))) +
+  scale_colour_gradientn(colours = wes_palette("Zissou1", 100, type = "continuous"),
+                         labels = c(0, 2, 9, 31, 99, 316)) +
+  themebyjess_light_map()
+
+ggplot2::ggsave("outputs/map_endangered.png", map_endangered, width = 16, height = 9, units = "in", dpi = 300)
+
+maps_iucn <- ggarrange(map_lc + rremove("xlab") + rremove("ylab"), map_endangered + rremove("xlab") + rremove("ylab"),
+                       nrow = 2,
+                       heights = c(1, 1),
+                       align = c("v"))
+
+maps_iucn_an <- annotate_figure(maps_iucn,
+                                left = text_grob("Latitude",
+                                                 rot = 90,
+                                                 family = "Lato",
+                                                 size = 22,
+                                                 face = "bold"),
+                                bottom = text_grob("Longitude",
+                                                   family = "Lato",
+                                                   size = 22,
+                                                   face = "bold"))
+
+ggplot2::ggsave("outputs/maps_iucn_an.png", maps_iucn_an, width = 16, height = 13, units = "in", dpi = 300)
 
 iucnmap_plot <- ggplot(data = world) +
   geom_sf() +
