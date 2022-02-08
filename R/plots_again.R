@@ -105,6 +105,30 @@ ggplot(includeh, aes(x = logh1,
                       na.value = c("#a5a5a5")) +
   scale_y_discrete(limits = rev)
 
+#m-index
+ggplot(includeh %>% filter(m>1),
+               aes(x = m,
+                   y = reorder(genus_species, m),
+                   fill = order)) +
+  geom_segment(aes(x = 0,
+                   xend = m,
+                   y = reorder(genus_species, m),
+                   yend = reorder(genus_species, m)),
+               size = 1,
+               colour = "grey70") +
+  geom_point(size = 4.5,
+             alpha = 0.8,
+             shape = 21,
+             stroke = 1.5) +
+  labs(x = expression(bold(paste("species ", italic(m), "-index")))) +
+  # scale_fill_manual(values = c("#f1c40f", "#E98935", "#e74c3c", "#8e44ad", "#3498db", "#2ECC71"),
+  #                   guide = guide_legend(override.aes = list(size = 4,
+  #                                                            alpha = 1),
+  #                                        nrow = 1)) +
+  themebyjess_light_col()
+
+ggplot2::ggsave("outputs/h100.png", h100, width = 16, height = 9, units = "in", dpi = 300)
+
 #h-index
 h100 <- ggplot(includeh %>% filter(h>99),
        aes(x = h,
