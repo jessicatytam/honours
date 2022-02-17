@@ -129,6 +129,41 @@ m1 <- ggplot(includeh %>% filter(m>1),
 
 ggplot2::ggsave("outputs/m1.png", m1, width = 16, height = 13, units = "in", dpi = 300)
 
+allm <- ggplot(includeh,
+               aes(x = m,
+                   y = reorder(genus_species, m))) +
+  geom_point(size = 1,
+             alpha = 0.2) +
+  labs(x = "m-index") + 
+  scale_y_discrete(expand = c(0.005, 0.005)) +
+  theme(axis.title = element_blank(),
+        axis.text.x = element_text(family = "Lato",
+                                   size = 12,
+                                   colour = "grey30"),
+        axis.text.y = element_blank(),
+        axis.line = element_line(size = 1.05,
+                                 colour = "grey20"),
+        legend.background = element_rect(fill = "white"),
+        legend.title = element_blank(),
+        legend.text = element_text(family = "Roboto",
+                                   size = 20,
+                                   colour = "black"),
+        legend.key = element_rect(fill = "white"),
+        legend.position = "top",
+        legend.justification = "centre",
+        plot.background = element_rect(fill = "white"),
+        panel.border = element_rect(colour = "black",
+                                    fill = NA,
+                                    size = 3),
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major.x = element_line(colour = "grey90"),
+        panel.grid.minor.x = element_line(colour = "grey90",
+                                          linetype = "longdash"),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank())
+
+ggplot2::ggsave("outputs/allm.png", allm, width = 9, height = 16, units = "in", dpi = 300)
+
 #h-index
 h100 <- ggplot(includeh %>% filter(h>99),
        aes(x = h,

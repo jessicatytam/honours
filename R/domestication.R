@@ -49,20 +49,35 @@ partially_domesticated$species <- str_replace_all(partially_domesticated$species
 partially_domesticated <- partially_domesticated %>% #separate the names using ","
   separate(species, c("species1", "species2", "species3", "species4", "species5",
                       "species6", "species7", "species8", "species9", "species10"), sep = "[,]+")
+domesticated <- domesticated %>% #separate the names using ","
+  separate(species, c("species1", "species2", "species3"), sep = "[,]+")
+domesticated <- domesticated %>% #separate the names using ","
+  separate(species3, c("species3", "species4"), sep = " and ")
 
 #fill in genus names
 
+domesticated[,"species2"]==" A. algirus" #find row with "C. l. lupus"
+domesticated[26,"species2"] <- "Atelerix algirus" #change to full name
+domesticated[,"species4"]=="H. collaris" #find row with "C. l. lupus"
+domesticated[26,"species4"] <- "Hemiechinus algirus" #change to full name
+domesticated[26,"species2"] #check
+domesticated[26,"species4"] #check
+
+partially_domesticated[,"species1"] #find row with "C. l. lupus"
+partially_domesticated[92,"species1"] <- "Canis lupus lupus" #change to full name
+partially_domesticated[92,"species1"] #check
+
 for (j in 11:ncol(partially_domesticated)) {
   for (i in 1:nrow(partially_domesticated)) {
-    if (!is.na(partially_domesticated[,j][i]) & (lengths(str_split(partially_domesticated[,j][i], " ")) == 3)) {
-      partially_domesticated[,j][i] <- str_replace(partially_domesticated[,j][i], ".+(?=[:space:])", word(partially_domesticated$species1[i], 1))
-    } else if (!is.na(partially_domesticated[,j][i]) & (lengths(str_split(partially_domesticated[,j][i], " ")) == 4)) {
-      partially_domesticated[,j][i] <- str_replace(partially_domesticated[,j][i], ".+(?=[:space:])", word(partially_domesticated$species1[i], 1, 2))
+    if (!is.na(partially_domesticated[i,j]) & (lengths(str_split(partially_domesticated[i,j], " ")) == 3)) {
+      partially_domesticated[i,j] <- str_replace(partially_domesticated[i,j], ".+(?=[:space:])", word(partially_domesticated$species1[i], 1))
+    } else if (!is.na(partially_domesticated[i,j]) & (lengths(str_split(partially_domesticated[i,j], " ")) == 4)) {
+      partially_domesticated[i,j] <- str_replace(partially_domesticated[i,j], ".+(?=[:space:])", word(partially_domesticated$species1[i], 1, 2))
     } 
   }
 }
 
-partially_domesticated[46, 13] <- "Osphranter rufus"
+# partially_domesticated[46, 13] <- "Osphranter rufus"
 
 #check for and fix spelling mistakes
 
@@ -93,10 +108,18 @@ partially_domesticated <- partially_domesticated %>%
 partially_domesticated <- partially_domesticated %>%
   select(!name)
 
-#combine
-
 domesticated <- domesticated %>%
   rename("spp and subspp" = "Species and subspecies")
+
+domesticated <- domesticated %>%
+  pivot_longer(cols = starts_with("species"),
+               values_to = "species",
+               values_drop_na = TRUE)
+
+domesticated <- domesticated %>%
+  select(!name)
+
+#combine
 
 partially_domesticated <- partially_domesticated %>%
   rename(Purposes = Purpose)
@@ -109,7 +132,7 @@ domestication <- domestication[c(10, 5, 7:8)]
 domestication <- domestication %>%
   arrange(species)
 
-#get id for domestication
+#get id for domestication (end after this step if keeping subspecies)
 
 domestication <- domestication %>%
   mutate(id = tnrs_match_names(names = domestication$species)$ott_id, .after = species)
