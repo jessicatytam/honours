@@ -272,6 +272,7 @@ allh_wo_dom <- ggplot(includeh_wo_dom,
   geom_point(size = 1,
              alpha = 0.2) +
   labs(x = "h-index") + 
+  xlim(c(0, 500)) +
   scale_y_discrete(expand = c(0.005, 0.005)) +
   theme(axis.title = element_blank(),
         axis.text.x = element_text(family = "Lato",
@@ -300,3 +301,157 @@ allh_wo_dom <- ggplot(includeh_wo_dom,
         panel.grid.minor.y = element_blank())
 
 ggplot2::ggsave("outputs/allh_wo_dom.png", allh_wo_dom, width = 9, height = 16, units = "in", dpi = 300)
+
+#grid arrange
+
+mass_combine <- ggplot(includeh, aes(x = logmass,
+                                     y = logh1,
+                                     colour = domestication)) +
+  geom_point(size = 3,
+             alpha = 0.2) +
+  labs(x = "(a) Body mass (kg)") +
+  ylim(c(0, 500)) +
+  coord_trans(x = "log1p") +
+  scale_x_continuous(breaks = c(0.3, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0),
+                     labels = c(0.002, 0.01, 0.1, 1, 10, 100, "1,000", "100,000")) +
+  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
+  scale_colour_manual(values = c("#C83200", "#E19600", "#518DC6"),
+                      guide = guide_legend(override.aes = list(size = 5,
+                                                               alpha = 1))) +
+  new_scale_colour() +
+  geom_quantile(aes(colour = clade),
+                quantiles = 0.5,
+                size = 2.5,
+                alpha = 0.8,
+                lineend = "round") +
+  scale_colour_manual(values = c("#C83200", "#E19600", "#518DC6")) +
+  guides(colour = FALSE) +
+  themebyjess_light_point()
+
+lat_combine <- ggplot(includeh, aes(x = median_lat,
+                                    y = logh1,
+                                    colour = domestication)) +
+  geom_point(size = 3,
+             alpha = 0.2) +
+  geom_smooth(colour = "black",
+              size = 1.2) +
+  geom_rug(sides = "t",
+           col = rgb(0.5, 0, 0,
+                     alpha = 0.05)) +
+  labs(x = "(b) Latitude") +
+  ylim(c(0, 500)) +
+  scale_x_continuous(breaks = c(-40, 0, 40, 80),
+                     labels = c("-40°", 0, "40°", "80°")) +
+  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
+  scale_colour_manual(values = c("#C83200", "#E19600", "#518DC6"),
+                      guide = guide_legend(override.aes = list(size = 5,
+                                                               alpha = 1))) +
+  themebyjess_light_point()
+
+lat_combine_margin <- ggMarginal(lat_combine, 
+                                 margins = "x",
+                                 groupColour = TRUE,
+                                 groupFill = TRUE)
+
+ggMarginal(lat_combine, 
+           margins = "x",
+           type = "histogram",
+           xparams = list(binwidth = 1))
+
+humanuse_combine <- ggplot(includeh, aes(x = factor(humanuse_bin),
+                                         y = logh1)) +
+  geom_quasirandom(aes(colour = domestication),
+                   size = 3,
+                   alpha = 0.2) +
+  geom_boxplot(fill = "grey80",
+               size = 0.8,
+               width = 0.4,
+               alpha = 0.2,
+               outlier.shape = NA) +
+  labs(x = "(c) Human use") +
+  ylim(c(0, 500)) +
+  scale_x_discrete(breaks = c(0, 1),
+                   labels = c("No documented use", "Use documented")) +
+  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
+  scale_colour_manual(values = c("#C83200", "#E19600", "#518DC6"),
+                      guide = guide_legend(override.aes = list(size = 5,
+                                                               alpha = 1))) +
+  themebyjess_light_quasirandom()
+
+domestication_combine <- ggplot(includeh, aes(x = factor(domestication_bin),
+                                              y = logh1)) +
+  geom_quasirandom(aes(colour = domestication),
+                   size = 3,
+                   alpha = 0.2) +
+  geom_boxplot(fill = "grey80",
+               size = 0.8,
+               width = 0.4,
+               alpha = 0.2,
+               outlier.shape = NA) +
+  labs(x = "(d) Domestication") +
+  ylim(c(0, 500)) +
+  scale_x_discrete(breaks = c(1, 2, 3),
+                   labels = c("Domesticated", "Partially-domesticated", "Wild")) +
+  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
+  scale_colour_manual(values = c("#C83200", "#E19600", "#518DC6"),
+                      guide = guide_legend(override.aes = list(size = 5,
+                                                               alpha = 1))) +
+  themebyjess_light_quasirandom()
+
+iucn_combine <- ggplot(includeh %>% 
+                         drop_na(iucn_bin), aes(x = factor(iucn_bin),
+                                                y = logh1)) +
+  geom_quasirandom(aes(colour = domestication),
+                   size = 3,
+                   alpha = 0.2) +
+  geom_boxplot(fill = "grey80",
+               size = 0.8,
+               width = 0.4,
+               alpha = 0.2,
+               outlier.shape = NA) +
+  labs(x = "(e) IUCN Red List status") +
+  ylim(c(0, 500)) +
+  scale_x_discrete(breaks = c(1, 2, 3, 4, 5),
+                   labels = c("LC", "VU", "EN", "CE", "EW")) +
+  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
+  scale_colour_manual(values = c("#C83200", "#E19600", "#518DC6"),
+                      guide = guide_legend(override.aes = list(size = 5,
+                                                               alpha = 1))) +
+  themebyjess_light_quasirandom()
+
+gtrends_combine <- ggplot(includeh, aes(x = log_sumgtrends,
+                                        y = logh1,
+                                        colour = domestication)) +
+  geom_point(size = 3,
+             alpha = 0.2) +
+  labs(x = "(f) Google Trends index") +
+  ylim(c(0, 500)) +
+  scale_x_continuous(breaks = c(0, 2, 3, 4),
+                     labels = c(0, 100, "1,000", "10,000")) +
+  scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
+                     labels = c(0, 2, 9, 31, 99, 316)) +
+  scale_colour_manual(values = c("#C83200", "#E19600", "#518DC6"),
+                      guide = guide_legend(override.aes = list(size = 5,
+                                                               alpha = 1))) +
+  themebyjess_light_point()
+
+grid_plot <- ggarrange(mass_combine + rremove("ylab"), lat_combine + rremove("ylab"), humanuse_combine + rremove("ylab"),
+                       domestication_combine + rremove("ylab"), iucn_combine + rremove("ylab"),
+                       gtrends_combine + rremove("ylab"),
+                       common.legend = TRUE,
+                       nrow = 2, ncol = 3)
+
+grid_plot_an <- annotate_figure(grid_plot, left = text_grob(expression(bold(paste("species ", italic(h), "-index"))),
+                                                            rot = 90,
+                                                            family = "Lato",
+                                                            size = 22))
+
+ggplot2::ggsave("outputs/grid_plot_domestication.png", grid_plot_an, width = 20, height = 11, units = "in", dpi = 300)
+
+
+
