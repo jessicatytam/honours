@@ -221,3 +221,80 @@ for (j in 1:length(random_trees_new)) {
 
 saveRDS(random_trees_new, "data/intermediate_data/random_trees_new.rds")
 
+
+#plots
+
+#sorting
+
+includeh_wo_dom$clade <- factor(includeh_wo_dom$clade,
+                                levels = c("Afrotheria", "Xenarthra", "Euarchontoglires",
+                                           "Laurasiatheria", "Marsupials & monotremes"))
+# includeh$order <- factor(includeh$order, levels = med_mass$order)
+# unique(includeh$redlistCategory)
+includeh_wo_dom$redlistCategory <- factor(includeh_wo_dom$redlistCategory,
+                                          levels = c("Least Concern", "Near Threaten", "Vulnerable",
+                                                     "Endangered", "Critically Endangered",
+                                                     "Extinct in the Wild", "Extinct", "Data Deficient"))
+
+#themes
+
+source("R/themes.R")
+
+h100_wo_dom <- ggplot(includeh_wo_dom %>% filter(h>99),
+                      aes(x = h,
+                          y = reorder(genus_species, h),
+                          fill = order)) +
+  geom_segment(aes(x = 0,
+                   xend = h,
+                   y = reorder(genus_species, h),
+                   yend = reorder(genus_species, h)),
+               size = 1,
+               colour = "grey70") +
+  geom_point(size = 4.5,
+             alpha = 0.8,
+             shape = 21,
+             stroke = 1.5) +
+  labs(x = expression(bold(paste("species ", italic(h), "-index")))) +
+  scale_fill_manual(values = c("#f1c40f", "#E98935", "#e74c3c", "#8e44ad", "#3498db", "#2ECC71"),
+                    guide = guide_legend(override.aes = list(size = 4,
+                                                             alpha = 1),
+                                         nrow = 1)) +
+  themebyjess_light_col()
+
+ggplot2::ggsave("outputs/h100_wo_dom.png", h100_wo_dom, width = 16, height = 9, units = "in", dpi = 300)
+ggplot2::ggsave("outputs/h100_wo_dom_text.png", h100_wo_dom, width = 16, height = 13, units = "in", dpi = 300)
+
+allh_wo_dom <- ggplot(includeh_wo_dom,
+               aes(x = h,
+                   y = reorder(genus_species, h))) +
+  geom_point(size = 1,
+             alpha = 0.2) +
+  labs(x = "h-index") + 
+  scale_y_discrete(expand = c(0.005, 0.005)) +
+  theme(axis.title = element_blank(),
+        axis.text.x = element_text(family = "Lato",
+                                   size = 12,
+                                   colour = "grey30"),
+        axis.text.y = element_blank(),
+        axis.line = element_line(size = 1.05,
+                                 colour = "grey20"),
+        legend.background = element_rect(fill = "white"),
+        legend.title = element_blank(),
+        legend.text = element_text(family = "Roboto",
+                                   size = 20,
+                                   colour = "black"),
+        legend.key = element_rect(fill = "white"),
+        legend.position = "top",
+        legend.justification = "centre",
+        plot.background = element_rect(fill = "white"),
+        panel.border = element_rect(colour = "black",
+                                    fill = NA,
+                                    size = 3),
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major.x = element_line(colour = "grey90"),
+        panel.grid.minor.x = element_line(colour = "grey90",
+                                          linetype = "longdash"),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank())
+
+ggplot2::ggsave("outputs/allh_wo_dom.png", allh_wo_dom, width = 9, height = 16, units = "in", dpi = 300)

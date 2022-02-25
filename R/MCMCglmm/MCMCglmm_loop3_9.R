@@ -36,5 +36,4 @@ for (i in 1:length(random_trees)) {
 }
 
 #save the models
-saveRDS(mod_list3
-        _9, "data/intermediate_data/MCMCglmm/mod_list3_9.rds")
+saveRDS(mod_list3_9, "data/intermediate_data/MCMCglmm/mod_list3_9.rds")

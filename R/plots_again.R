@@ -783,9 +783,9 @@ scopus1_melt <- melt(scopus_results1)
 scopus2_melt <- melt(scopus_results2)
 
 scopus1_df <- scopus1_melt %>%
-  select(cover_date, L1) 
+  dplyr::select(cover_date, L1) 
 scopus2_df <- scopus2_melt %>%
-  select(cover_date, L1) 
+  dplyr::select(cover_date, L1) 
 
 scopus2_df$L1 <- scopus2_df$L1+3999
 
@@ -883,6 +883,12 @@ scopus_order_1950 <- scopus_order %>%
 scopus_order_1940 <- scopus_order %>%
   filter(year > 1939)
 
+scopus_order_1990 <- scopus_order %>%
+  filter(year > 1989)
+
+scopus_order_1980 <- scopus_order %>%
+  filter(year > 1979)
+
 #check percentages
 
 scopus_order_sum <- unique(scopus_order %>% 
@@ -895,6 +901,11 @@ scopus_order_yrperc <- left_join(scopus_order, scopus_order_yr)
 scopus_order_yrperc <- scopus_order_yrperc %>% 
   mutate(perc = count/sum*100)
 write.csv(scopus_order_yrperc, file = "outputs/data/scopus_order_yrperc.csv")
+
+scopus_order_yrperc %>%
+  group_by(year) %>% 
+  summarise(sum(sum)) %>% 
+  View()
 
 scopus_order_1960 <- scopus_order %>% 
   filter(year == 1960)
