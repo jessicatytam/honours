@@ -316,7 +316,7 @@ mass_combine <- ggplot(includeh, aes(x = logmass,
                      labels = c(0.002, 0.01, 0.1, 1, 10, 100, "1,000", "100,000")) +
   scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
                      labels = c(0, 2, 9, 31, 99, 316)) +
-  scale_colour_manual(values = c("#C83200", "#E19600", "#518DC6"),
+  scale_colour_manual(values = c("#649fea", "#a9dfbf", "#f0b27a"),
                       guide = guide_legend(override.aes = list(size = 5,
                                                                alpha = 1))) +
   new_scale_colour() +
@@ -325,7 +325,7 @@ mass_combine <- ggplot(includeh, aes(x = logmass,
                 size = 2.5,
                 alpha = 0.8,
                 lineend = "round") +
-  scale_colour_manual(values = c("#C83200", "#E19600", "#518DC6")) +
+  scale_colour_manual(values = c("#649fea", "#a9dfbf", "#f0b27a")) +
   guides(colour = FALSE) +
   themebyjess_light_point()
 
@@ -345,7 +345,7 @@ lat_combine <- ggplot(includeh, aes(x = median_lat,
                      labels = c("-40°", 0, "40°", "80°")) +
   scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
                      labels = c(0, 2, 9, 31, 99, 316)) +
-  scale_colour_manual(values = c("#C83200", "#E19600", "#518DC6"),
+  scale_colour_manual(values = c("#649fea", "#a9dfbf", "#f0b27a"),
                       guide = guide_legend(override.aes = list(size = 5,
                                                                alpha = 1))) +
   themebyjess_light_point()
@@ -376,7 +376,7 @@ humanuse_combine <- ggplot(includeh, aes(x = factor(humanuse_bin),
                    labels = c("No documented use", "Use documented")) +
   scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
                      labels = c(0, 2, 9, 31, 99, 316)) +
-  scale_colour_manual(values = c("#C83200", "#E19600", "#518DC6"),
+  scale_colour_manual(values = c("#649fea", "#a9dfbf", "#f0b27a"),
                       guide = guide_legend(override.aes = list(size = 5,
                                                                alpha = 1))) +
   themebyjess_light_quasirandom()
@@ -397,7 +397,7 @@ domestication_combine <- ggplot(includeh, aes(x = factor(domestication_bin),
                    labels = c("Domesticated", "Partially-domesticated", "Wild")) +
   scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
                      labels = c(0, 2, 9, 31, 99, 316)) +
-  scale_colour_manual(values = c("#C83200", "#E19600", "#518DC6"),
+  scale_colour_manual(values = c("#649fea", "#a9dfbf", "#f0b27a"),
                       guide = guide_legend(override.aes = list(size = 5,
                                                                alpha = 1))) +
   themebyjess_light_quasirandom()
@@ -419,7 +419,7 @@ iucn_combine <- ggplot(includeh %>%
                    labels = c("LC", "VU", "EN", "CE", "EW")) +
   scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
                      labels = c(0, 2, 9, 31, 99, 316)) +
-  scale_colour_manual(values = c("#C83200", "#E19600", "#518DC6"),
+  scale_colour_manual(values = c("#649fea", "#a9dfbf", "#f0b27a"),
                       guide = guide_legend(override.aes = list(size = 5,
                                                                alpha = 1))) +
   themebyjess_light_quasirandom()
@@ -435,7 +435,7 @@ gtrends_combine <- ggplot(includeh, aes(x = log_sumgtrends,
                      labels = c(0, 100, "1,000", "10,000")) +
   scale_y_continuous(breaks = c(0, 0.477, 1, 1.505, 2, 2.501),
                      labels = c(0, 2, 9, 31, 99, 316)) +
-  scale_colour_manual(values = c("#C83200", "#E19600", "#518DC6"),
+  scale_colour_manual(values = c("#649fea", "#a9dfbf", "#f0b27a"),
                       guide = guide_legend(override.aes = list(size = 5,
                                                                alpha = 1))) +
   themebyjess_light_point()
