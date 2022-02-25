@@ -226,6 +226,7 @@ saveRDS(random_trees_new, "data/intermediate_data/random_trees_new.rds")
 
 #sorting
 
+includeh_wo_dom$genus_species <- str_replace(includeh_wo_dom$genus_species, "_", " ")
 includeh_wo_dom$clade <- factor(includeh_wo_dom$clade,
                                 levels = c("Afrotheria", "Xenarthra", "Euarchontoglires",
                                            "Laurasiatheria", "Marsupials & monotremes"))
@@ -254,8 +255,9 @@ h100_wo_dom <- ggplot(includeh_wo_dom %>% filter(h>99),
              alpha = 0.8,
              shape = 21,
              stroke = 1.5) +
+  xlim(c(0, 500)) +
   labs(x = expression(bold(paste("species ", italic(h), "-index")))) +
-  scale_fill_manual(values = c("#f1c40f", "#E98935", "#e74c3c", "#8e44ad", "#3498db", "#2ECC71"),
+  scale_fill_manual(values = c("#E98935", "#3498db"),
                     guide = guide_legend(override.aes = list(size = 4,
                                                              alpha = 1),
                                          nrow = 1)) +
